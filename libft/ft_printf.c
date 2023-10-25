@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:11:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 13:44:33 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 13:54:24 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	chosentype(const char *format, va_list args, long *len)
 	return (*len);
 }
 
-int	ft_printf(const char *format, ...)
+int	prt(const char *format, ...)
 {
 	va_list		args;
 	long		lenformat;
