@@ -6,13 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 11:54:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 13:57:36 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int main(void)
+int	main(void)
 // int main(int ac, char **av, char **ep)
 {
 	return (0);
