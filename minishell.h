@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 12:12:03 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 18:16:08 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <term.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "libft/libft.h"
 
 typedef struct s_var
 {

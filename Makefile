@@ -14,7 +14,7 @@ OBJDIR	= objs
 
 SRC		= minishell_utils.c
 # SRC		:= $(addprefix srcs/,$(SRC))
-SRC		+= minishell.c
+SRC		+= minishell.c libft/*.c
 OBJ		= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 
 all:	$(NAME)

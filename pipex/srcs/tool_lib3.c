@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:16:37 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/21 19:23:07 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 16:18:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,18 @@ void	free_all(int n)
 {
 	int	i;
 
-	free_strs(vars()->paths);
+	free_strs(var()->paths);
 	i = -1;
-	while (++i < vars()->ac - 3 - vars()->hd)
-		free_strs(vars()->cmdargs[i]);
-	free(vars()->cmdargs);
+	while (++i < var()->ac - 3 - var()->hd)
+		free_strs(var()->cmdargs[i]);
+	free(var()->cmdargs);
 	i = -1;
-	while (++i < vars()->ac - 4)
-		free(vars()->pipe[i]);
-	free(vars()->pipe);
+	while (++i < var()->ac - 4)
+		free(var()->pipe[i]);
+	free(var()->pipe);
 	if (n)
 		return ;
-	free(vars()->pids);
+	free(var()->pids);
 }
 
 void	close_all(int fd1, int fd2)
@@ -70,10 +70,10 @@ void	close_all(int fd1, int fd2)
 	if (fd2 > -1)
 		close(fd2);
 	i = -1;
-	while (++i < vars()->ac - 4)
+	while (++i < var()->ac - 4)
 	{
-		close(vars()->pipe[i][0]);
-		close(vars()->pipe[i][1]);
+		close(var()->pipe[i][0]);
+		close(var()->pipe[i][1]);
 	}
 }
 
@@ -91,10 +91,10 @@ void	error_b(int n)
 		free_all(0);
 	if (n == 3)
 	{
-		if (!vars()->av[1] || !*vars()->av[1])
+		if (!var()->av[1] || !*var()->av[1])
 			perror("''");
 		else
-			perror(vars()->av[1]);
+			perror(var()->av[1]);
 	}
 	else if (n > 1 && n != 4)
 		perror("pipex");

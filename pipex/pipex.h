@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/22 12:17:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 11:31:07 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 16:18:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #  define BUFFER_SIZE 5
 # endif
 
-typedef struct s_vars
+typedef struct s_var
 {
 	char	**paths;
 	char	***cmdargs;
@@ -40,7 +40,7 @@ typedef struct s_vars
 	int		hd;
 	char	**av;
 	pid_t	*pids;
-}			t_vars;
+}			t_var;
 
 // pipex
 char	*search_cmd(char **cmdargs, int fd, int fd2);
@@ -68,7 +68,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 // tool_lib2
 size_t	ft_strlen(char const *s);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
-t_vars	*vars(void);
+t_var	*var(void);
 void	*ft_calloc(size_t nmemb, size_t size);
 char	*ft_strchr(const char *s, int c);
 

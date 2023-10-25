@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:16:37 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/12 17:42:16 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/25 16:18:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 }
 
 // this function is a global var without norm error
-t_vars	*vars(void)
+t_var	*var(void)
 {
-	static t_vars	vars;
+	static t_var	var;
 
-	return (&vars);
+	return (&var);
 }
 
 void	*ft_calloc(size_t nmemb, size_t size)
