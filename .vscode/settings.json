@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "minishell.h": "c",
+        "chrono": "c",
+        "algorithm": "c",
+        "libft.h": "c",
+        "history.h": "c",
+        "wait.h": "c"
+    }
+}

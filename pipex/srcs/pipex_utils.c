@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 18:36:21 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 16:18:47 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/27 20:35:14 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ void	get_stdin(void)
 	char	*buf;
 	char	*str;
 
-	prt("pipe heredoc>");
+	ft_printf("pipe heredoc>");
 	buf = get_next_line(STDIN_FILENO);
 	str = ft_strjoin(var()->av[2], "\n");
 	while (ft_strcmp(buf, str))
 	{
 		write(var()->pipe[0][1], buf, ft_strlen(buf));
 		free(buf);
-		prt("pipe heredoc>");
+		ft_printf("pipe heredoc>");
 		buf = get_next_line(STDIN_FILENO);
 	}
 	free(str);

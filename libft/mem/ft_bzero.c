@@ -1,33 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:33:16 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:33:18 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+void	ft_bzero(void *s, size_t n)
 {
-	char	*buf;
+	unsigned char	*p;
+	size_t			i;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	p = s;
+	i = 0;
+	while (i < n)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		*p++ = 0;
+		i++;
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
 }
+
+/*int main()
+{
+    int str[10];
+  
+    ft_bzero(str, sizeof(str));
+
+    int i;
+
+    i = 0;
+
+    while(i < 10)
+    {
+        printf("%d", str[i]);
+        i++;
+    }
+    return (0);
+}*/

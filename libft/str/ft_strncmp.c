@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:36:50 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:36:54 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	char	*buf;
+	size_t	count;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	if (n == 0)
+		return (0);
+	count = 0;
+	while (s1[count] == s2[count] && s1[count] != '\0')
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		if (count < (n - 1))
+			count++;
+		else
+			return (0);
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	return ((unsigned char)s1[count] - (unsigned char)s2[count]);
 }
+
+/*int main()
+{
+	int result;
+	result = ft_strncmp("Jessica", "jessica", 7);
+	printf("%d", result);
+}*/

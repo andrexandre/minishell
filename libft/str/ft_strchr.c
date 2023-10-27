@@ -1,33 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:35:11 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:35:13 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+char	*ft_strchr(const char *s, int c)
 {
-	char	*buf;
+	int	count;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	count = 0;
+	while (s[count] != (char)c)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		if (s[count] == '\0')
+			return (NULL);
+		count++;
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	return ((char *)(s + count));
 }
+
+/*int	main(void)
+{
+	const char str [] = "Mezzavilla, Jéssica.";
+	const char target = 'J';
+
+	printf("%s", ft_strchr(str, target));
+}*/
