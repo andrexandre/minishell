@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:44:07 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/21 16:59:43 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/27 21:00:02 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	check_buffer(char *str)
 	return (nl);
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line_pipex(int fd)
 {
 	static char	buffer[FOPEN_MAX][BUFFER_SIZE + 1];
 	char		*line;

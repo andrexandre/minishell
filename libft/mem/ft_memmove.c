@@ -1,33 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:33:53 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:33:56 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	char	*buf;
+	char		*d;
+	const char	*s;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	d = dest;
+	s = src;
+	if (d <= s)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		ft_memcpy(d, s, n);
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	else
+	{
+		d += n;
+		s += n;
+		while (n--)
+		{
+			*--d = *--s;
+		}
+	}
+	return (dest);
 }
+
+/*int	main(void)
+{
+    char src[] = "j";
+    char dest[] = "jessica";
+
+    ft_memmove(dest, src, ft_strlen(src) + 1);
+
+    printf("%s", dest);
+}*/

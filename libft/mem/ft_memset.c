@@ -1,33 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:33:59 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:34:03 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+void	*ft_memset(void *s, int c, size_t n)
 {
-	char	*buf;
+	unsigned char	*p;
+	size_t			i;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	p = s;
+	i = 0;
+	while (i < n)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		*p++ = (unsigned char)c;
+		i++;
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	return (s);
 }
+
+/*int main()
+{
+    char str[50] = "Jessica Alves Mezzavilla";
+  
+    ft_memset(str + 24, '!', 8*sizeof(char));
+    printf("%s", str);
+}*/

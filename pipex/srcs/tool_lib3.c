@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tool_lib3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:16:37 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 16:18:47 by analexan         ###   ########.fr       */
+/*   Updated: 2023/10/27 20:35:14 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,13 @@ void	close_all(int fd1, int fd2)
 void	error_b(int n)
 {
 	if (n == -1)
-		prt("usage: ./pipex <file1> <cmd1> <cmd2> <file2>\n");
+		ft_printf("usage: ./pipex <file1> <cmd1> <cmd2> <file2>\n");
 	else if (!n)
-		prt("usage: ./pipex <file1> <cmd1> <cmd2> ... <file2>\n");
+		ft_printf("usage: ./pipex <file1> <cmd1> <cmd2> ... <file2>\n");
 	else if (n == 1)
 		free_all(1);
 	else if (n == 4)
-		prt("usage: ./pipex here_doc EOF <cmd1> <cmd2> <file>\n");
+		ft_printf("usage: ./pipex here_doc EOF <cmd1> <cmd2> <file>\n");
 	else
 		free_all(0);
 	if (n == 3)

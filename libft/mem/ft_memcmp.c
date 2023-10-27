@@ -1,33 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:33:34 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:33:36 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	char	*buf;
+	const unsigned char	*p1;
+	const unsigned char	*p2;
+	size_t				count;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	p1 = s1;
+	p2 = s2;
+	count = 0;
+	while (count < n)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		if (p1[count] != p2[count])
+		{
+			return (p1[count] - p2[count]);
+		}
+		count++;
 	}
-	free(buf);
-	ft_printf("\n");
 	return (0);
 }
+
+/*int	main(void)
+{
+	char s1[] = "Jessica";
+	char s2[] = "jessica";
+
+	printf("%d\n", ft_memcmp(s1, s2, 7));
+    printf("%d", memcmp(s1, s2, 7));
+}*/

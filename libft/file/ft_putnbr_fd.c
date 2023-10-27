@@ -1,33 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:28:02 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:28:06 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+void	ft_putnbr_fd(int n, int fd)
 {
-	char	*buf;
+	char	c;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	if (n == -2147483648)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		ft_putchar_fd('-', fd);
+		ft_putchar_fd('2', fd);
+		n = 147483648;
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	if (n < 0)
+	{
+		ft_putchar_fd('-', fd);
+		n = -n;
+	}
+	if (n >= 10)
+	{
+		ft_putnbr_fd(n / 10, fd);
+		ft_putnbr_fd(n % 10, fd);
+	}
+	else
+	{
+		c = '0' + n;
+		ft_putchar_fd(c, fd);
+	}
 }
+
+/*int	main(void)
+{
+	int n = -1234;
+	ft_putnbr_fd(n, fd);
+}*/

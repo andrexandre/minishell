@@ -1,33 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_isnumber.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/25 22:43:16 by jealves-          #+#    #+#             */
+/*   Updated: 2023/10/05 23:18:23 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+int	ft_isnumber(char *str)
 {
-	char	*buf;
+	int	i;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (str[i] == '\0')
+		return (0);
+	while (str[i])
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	return (1);
 }

@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_putpointer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:28:41 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:28:43 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "ft_printf.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+int	ft_putpointer(unsigned long int n)
 {
-	char	*buf;
+	int	count;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	count = 0;
+	if (!n)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		count += ft_putstr("(nil)");
+		return (count);
 	}
-	free(buf);
-	ft_printf("\n");
-	return (0);
+	count += ft_putstr("0x");
+	count += ft_putnbr_base_us(n, HEXA_LOWER);
+	return (count);
 }

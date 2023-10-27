@@ -1,33 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_memchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:01:49 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:33:29 by jealves-          #+#    #+#             */
+/*   Updated: 2023/09/14 22:33:31 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
-// int main(int ac, char **av, char **ep)
+void	*ft_memchr(const void *s, int c, size_t n)
 {
-	char	*buf;
+	const unsigned char	*p;
+	size_t				count;
 
-	ft_printf("> ");
-	buf = get_next_line(0);
-	while (buf)
+	p = s;
+	count = 0;
+	while (n--)
 	{
-		free(buf);
-		ft_printf("> ");
-		buf = get_next_line(0);
-		if (!ft_strncmp(buf, "exit", 4) || !ft_strncmp(buf, "q", 1))
-			break;
+		if ((unsigned char)p[count] == (unsigned char)c)
+		{
+			return ((void *)(p + count));
+		}
+		count++;
 	}
-	free(buf);
-	ft_printf("\n");
 	return (0);
 }
+
+/*int main()
+{
+	char str[] = "jessica";
+	char *result;
+
+	result = ft_memchr(str, 'i', 8);
+	printf("%s", result);
+}*/
