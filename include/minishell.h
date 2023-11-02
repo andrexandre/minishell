@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/01 14:30:35 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/02 19:28:45 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,13 @@
 # include <termios.h>
 # include <unistd.h>
 
+	// char	**cmdargs;
 typedef struct s_var
 {
-	int	signal;
+	int		signal;
+	char	**paths;
+	int		ac;
+	char	**av;
 }		t_var;
 
 t_var	*var(void);

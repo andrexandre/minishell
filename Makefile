@@ -53,7 +53,7 @@ re:	fclean all
 run: ${NAME}
 	@./${NAME}
 
-TESTF	= infile cat wc outfile
+TESTF	= | cat -e
 
 v:
 	@make && valgrind --track-fds=yes --trace-children=yes --leak-check=full --show-leak-kinds=all ./${NAME} ${TESTF}
