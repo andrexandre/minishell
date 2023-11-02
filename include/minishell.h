@@ -3,38 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 20:34:01 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/01 14:30:35 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <string.h>
-#include <stdio.h>
-#include <curses.h>
-#include <sys/ioctl.h>
-#include <termios.h>
-#include <term.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "libft.h"
+# include "libft.h"
+# include <curses.h>
+# include <dirent.h>
+# include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/ioctl.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <term.h>
+# include <termios.h>
+# include <unistd.h>
 
 typedef struct s_var
 {
-	int		signal;
-}			t_var;
+	int	signal;
+}		t_var;
 
 t_var	*var(void);
 

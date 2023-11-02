@@ -28,7 +28,6 @@ all:	$(NAME)
 lib:
 	@make -s -C $(DIR_LIBFT)
 
-
 $(NAME): lib $(OBJ) $(LIB)
 	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME)
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
@@ -51,7 +50,6 @@ fclean:	clean
 
 re:	fclean all
 
-
 run: ${NAME}
 	@./${NAME}
 
@@ -70,4 +68,4 @@ val: ${NAME}
 
 e: fclean
 
-.PHONY:	all clean fclean re rb run test testt v val e
+.PHONY:	all clean fclean re run v val e
