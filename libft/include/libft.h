@@ -3,30 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/10/05 15:06:22 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/02 13:51:29 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# define BUFFER_SIZE 512
-
-# include "ft_printf.h"
-# include "get_next_line.h"
+# include <limits.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+# include <stdarg.h>
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }					t_list;
+
+int					prt(const char *format, ...);
+void				ft_putchar_c(char c, long *ptr);
+void				ft_putstr_c(char *s, long *ptr);
+void				ft_putnbr_c(long n, long *ptr);
+
+char				*get_next_line(int fd);
 
 size_t				ft_strlen(const char *str);
 size_t				ft_strlen_nl(const char *s);

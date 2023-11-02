@@ -75,13 +75,9 @@ SRCS = \
    utils/ft_isnumber.c\
    \
    ft_printf/ft_printf.c\
-   ft_printf/ft_putchar.c\
-   ft_printf/ft_putnbr_base.c\
-   ft_printf/ft_putpointer.c\
-   ft_printf/ft_putstr.c\
+   ft_printf/ft_printf_utils.c\
    \
-   get_next_line/get_next_line_utils.c\
-   get_next_line/get_next_line.c\
+   get_next_line/get_next_line_bonus.c\
 
 INCLUDES = include
 
@@ -96,8 +92,8 @@ CFLAGS = -Wall -I $(INCLUDES) -Wextra -Werror -g #-fsanitize=address
 	@$(CC) $(CFLAGS) -c $< -o $@   
 
 $(NAME): $(OBJS)         
-		@ar -rcs $(NAME) $(OBJS)
-	   @printf "\n$(BLUE)$(PROJECT)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
+	@ar -rcs $(NAME) $(OBJS)
+	@printf "\n$(BLUE)$(PROJECT)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
 	@make clean
 
 all:	$(NAME)
