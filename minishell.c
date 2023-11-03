@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/02 19:31:16 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/03 18:58:22 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,30 @@ void	cmd_execute(char **cmdargs, char **ep)
 	free(cmd);
 }
 
+int	builtin(char *buf, int *status)
+{
+	if (!ft_strncmp(buf, "\0", 1))
+		return (1);
+	if (!ft_strncmp(buf, "cd\0", 3))
+		return (1);
+	if (!ft_strncmp(buf, "echo\0", 5) || !ft_strncmp(buf, "echo -n\0", 8))
+		return (1);
+	if (!ft_strncmp(buf, "env\0", 4))
+		return (1);
+	if (!ft_strncmp(buf, "export\0", 7))
+		return (1);
+	if (!ft_strncmp(buf, "pwd\0", 4))
+		return (1);
+	if (!ft_strncmp(buf, "unset\0", 6))
+		return (1);
+	if (!ft_strncmp(buf, "exit\0", 5) || !ft_strncmp(buf, "q\0", 2))
+	{
+		*status = 0;
+		return (1);
+	}
+	return (0);
+}
+
 void	cmd_loop(char **ep)
 {
 	char	**cmdargs;
@@ -91,16 +115,14 @@ void	cmd_loop(char **ep)
 		buf = get_next_line(0);
 		buf[ft_strlen(buf) - 1] = '\0';
 		cmdargs = ft_split(buf, ' ');
-		if (!ft_strncmp(buf, "exit\0", 5) || !ft_strncmp(buf, "q\0", 2))
-			status = 0;
-		else
+		if (!builtin(buf, &status))
 			cmd_execute(cmdargs, ep);
 		free(buf);
 		free_strs(cmdargs);
 	}
 }
 
-void	parsing(char **ep, int i)
+void	parsing_paths(char **ep, int i)
 {
 	char	*path_from_ep;
 	char	*temp;
@@ -134,11 +156,10 @@ int	main(int ac, char **av, char **ep)
 	// load
 	var()->ac = ac;
 	var()->av = av;
-	parsing(ep, -1);
+	parsing_paths(ep, -1);
 	// loop
 	cmd_loop(ep);
 	// clean
 	free_all();
-	prt("\n");
 	return (0);
 }
