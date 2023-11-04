@@ -6,11 +6,26 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/03 18:58:22 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/04 17:37:44 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	prt_strs(char **strs)
+{
+	int	i;
+
+	i = -1;
+	if (!strs)
+		return ;
+	while (strs[++i])
+	{
+		prt("%s", strs[i]);
+		if (strs[i + 1])
+			prt(" ");
+	}
+}
 
 void	*free_strs(char **strs)
 {
@@ -78,23 +93,49 @@ void	cmd_execute(char **cmdargs, char **ep)
 	free(cmd);
 }
 
-int	builtin(char *buf, int *status)
+// to-do: separate builtins to functions
+int	builtin(char **cmdargs, int *status)
 {
-	if (!ft_strncmp(buf, "\0", 1))
+	char	*temp;
+
+	if (!cmdargs[0])
 		return (1);
-	if (!ft_strncmp(buf, "cd\0", 3))
+	else if (!ft_strcmp(cmdargs[0], "cd"))
+	{
+		temp = ft_strjoin("./", cmdargs[0]);
+		if (!cmdargs[1])
+			chdir(getenv("HOME"));
+		else
+			if (chdir(cmdargs[1]) < 0)
+				if (chdir(temp) < 0)
+					perror(cmdargs[1]);
+		free(temp);
+		prt("%s\n", getcwd(NULL, 0)); // debug
 		return (1);
-	if (!ft_strncmp(buf, "echo\0", 5) || !ft_strncmp(buf, "echo -n\0", 8))
+	}
+	else if (!ft_strcmp(cmdargs[0], "echo"))
+	{
+		if (!ft_strncmp(cmdargs[1], "-n", 2))
+			prt_strs(cmdargs + 2);
+		else
+		{
+			prt_strs(cmdargs + 1);
+			prt("\n");
+		}
 		return (1);
-	if (!ft_strncmp(buf, "env\0", 4))
+	}
+	else if (!ft_strcmp(cmdargs[0], "env"))
 		return (1);
-	if (!ft_strncmp(buf, "export\0", 7))
+	else if (!ft_strcmp(cmdargs[0], "export"))
 		return (1);
-	if (!ft_strncmp(buf, "pwd\0", 4))
+	else if (!ft_strcmp(cmdargs[0], "pwd"))
+	{
+		prt("%s\n", getcwd(NULL, 0));
 		return (1);
-	if (!ft_strncmp(buf, "unset\0", 6))
+	}
+	else if (!ft_strcmp(cmdargs[0], "unset"))
 		return (1);
-	if (!ft_strncmp(buf, "exit\0", 5) || !ft_strncmp(buf, "q\0", 2))
+	else if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
 	{
 		*status = 0;
 		return (1);
@@ -102,6 +143,15 @@ int	builtin(char *buf, int *status)
 	return (0);
 }
 
+
+/* searching for commands:
+if (has slashes)
+	execute it direcly;
+else if (its a builtin)
+	execute builtin;
+else
+	search for it in PATH;
+*/
 void	cmd_loop(char **ep)
 {
 	char	**cmdargs;
@@ -111,11 +161,11 @@ void	cmd_loop(char **ep)
 	status = 1;
 	while (status)
 	{
-		prt("minishell> ");
+		prt("\033[0;34mminishell\033[0m$ ");
 		buf = get_next_line(0);
 		buf[ft_strlen(buf) - 1] = '\0';
 		cmdargs = ft_split(buf, ' ');
-		if (!builtin(buf, &status))
+		if (!builtin(cmdargs, &status))
 			cmd_execute(cmdargs, ep);
 		free(buf);
 		free_strs(cmdargs);
