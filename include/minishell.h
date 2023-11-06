@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/02 19:28:45 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/06 12:57:21 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_var
 	char	**paths;
 	int		ac;
 	char	**av;
+	char	**ep;
 }		t_var;
 
 t_var	*var(void);

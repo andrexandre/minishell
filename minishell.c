@@ -6,13 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/04 17:37:44 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/06 19:16:38 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	prt_strs(char **strs)
+void	prt_strs(char **strs, char sep)
 {
 	int	i;
 
@@ -23,7 +23,7 @@ void	prt_strs(char **strs)
 	{
 		prt("%s", strs[i]);
 		if (strs[i + 1])
-			prt(" ");
+			prt("%c", sep);
 	}
 }
 
@@ -93,65 +93,125 @@ void	cmd_execute(char **cmdargs, char **ep)
 	free(cmd);
 }
 
-// to-do: separate builtins to functions
+// cd -> bug when i do /bin it goes to /usr/bin
+int	run_cd(char **cmdargs)
+{
+	char	*home;
+
+	home = getenv("HOME");
+	if (!cmdargs[1])
+	{
+		if (!home)
+			prt("cd: HOME not set\n");
+		else
+			chdir(home);
+	}
+	else if (chdir(cmdargs[1]) < 0)
+		perror(cmdargs[1]);
+	return (1);
+}
+int	run_echo(char **cmdargs)
+{
+	if (cmdargs[1] && !ft_strncmp(cmdargs[1], "-n", 2))
+		prt_strs(cmdargs + 2, ' ');
+	else
+	{
+		prt_strs(cmdargs + 1, ' ');
+		prt("\n");
+	}
+	return (1);
+}
+int	run_env(char **cmdargs)
+{
+	if (cmdargs[1])
+		prt("env: too many arguments");
+	else
+		prt_strs(var()->ep, '\n');
+	prt("\n");
+	return (1);
+}
+int	run_export(char **cmdargs)
+{
+	(void)cmdargs;
+	return (1);
+}
+int	run_pwd(char **cmdargs)
+{
+	char	*cwd;
+
+	if (cmdargs[1])
+		prt("pwd: too many arguments\n");
+	else 
+	{
+		cwd = NULL;
+		cwd = getcwd(cwd, 0);
+		if (!cwd)
+		{
+			perror("getcwd");
+			return (1);
+		}
+		prt("%s\n", cwd);
+		free(cwd);
+	}
+	return (1);
+}
+int	run_unset(char **cmdargs)
+{
+	int	i;
+
+	i = -1;
+	if (cmdargs[1])
+	{
+		while (var()->ep[++i])
+		{
+			if (!ft_strcmp(var()->ep[i], cmdargs[1]))
+			{
+				var()->ep[i][0] = '\0';
+				// use linked list and then delete the node
+				break ;
+			}
+		}
+	}
+	return (1);
+}
+
+char *builtin_str[] = {
+	"cd",
+	"echo",
+	"env",
+	"export",
+	"pwd",
+	"unset"
+};
+
+int (*builtin_func[]) (char **) = {
+	&run_cd,
+	&run_echo,
+	&run_env,
+	&run_export,
+	&run_pwd,
+	&run_unset
+};
+
 int	builtin(char **cmdargs, int *status)
 {
-	char	*temp;
+	int		i;
 
+	i = -1;
 	if (!cmdargs[0])
 		return (1);
-	else if (!ft_strcmp(cmdargs[0], "cd"))
-	{
-		temp = ft_strjoin("./", cmdargs[0]);
-		if (!cmdargs[1])
-			chdir(getenv("HOME"));
-		else
-			if (chdir(cmdargs[1]) < 0)
-				if (chdir(temp) < 0)
-					perror(cmdargs[1]);
-		free(temp);
-		prt("%s\n", getcwd(NULL, 0)); // debug
-		return (1);
-	}
-	else if (!ft_strcmp(cmdargs[0], "echo"))
-	{
-		if (!ft_strncmp(cmdargs[1], "-n", 2))
-			prt_strs(cmdargs + 2);
-		else
-		{
-			prt_strs(cmdargs + 1);
-			prt("\n");
-		}
-		return (1);
-	}
-	else if (!ft_strcmp(cmdargs[0], "env"))
-		return (1);
-	else if (!ft_strcmp(cmdargs[0], "export"))
-		return (1);
-	else if (!ft_strcmp(cmdargs[0], "pwd"))
-	{
-		prt("%s\n", getcwd(NULL, 0));
-		return (1);
-	}
-	else if (!ft_strcmp(cmdargs[0], "unset"))
-		return (1);
-	else if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
+	while (++i < 6)
+		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
+			return (*builtin_func[i])(cmdargs);
+	if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
 	{
 		*status = 0;
+		prt("exit\n");
 		return (1);
 	}
 	return (0);
 }
 
-
-/* searching for commands:
-if (has slashes)
-	execute it direcly;
-else if (its a builtin)
-	execute builtin;
-else
-	search for it in PATH;
-*/
 void	cmd_loop(char **ep)
 {
 	char	**cmdargs;
@@ -161,7 +221,8 @@ void	cmd_loop(char **ep)
 	status = 1;
 	while (status)
 	{
-		prt("\033[0;34mminishell\033[0m$ ");
+		// prt("\033[0;34mminishell\033[0m$ ");
+		prt("minishell$ ");
 		buf = get_next_line(0);
 		buf[ft_strlen(buf) - 1] = '\0';
 		cmdargs = ft_split(buf, ' ');
@@ -206,6 +267,7 @@ int	main(int ac, char **av, char **ep)
 	// load
 	var()->ac = ac;
 	var()->av = av;
+	var()->ep = ep;
 	parsing_paths(ep, -1);
 	// loop
 	cmd_loop(ep);
