@@ -19,6 +19,7 @@ OBJDIR	= objs
 
 SRC		= minishell_utils.c\
 		  minishell.c \
+		  lexer/lexer.c \
 
 
 OBJ		= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))

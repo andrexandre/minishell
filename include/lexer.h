@@ -1,27 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/14 22:35:28 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/06 17:12:32 by jealves-         ###   ########.fr       */
+/*   Created: 2023/11/06 16:45:30 by jealves-          #+#    #+#             */
+/*   Updated: 2023/11/06 18:19:20 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef LEXER_H
+# define LEXER_H
 
-bool	ft_strcmp(const char *s1, const char *s2)
+enum				e_tokens
 {
-	size_t	count;
+	CMD,
+	AND,
+	PIPE,
+	WORD,
+	SEMICOLON,
+	REDIRECT_IN,
+	REDIRECT_OUT
+};
+	//REDIRECT_IN_D,
+	//REDIRECT_OUT_D,
 
-	count = 0;
-	while (s1[count] == s2[count] && s1[count] != '\0')
-	{
-		count++;
-	}
-	if (((unsigned char)s1[count] - (unsigned char)s2[count]) == 0)
-		return (true);
-	return (false);
-}
+typedef struct s_words
+{
+	enum e_tokens	token;
+	char			*word;
+}					t_words;
+
+void				lexer(char *str);
+
+#endif

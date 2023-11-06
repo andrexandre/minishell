@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/03 18:58:22 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/06 18:10:36 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void	cmd_loop(char **ep)
 	{
 		prt("minishell> ");
 		buf = get_next_line(0);
+		lexer(buf);
 		buf[ft_strlen(buf) - 1] = '\0';
 		cmdargs = ft_split(buf, ' ');
 		if (!builtin(buf, &status))
