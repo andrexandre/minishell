@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:11:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 13:54:24 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:45:46 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,11 @@ int	prt(const char *format, ...)
 
 	lenformat = 0;
 	va_start(args, format);
+	if (!format)
+	{
+		write(1, "format is NULL\n", 15);
+		return (-1);
+	}
 	while (*format)
 	{
 		if (*format == '%')

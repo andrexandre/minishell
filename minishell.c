@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/06 19:16:38 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/08 18:30:12 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,14 @@ void	*free_strs(char **strs)
 
 void	free_all(void)
 {
+	t_list	*current;
+
+	while (var()->lstep)
+	{
+		current = var()->lstep->next;
+		ft_lstdelone(var()->lstep, free);
+		var()->lstep = current;
+	}
 	free_strs(var()->paths);
 }
 
@@ -93,86 +101,174 @@ void	cmd_execute(char **cmdargs, char **ep)
 	free(cmd);
 }
 
-// cd -> bug when i do /bin it goes to /usr/bin
+void	print_lst(t_list *lst)
+{
+	while (lst)
+	{
+		prt("%s\n", lst->content);
+		lst = lst->next;
+	}
+}
+
+char	*m_get_env(char *key)
+{
+	t_list	*curr;
+	char 	*value;
+	
+	curr = var()->lstep;
+	value = ft_strjoin(key, "=");
+	while (curr)
+	{
+		if (!ft_strncmp(curr->content, value, ft_strlen(value)))
+		{
+			free(value);
+			return (ft_strchr(curr->content, '=') + 1);
+		}
+		curr = curr->next;
+	}
+	free(value);
+	return (NULL);
+}
+
 int	run_cd(char **cmdargs)
 {
-	char	*home;
+	char	*str;
+	char	*cwd;
 
-	home = getenv("HOME");
+	cwd = NULL;
+	str = cmdargs[1];
 	if (!cmdargs[1])
 	{
-		if (!home)
+		if (!m_get_env("HOME"))
+		{
 			prt("cd: HOME not set\n");
+			return (0);
+		}
 		else
-			chdir(home);
+			str = m_get_env("HOME");
 	}
-	else if (chdir(cmdargs[1]) < 0)
-		perror(cmdargs[1]);
-	return (1);
+	if (!chdir(str))
+	{
+		str = ft_strjoin("OLDPWD=", m_get_env("PWD"));
+		run_export((char *[]){"export", str, NULL});
+		free(str);
+		cwd = getcwd(cwd, 0);
+		if (!cwd)
+		{
+			perror("getcwd");
+			return (0);
+		}
+		str = ft_strjoin("PWD=", cwd);
+		free(cwd);
+		run_export((char *[]){"export", str, NULL});
+		free(str);
+	}
+	else
+		perror(str);
+	return (0);
 }
 int	run_echo(char **cmdargs)
 {
+	int	i;
+
+	i = 2;
 	if (cmdargs[1] && !ft_strncmp(cmdargs[1], "-n", 2))
-		prt_strs(cmdargs + 2, ' ');
+	{
+		while (cmdargs[1][i] && cmdargs[1][i] == 'n')
+			i++;
+		if (!cmdargs[1][i])
+			prt_strs(cmdargs + 2, ' ');
+		else
+			prt_strs(cmdargs + 1, ' ');
+	}
 	else
 	{
 		prt_strs(cmdargs + 1, ' ');
 		prt("\n");
 	}
-	return (1);
+	return (0);
 }
 int	run_env(char **cmdargs)
 {
 	if (cmdargs[1])
-		prt("env: too many arguments");
+		prt("env: too many arguments\n");
 	else
-		prt_strs(var()->ep, '\n');
-	prt("\n");
-	return (1);
+		print_lst(var()->lstep);
+	return (0);
 }
 int	run_export(char **cmdargs)
 {
-	(void)cmdargs;
-	return (1);
+	t_list	*curr;
+
+	curr = var()->lstep;
+	if (!cmdargs[1])
+	{
+		while (curr)
+		{
+			// fix this so the quotes are shown in the value of the var
+			prt("declare -x \"%s\"\n", curr->content);
+			curr = curr->next;
+		}
+	}
+	else if (ft_strchr(cmdargs[1], '='))
+	{
+		while (curr)
+		{
+			if (!ft_strncmp(curr->content, cmdargs[1], ft_strlen(cmdargs[1])
+					- ft_strlen(ft_strchr(cmdargs[1], '=') + 1)))
+			{
+				free(curr->content);
+				curr->content = ft_strdup(cmdargs[1]);
+				break ;
+			}
+			curr = curr->next;
+		}
+		if (!curr)
+			ft_lstadd_back(&var()->lstep, ft_lstnew(cmdargs[1]));
+	}
+	return (0);
 }
 int	run_pwd(char **cmdargs)
 {
 	char	*cwd;
 
-	if (cmdargs[1])
-		prt("pwd: too many arguments\n");
-	else 
+	cwd = NULL;
+	cwd = getcwd(cwd, 0);
+	if (!cwd)
 	{
-		cwd = NULL;
-		cwd = getcwd(cwd, 0);
-		if (!cwd)
-		{
-			perror("getcwd");
-			return (1);
-		}
-		prt("%s\n", cwd);
-		free(cwd);
+		perror("getcwd");
+		return (0);
 	}
-	return (1);
+	prt("%s\n", cwd);
+	free(cwd);
+	(void)cmdargs;
+	return (0);
 }
 int	run_unset(char **cmdargs)
 {
-	int	i;
+	t_list	*prev;
+	t_list	*curr;
 
-	i = -1;
 	if (cmdargs[1])
 	{
-		while (var()->ep[++i])
+		prev = NULL;
+		curr = var()->lstep;
+		while (curr)
 		{
-			if (!ft_strcmp(var()->ep[i], cmdargs[1]))
+			if (!ft_strncmp(curr->content, cmdargs[1], ft_strlen(cmdargs[1])))
 			{
-				var()->ep[i][0] = '\0';
-				// use linked list and then delete the node
-				break ;
+				if (!prev)
+					var()->lstep = curr->next;
+				else
+					prev->next = curr->next;
+				ft_lstdelone(curr, free);
+				return (0);
 			}
+			prev = curr;
+			curr = curr->next;
 		}
 	}
-	return (1);
+	return (0);
 }
 
 char *builtin_str[] = {
@@ -199,7 +295,7 @@ int	builtin(char **cmdargs, int *status)
 
 	i = -1;
 	if (!cmdargs[0])
-		return (1);
+		return (0);
 	while (++i < 6)
 		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
 			return (*builtin_func[i])(cmdargs);
@@ -207,9 +303,9 @@ int	builtin(char **cmdargs, int *status)
 	{
 		*status = 0;
 		prt("exit\n");
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }
 
 void	cmd_loop(char **ep)
@@ -221,12 +317,11 @@ void	cmd_loop(char **ep)
 	status = 1;
 	while (status)
 	{
-		// prt("\033[0;34mminishell\033[0m$ ");
-		prt("minishell$ ");
-		buf = get_next_line(0);
-		buf[ft_strlen(buf) - 1] = '\0';
+		buf = readline("\033[0;34mminishell\033[0m$ ");
 		cmdargs = ft_split(buf, ' ');
-		if (!builtin(cmdargs, &status))
+		add_history(buf);
+		// lexer(cmdargs);
+		if (builtin(cmdargs, &status))
 			cmd_execute(cmdargs, ep);
 		free(buf);
 		free_strs(cmdargs);
@@ -262,16 +357,39 @@ void	parsing_paths(char **ep, int i)
 	}
 }
 
+void	create_lstep(char **ep)
+{
+	int		i;
+	char	*cwd;
+	char	*str;
+
+	i = -1;
+	cwd = NULL;
+	while (ep[++i])
+		ft_lstadd_back(&var()->lstep, ft_lstnew(ep[i]));
+	cwd = getcwd(cwd, 0);
+	if (!cwd)
+	{
+		perror("getcwd");
+		return ;
+	}
+	str = ft_strjoin("OLDPWD=", cwd);
+	run_export((char *[]){"export", str, NULL});
+	free(str);
+	str = ft_strjoin("PWD=", cwd);
+	run_export((char *[]){"export", str, NULL});
+	free(str);
+	free(cwd);
+}
+
 int	main(int ac, char **av, char **ep)
 {
-	// load
 	var()->ac = ac;
 	var()->av = av;
 	var()->ep = ep;
+	create_lstep(ep);
 	parsing_paths(ep, -1);
-	// loop
 	cmd_loop(ep);
-	// clean
 	free_all();
 	return (0);
 }
