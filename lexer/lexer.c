@@ -6,13 +6,13 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/08 19:06:55 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 15:05:37 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	cmd(t_minishell *ms, char *str)
+bool	cmd(char *str)
 {
 	t_word	*word;
 
@@ -22,18 +22,18 @@ bool	cmd(t_minishell *ms, char *str)
 	{
 		word = ft_calloc(sizeof(t_word), 1);
 		word->type = BUILD_IN;
-		word->is_builin = true;
+		word->is_builtin = true;
 		word->str = ft_strdup(str);
-		if (ms->words == NULL)
-			ms->words = ft_lstnew(word);
+		if (var()->words == NULL)
+			var()->words = ft_lstnewold(word);
 		else
-			ft_lstadd_back(&ms->words, ft_lstnew(word));
+			ft_lstadd_back(&var()->words, ft_lstnewold(word));
 		return (true);
 	}
 	return (false);
 }
 
-bool	token(t_minishell *ms, char *str)
+bool	token(char *str)
 {
 	t_word	*word;
 
@@ -43,42 +43,39 @@ bool	token(t_minishell *ms, char *str)
 	{
 		word = ft_calloc(sizeof(t_word), 1);
 		word->type = TOKEN;
-		word->is_builin = false;
+		word->is_builtin = false;
 		word->str = ft_strdup(str);
-		if (ms->words == NULL)
-			ms->words = ft_lstnew(word);
+		if (var()->words == NULL)
+			var()->words = ft_lstnewold(word);
 		else
-			ft_lstadd_back(&ms->words, ft_lstnew(word));
+			ft_lstadd_back(&var()->words, ft_lstnewold(word));
 		return (true);
 	}
 	return (false);
 }
 
-void	lexer(char *str, t_minishell *ms)
+void	lexer(char *str)
 {
 	int		i;
 	char	**splitted;
-	char	*new_str;
 	t_word	*word;
 
 	i = 0;
-	new_str = ft_substr(str, 0, ft_strlen(str) - 1);
-	splitted = ft_split(new_str, ' ');
+	splitted = ft_split(ft_strtrim(str, " "), ' ');
 	while (splitted[i])
 	{
-		if (!cmd(ms, splitted[i]) && !token(ms, splitted[i]))
+		if (!cmd(splitted[i]) && !token(splitted[i]))
 		{
 			word = ft_calloc(sizeof(t_word), 1);
 			word->type = WORD;
-			word->is_builin = false;
+			word->is_builtin = false;
 			word->str = ft_strdup(splitted[i]);
-			if (ms->words == NULL)
-				ms->words = ft_lstnew(word);
+			if (var()->words == NULL)
+				var()->words = ft_lstnewold(word);
 			else
-				ft_lstadd_back(&ms->words, ft_lstnew(word));
+				ft_lstadd_back(&var()->words, ft_lstnewold(word));
 		}
 		i++;
 	}
 	ft_cleanup_split(splitted, i);
-	free(new_str);
 }
