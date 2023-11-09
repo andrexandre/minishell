@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/06 17:01:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/08 18:00:01 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,19 @@ typedef struct s_var
 	char	**paths;
 	int		ac;
 	char	**av;
-}			t_var;
+	char	**ep;
+	t_list	*lstep;
+}		t_var;
 
-t_var		*var(void);
+// minishell
+int		run_cd(char **cmdargs);
+int		run_echo(char **cmdargs);
+int		run_env(char **cmdargs);
+int		run_export(char **cmdargs);
+int		run_pwd(char **cmdargs);
+int		run_unset(char **cmdargs);
+char	*m_get_env(char *key);
+
+t_var	*var(void);
 
 #endif

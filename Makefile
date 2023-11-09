@@ -8,7 +8,7 @@ CYAN 	= \033[1;36m
 RM		= rm -f
 NAME	= minishell
 INCLUDES = include
-CFLAGS = -Wall -Wextra -Werror -I $(INCLUDES) -I $(INCLUDE_LIB) -g
+CFLAGS = -Wall -Wextra -Werror -lreadline -I $(INCLUDES) -I $(INCLUDE_LIB) -g
 
 DIR_LIBFT = libft
 INCLUDE_LIB = $(DIR_LIBFT)/include
@@ -54,13 +54,14 @@ re:	fclean all
 run: ${NAME}
 	@./${NAME}
 
-TESTF	= | cat -e
+VALG	= valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all# --trace-children=yes --track-fds=yes
 
 v:
-	@make && valgrind --track-fds=yes --trace-children=yes --leak-check=full --show-leak-kinds=all ./${NAME} ${TESTF}
+	@make && ${VALG} ./${NAME}
 
 val: ${NAME}
-	@output=$$(make re && valgrind --track-fds=yes --trace-children=yes --leak-check=full --show-leak-kinds=all ./${NAME} ${TESTF} 2>&1); \
+	@make
+	@output=$$(${VALG} ./${NAME} 2>&1); \
 	if echo "$$output" | grep -q 'freed' && echo "$$output" | grep -q '0 errors' ; then\
 		echo -n "$(GREEN)"; echo "$$output" | grep -E 'freed|total|ERROR S|file descriptor' | sed 's/^[^ ]* //';\
 	else\
