@@ -6,15 +6,15 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/06 17:01:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:05:54 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft.h"
 # include "lexer.h"
+# include "libft.h"
 # include <curses.h>
 # include <dirent.h>
 # include <fcntl.h>
@@ -40,6 +40,14 @@ typedef struct s_var
 	char	**av;
 }			t_var;
 
+typedef struct s_minishell
+{
+	t_list	*words;
+	t_list	*parcing_words;
+}			t_minishell;
+
 t_var		*var(void);
+void			lexer(char *str, t_minishell *ms);
+void	parse(t_minishell *ms);
 
 #endif

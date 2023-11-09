@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/06 18:10:36 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:07:09 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,19 +101,26 @@ int	builtin(char *buf, int *status)
 	}
 	return (0);
 }
+void init_minishell(t_minishell *ms)
+{
+	ms->words = NULL;
+	ms->parcing_words = NULL;
+}
 
 void	cmd_loop(char **ep)
 {
 	char	**cmdargs;
 	char	*buf;
 	int		status;
-
+	t_minishell	ms;
 	status = 1;
 	while (status)
 	{
 		prt("minishell> ");
+		init_minishell(&ms);
 		buf = get_next_line(0);
-		lexer(buf);
+		lexer(buf, &ms);
+		parse(&ms);
 		buf[ft_strlen(buf) - 1] = '\0';
 		cmdargs = ft_split(buf, ' ');
 		if (!builtin(buf, &status))

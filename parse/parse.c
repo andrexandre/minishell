@@ -1,27 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/14 22:29:52 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/08 16:00:42 by jealves-         ###   ########.fr       */
+/*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
+/*   Updated: 2023/11/08 16:54:27 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	parse(t_minishell *ms)
 {
-	t_list	*last;
-
-	if (!*lst)
-		*lst = new;
-	else
+	t_word *word;
+	
+	while (ms->words)
 	{
-		last = ft_lstlast(*lst);
-		last->next = new;
-		new->prev = last;
+		word = ms->words->content;
+		prt("tipo = %d, palavra = %s\n", word->type, word->str);
+		ms->words = ms->words->next;
 	}
+
 }
