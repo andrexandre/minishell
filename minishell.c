@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/09 15:08:01 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 16:29:32 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,7 +310,7 @@ int	builtin(char **cmdargs, int *status)
 void init_minishell(void)
 {
 	var()->words = NULL;
-	var()->parsing_words = NULL;
+	var()->lstep_parsed = NULL;
 }
 
 void	cmd_loop(char **ep)

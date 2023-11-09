@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/09 15:10:28 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 16:58:45 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,30 +31,38 @@
 # include <termios.h>
 # include <unistd.h>
 
+typedef struct s_word
+{
+	enum e_type	type;
+	char		*str;
+	bool		is_builtin;
+	t_list		*args;
+}				t_word;
+
 // char	**cmdargs;
 typedef struct s_var
 {
-	int		signal;
-	char	**paths;
-	int		ac;
-	char	**av;
-	char	**ep;
-	t_list	*lstep;
-	t_list	*words;
-	t_list	*lstep_parsed;
-}			t_var;
+	int			signal;
+	char		**paths;
+	int			ac;
+	char		**av;
+	char		**ep;
+	t_list		*lstep;
+	t_list		*words;
+	t_list		*lstep_parsed;
+}				t_var;
 
 // minishell
-int			run_cd(char **cmdargs);
-int			run_echo(char **cmdargs);
-int			run_env(char **cmdargs);
-int			run_export(char **cmdargs);
-int			run_pwd(char **cmdargs);
-int			run_unset(char **cmdargs);
-char		*m_get_env(char *key);
+int				run_cd(char **cmdargs);
+int				run_echo(char **cmdargs);
+int				run_env(char **cmdargs);
+int				run_export(char **cmdargs);
+int				run_pwd(char **cmdargs);
+int				run_unset(char **cmdargs);
+char			*m_get_env(char *key);
 
-void		lexer(char *str);
-void	parse();
-t_var		*var(void);
+void			lexer(char *str);
+void			parse(void);
+t_var			*var(void);
 
 #endif
