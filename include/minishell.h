@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
 /*   Updated: 2023/11/08 18:00:01 by analexan         ###   ########.fr       */
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "libft.h"
+# include "lexer.h"
 # include <curses.h>
 # include <dirent.h>
 # include <fcntl.h>
@@ -30,7 +31,7 @@
 # include <termios.h>
 # include <unistd.h>
 
-	// char	**cmdargs;
+// char	**cmdargs;
 typedef struct s_var
 {
 	int		signal;

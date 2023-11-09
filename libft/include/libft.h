@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
 /*   Updated: 2023/11/08 18:26:01 by analexan         ###   ########.fr       */
@@ -14,11 +14,12 @@
 # define LIBFT_H
 
 # include <limits.h>
+# include <stdarg.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-# include <stdarg.h>
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
@@ -47,7 +48,7 @@ size_t				ft_strlcpy(char *dest, const char *src, size_t size);
 void				ft_strcpy_gnl(char *dest, char *src);
 char				*ft_strchr(const char *s, int c);
 char				*ft_strrchr(const char *s, int c);
-int					ft_strcmp(const char *s1, const char *s2);
+bool				ft_strcmp(const char *s1, const char *s2);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 char				*ft_strdup(const char *s);
 char				*ft_strnstr(const char *big, const char *little,
