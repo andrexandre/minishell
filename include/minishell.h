@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/09 12:04:58 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 15:10:28 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,9 @@ typedef struct s_var
 	char	**av;
 	char	**ep;
 	t_list	*lstep;
-}			t_var;
-
-typedef struct s_minishell
-{
 	t_list	*words;
-	t_list	*parsing_words;
-}			t_minishell;
+	t_list	*lstep_parsed;
+}			t_var;
 
 // minishell
 int			run_cd(char **cmdargs);
@@ -57,8 +53,8 @@ int			run_pwd(char **cmdargs);
 int			run_unset(char **cmdargs);
 char		*m_get_env(char *key);
 
-void		lexer(char *str, t_minishell *ms);
-void	parse(t_minishell *ms);
+void		lexer(char *str);
+void	parse();
 t_var		*var(void);
 
 #endif

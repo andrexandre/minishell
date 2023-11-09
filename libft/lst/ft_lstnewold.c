@@ -1,41 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.h                                            :+:      :+:    :+:   */
+/*   ft_lstnewold.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:45:30 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 13:18:25 by jealves-         ###   ########.fr       */
+/*   Created: 2023/09/14 22:32:46 by jealves-          #+#    #+#             */
+/*   Updated: 2023/11/09 12:45:47 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_H
-# define LEXER_H
+#include "libft.h"
 
-# include <stdbool.h>
-
-enum			e_type
+t_list	*ft_lstnewold(void *content)
 {
-	WORD,
-	TOKEN,
-	BUILD_IN,
-	CMD
-};
-//AND,
-//PIPE,
-//SEMICOLON,
-//REDIRECT_IN,
-//REDIRECT_OUT
-//REDIRECT_IN_D,
-//REDIRECT_OUT_D,
+	t_list	*node;
 
-typedef struct s_word
-{
-	enum e_type	type;
-	char		*str;
-	bool 	is_builtin;
-}				t_word;
-
-
-#endif
+	node = (t_list *)malloc(sizeof(t_list));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->next = NULL;
+	node->prev = NULL;
+	return (node);
+}

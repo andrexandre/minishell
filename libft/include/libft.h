@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/08 18:26:01 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/09 12:46:07 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ long				ft_atol(const char *nptr);
 long long			ft_atoll(const char *nptr);
 void				ft_bzero(void *s, size_t n);
 
-char				*ft_strdup(const char *s);
 void				*ft_calloc(size_t nmemb, size_t size);
 
 void				*ft_memset(void *s, int c, size_t n);
@@ -97,6 +96,7 @@ void				ft_putendl_fd(char *s, int fd);
 // bonus
 
 t_list				*ft_lstnew(void *content);
+t_list				*ft_lstnewold(void *content);
 void				ft_lstadd_front(t_list **lst, t_list *new);
 int					ft_lstsize(t_list *lst);
 t_list				*ft_lstlast(t_list *lst);
