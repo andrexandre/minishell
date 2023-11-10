@@ -8,11 +8,10 @@ CYAN 	= \033[1;36m
 RM		= rm -f
 NAME	= minishell
 INCLUDES = include
-CFLAGS = -Wall -Wextra -Werror -lreadline -I $(INCLUDES) -I $(INCLUDE_LIB) -g
 
 DIR_LIBFT = libft
-INCLUDE_LIB = $(DIR_LIBFT)/include
 LIB = $(DIR_LIBFT)/libft.a
+CFLAGS = -Wall -Wextra -Werror -lreadline -I$(INCLUDES) -Ilibft/include -g
 
 SRCDIR	= srcs
 OBJDIR	= objs
@@ -22,17 +21,15 @@ SRC		= minishell_utils.c\
 		  lexer/lexer.c \
 		  parse/parse.c \
 
-
 OBJ		= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 
 all:	$(NAME)
 
-lib:
+$(NAME): $(OBJ)
 	@make -s -C $(DIR_LIBFT)
-
-$(NAME): lib $(OBJ) $(LIB)
-	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -lreadline
+	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME)
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
+
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(LIB)
 	@cc $(CFLAGS) -c $< -o $@
@@ -42,7 +39,7 @@ $(OBJDIR):
 
 clean:
 	@$(RM) $(OBJDIR)/*.o
-	@make -s -C $(DIR_LIBFT)  clean
+	@make -s -C $(DIR_LIBFT) clean
 
 fclean:	clean
 	@$(RM) $(NAME)
