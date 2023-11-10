@@ -6,11 +6,24 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 15:05:37 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 17:06:06 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	search_and_replace(char *str, char src, char dest)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == src)
+			str[i] = dest;
+		i++;
+	}
+}
 
 bool	cmd(char *str)
 {
@@ -37,9 +50,9 @@ bool	token(char *str)
 {
 	t_word	*word;
 
-	if (ft_strcmp(str, "|") || (ft_strcmp(str, ";")) || (ft_strcmp(str, "<"))
-		|| (ft_strcmp(str, "<<")) || (ft_strcmp(str, ">")) || (ft_strcmp(str,
-				">>")) || (ft_strcmp(str, "&")))
+	if (ft_strcmp(str, "|") || (ft_strcmp(str, "<")) || (ft_strcmp(str, "<<"))
+		|| (ft_strcmp(str, ">")) || (ft_strcmp(str, ">>")) || (ft_strcmp(str,
+				"&")))
 	{
 		word = ft_calloc(sizeof(t_word), 1);
 		word->type = TOKEN;
@@ -61,6 +74,7 @@ void	lexer(char *str)
 	t_word	*word;
 
 	i = 0;
+	search_and_replace(str, '\t', ' ');
 	splitted = ft_split(ft_strtrim(str, " "), ' ');
 	while (splitted[i])
 	{
