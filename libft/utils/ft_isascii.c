@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:38:03 by jealves-          #+#    #+#             */
-/*   Updated: 2023/09/14 22:38:05 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 11:57:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,7 @@
 
 int	ft_isascii(int c)
 {
-	if (c >= 0 && c <= 127)
-		return (1);
-	else
-		return (0);
+	return (c >= 0 && c <= 127);
 }
 
 /*int	main(void)

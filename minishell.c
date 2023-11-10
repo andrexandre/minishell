@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/09 16:29:32 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/10 11:25:45 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,9 +379,6 @@ void	create_lstep(char **ep)
 		perror("getcwd");
 		return ;
 	}
-	str = ft_strjoin("OLDPWD=", cwd);
-	run_export((char *[]){"export", str, NULL});
-	free(str);
 	str = ft_strjoin("PWD=", cwd);
 	run_export((char *[]){"export", str, NULL});
 	free(str);

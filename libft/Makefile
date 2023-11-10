@@ -28,7 +28,6 @@ SRCS = \
    lst/ft_lstlast.c\
    lst/ft_lstmap.c\
    lst/ft_lstnew.c\
-   lst/ft_lstnewold.c\
    lst/ft_lstsize.c\
    lst/ft_lstdelfirst.c\
    lst/ft_lstdellast.c\
@@ -55,7 +54,6 @@ SRCS = \
    str/ft_striteri.c\
    str/ft_strlcat.c\
    str/ft_strlen.c\
-   str/ft_strlen_matrix.c\
    str/ft_strlcpy.c\
    str/ft_strmapi.c\
    str/ft_strnstr.c\

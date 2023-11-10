@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 17:34:28 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/10 11:08:49 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ void	parse(void)
 			word_p = create_word(&is_new_cmd);
 		if (!word_p->is_builtin)
 			word_p->is_builtin = word->is_builtin;
-		if (!ft_strcmp(word->str, "|"))
+		if (!ft_strcmpold(word->str, "|"))
 			join_str_word(word_p, word);
-		if (ft_strcmp(word->str, "|") || var()->words->next == NULL)
+		if (ft_strcmpold(word->str, "|") || var()->words->next == NULL)
 			add_word_lst(word_p, &is_new_cmd);
 		var()->words = var()->words->next;
 	}

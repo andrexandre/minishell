@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 17:06:06 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/10 11:08:49 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ bool	cmd(char *str)
 {
 	t_word	*word;
 
-	if (ft_strcmp(str, "cd") || ft_strcmp(str, "echo") || ft_strcmp(str, "env")
-		|| ft_strcmp(str, "export") || ft_strcmp(str, "pwd") || ft_strcmp(str,
-			"unset") || ft_strcmp(str, "exit"))
+	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo") || ft_strcmpold(str, "env")
+		|| ft_strcmpold(str, "export") || ft_strcmpold(str, "pwd") || ft_strcmpold(str,
+			"unset") || ft_strcmpold(str, "exit"))
 	{
 		word = ft_calloc(sizeof(t_word), 1);
 		word->type = BUILD_IN;
@@ -50,8 +50,8 @@ bool	token(char *str)
 {
 	t_word	*word;
 
-	if (ft_strcmp(str, "|") || (ft_strcmp(str, "<")) || (ft_strcmp(str, "<<"))
-		|| (ft_strcmp(str, ">")) || (ft_strcmp(str, ">>")) || (ft_strcmp(str,
+	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str, "<<"))
+		|| (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")) || (ft_strcmpold(str,
 				"&")))
 	{
 		word = ft_calloc(sizeof(t_word), 1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:36:44 by jealves-          #+#    #+#             */
-/*   Updated: 2023/09/14 22:36:46 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/09 11:52:13 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 	if (!str)
 		return (NULL);
 	i = 0;
-	while (s[i] != '\0')
+	while (s[i])
 	{
 		str[i] = f(i, s[i]);
 		i++;
