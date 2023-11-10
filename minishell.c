@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/10 11:25:45 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:51:04 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,28 @@ void	free_all(void)
 		var()->lstep = current;
 	}
 	free_strs(var()->paths);
+	if (var()->is_free_all)
+	{
+		t_word *ptr = var()->lstep_parsed->content;
+		while (var()->lstep_parsed)
+		{
+			ptr = var()->lstep_parsed->content;
+			current = var()->lstep_parsed->next;
+			free(ptr->str);
+			ft_lstdelone(var()->lstep_parsed, free);
+			var()->lstep_parsed = current;
+		}
+		ptr = var()->words->content;
+		while (var()->words)
+		{
+			ptr = var()->words->content;
+			current = var()->words->next;
+			free(ptr->str);
+			free(ptr);
+			free(var()->words);
+			var()->words = current;
+		}
+	}
 }
 
 char	*search_cmd(char **cmdargs, char *cmd)
@@ -294,18 +316,15 @@ int	builtin(char **cmdargs, int *status)
 	int		i;
 
 	i = -1;
+	var()->is_free_all = 1;
 	if (!cmdargs[0])
 		return (0);
 	while (++i < 6)
 		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
 			return (*builtin_func[i])(cmdargs);
 	if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
-	{
 		*status = 0;
-		prt("exit\n");
-		return (0);
-	}
-	return (1);
+	return (*status);
 }
 void init_minishell(void)
 {
@@ -318,10 +337,14 @@ void	cmd_loop(char **ep)
 	char	**cmdargs;
 	char	*buf;
 	int		status;
+
 	status = 1;
+	var()->is_free_all = 0;
 	while (status)
 	{
 		buf = readline("\033[0;34mminishell\033[0m$ ");
+		if (!buf)
+			break ;
 		cmdargs = ft_split(buf, ' ');
 		add_history(buf);
 		init_minishell();
@@ -393,6 +416,7 @@ int	main(int ac, char **av, char **ep)
 	create_lstep(ep);
 	parsing_paths(ep, -1);
 	cmd_loop(ep);
+	prt("exit\n");
 	free_all();
 	return (0);
 }

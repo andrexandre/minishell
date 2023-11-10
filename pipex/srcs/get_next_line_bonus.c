@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:44:07 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 21:00:02 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/10 13:36:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-size_t	gnl_strlen(char *s)
+size_t	gnl_strlen(char *str)
 {
 	size_t	i;
 
 	i = 0;
-	if (!s)
+	if (!str)
 		return (0);
-	while (s[i] && s[i] != '\n')
+	while (str[i] && str[i] != '\n')
 		i++;
-	return (i + (s[i] == '\n'));
+	return (i + (str[i] == '\n'));
 }
 
 void	ft_bzero(void *s, size_t n)
@@ -38,30 +38,30 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 
-char	*ft_strjoin_gnl(char *s1, char *s2)
+char	*gnl_strjoin(char *s1, char *s2)
 {
 	int		i;
 	int		j;
 	char	*str;
 
-	str = (char *)malloc(gnl_strlen(s1) + gnl_strlen(s2) + 1);
+	i = 0;
+	j = 0;
+	str = malloc(gnl_strlen(s1) + gnl_strlen(s2) + 1);
 	if (!str)
 		return (NULL);
-	i = -1;
-	if (s1)
-		while (s1[++i])
-			str[i] = s1[i];
-	if (i == -1)
-		i = 0;
-	j = 0;
+	str[gnl_strlen(s1) + gnl_strlen(s2)] = 0;
+	while (s1 && s1[i])
+	{
+		str[i] = s1[i];
+		i++;
+	}
 	while (s2[j])
 	{
 		str[i + j] = s2[j];
-		j++;
-		if (s2[j - 1] == '\n')
+		if (s2[j] == '\n')
 			break ;
+		j++;
 	}
-	str[i + j] = 0;
 	return (str);
 }
 
@@ -85,23 +85,23 @@ int	check_buffer(char *str)
 	return (nl);
 }
 
-char	*get_next_line_pipex(int fd)
+char	*get_next_line(int fd)
 {
 	static char	buffer[FOPEN_MAX][BUFFER_SIZE + 1];
 	char		*line;
 	char		*temp;
 
-	if (read(fd, 0, 0) || BUFFER_SIZE < 1)
+	if (read(fd, 0, 0) < 0 || BUFFER_SIZE < 1 || fd > FOPEN_MAX)
 	{
 		if (fd >= 0 && fd <= FOPEN_MAX)
 			ft_bzero(buffer[fd], BUFFER_SIZE);
 		return (NULL);
 	}
 	line = NULL;
-	while (buffer[fd][0] != 0 || read(fd, buffer[fd], BUFFER_SIZE))
+	while (buffer[fd][0] != 0 || read(fd, buffer[fd], BUFFER_SIZE) > 0)
 	{
 		temp = line;
-		line = ft_strjoin_gnl(temp, buffer[fd]);
+		line = gnl_strjoin(temp, buffer[fd]);
 		free(temp);
 		if (check_buffer(buffer[fd]))
 			break ;
