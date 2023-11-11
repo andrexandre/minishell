@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:44:07 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/25 13:46:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:18:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*gnl_strjoin(char *s1, char *s2)
 
 	i = 0;
 	j = 0;
-	str = malloc(gnl_strlen(s1) + gnl_strlen(s2) + 1);
+	str = ft_calloc(1, gnl_strlen(s1) + gnl_strlen(s2) + 1);
 	if (!str)
 		return (NULL);
 	str[gnl_strlen(s1) + gnl_strlen(s2)] = 0;

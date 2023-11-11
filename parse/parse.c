@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/10 11:08:49 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:41:25 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_word	*create_word(bool *is_new_cmd)
 {
 	t_word	*word;
 
-	word = calloc(sizeof(t_word), 1);
+	word = ft_calloc(sizeof(t_word), 1);
 	word->type = CMD;
 	word->args = NULL;
 	*is_new_cmd = false;
@@ -45,7 +45,9 @@ void	join_str_word(t_word *word, t_word *src_word)
 
 void	add_word_lst(t_word *word, bool *is_new_cmd)
 {
-	word->str = ft_strtrim(word->str, " ");
+	char *temp = word->str;
+	word->str = ft_strtrim(temp, " ");
+	free(temp);
 	if (var()->lstep_parsed == NULL)
 		var()->lstep_parsed = ft_lstnewold(word);
 	else
@@ -59,25 +61,27 @@ void	parse(void)
 	t_word	*word_p;
 	bool	is_new_cmd;
 	t_word	*word2;
+	t_list	*curr;
 
 	is_new_cmd = true;
-	while (var()->words)
+	curr = var()->words;
+	while (curr)
 	{
-		word = var()->words->content;
+		word = curr->content;
 		if (is_new_cmd)
 			word_p = create_word(&is_new_cmd);
 		if (!word_p->is_builtin)
 			word_p->is_builtin = word->is_builtin;
 		if (!ft_strcmpold(word->str, "|"))
 			join_str_word(word_p, word);
-		if (ft_strcmpold(word->str, "|") || var()->words->next == NULL)
+		if (ft_strcmpold(word->str, "|") || curr->next == NULL)
 			add_word_lst(word_p, &is_new_cmd);
-		var()->words = var()->words->next;
+		curr = curr->next;
 	}
-	
-	while (var()->lstep_parsed)
+	curr = var()->lstep_parsed;
+	while (curr)
 	{
-		word = var()->lstep_parsed->content;
+		word = curr->content;
 		prt("Parser : tipo = %d, palavra = %s, built-in = %s\n", word->type,
 				word->str, word->is_builtin ? "true" : "false");
 		while (word->args)
@@ -87,6 +91,6 @@ void	parse(void)
 					word2->str, word2->is_builtin ? "true" : "false");
 			word->args = word->args->next;
 		}
-		var()->lstep_parsed = var()->lstep_parsed->next;
+		curr = curr->next;
 	}
 }

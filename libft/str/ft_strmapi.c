@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:36:44 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 11:52:13 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:16:51 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 	int		i;
 
 	len = ft_strlen(s);
-	str = malloc(sizeof(char) * (len + 1));
+	str = ft_calloc(len + 1, sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;
