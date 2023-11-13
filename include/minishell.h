@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/10 19:47:18 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/13 19:29:55 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,31 +39,41 @@ typedef struct s_word
 	t_list		*args;
 }				t_word;
 
-// char	**cmdargs;
 typedef struct s_var
 {
 	int			signal;
-	int			is_free_all;
 	char		**paths;
 	int			ac;
 	char		**av;
-	char		**ep;
-	t_list		*lstep;
+	t_list		*ep;
 	t_list		*words;
 	t_list		*lstep_parsed;
 }				t_var;
 
 // minishell
+void	free_all(void);
+
+// builtin
 int				run_cd(char **cmdargs);
 int				run_echo(char **cmdargs);
 int				run_env(char **cmdargs);
 int				run_export(char **cmdargs);
 int				run_pwd(char **cmdargs);
 int				run_unset(char **cmdargs);
-char			*m_get_env(char *key);
+t_list			*m_get_env(char *key);
 
+// minishell_exec
+int				builtin(char **cmdargs, int *status);
+void			cmd_execute(char **cmdargs, char **ep);
+
+// minishell_utils
+void			print_lst(t_list *lst);
+void			*free_strs(char **strs);
+void			prt_strs(char **strs, char sep);
+t_var			*var(void);
+
+// lexer, parser
 void			lexer(char *str);
 void			parse(void);
-t_var			*var(void);
 
 #endif

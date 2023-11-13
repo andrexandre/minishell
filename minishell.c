@@ -6,333 +6,42 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/11 17:34:24 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/13 19:49:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	prt_strs(char **strs, char sep)
-{
-	int	i;
-
-	i = -1;
-	if (!strs)
-		return ;
-	while (strs[++i])
-	{
-		prt("%s", strs[i]);
-		if (strs[i + 1])
-			prt("%c", sep);
-	}
-}
-
-void	*free_strs(char **strs)
-{
-	int	i;
-
-	i = 0;
-	if (!strs)
-		return (NULL);
-	while (strs[i])
-		free(strs[i++]);
-	free(strs);
-	return (NULL);
-}
-
 void	free_all(void)
 {
 	t_list	*current;
 
-	while (var()->lstep)
+	while (var()->ep)
 	{
-		current = var()->lstep->next;
-		ft_lstdelone(var()->lstep, free);
-		var()->lstep = current;
+		current = var()->ep->next;
+		ft_lstdelone(var()->ep, free);
+		var()->ep = current;
 	}
 	free_strs(var()->paths);
-	// if (var()->is_free_all)
+	// t_word *ptr = var()->lstep_parsed->content;
+	// while (var()->lstep_parsed)
 	// {
-	// 	t_word *ptr = var()->lstep_parsed->content;
-	// 	while (var()->lstep_parsed)
-	// 	{
-	// 		ptr = var()->lstep_parsed->content;
-	// 		current = var()->lstep_parsed->next;
-	// 		free(ptr->str);
-	// 		ft_lstdelone(var()->lstep_parsed, free);
-	// 		var()->lstep_parsed = current;
-	// 	}
-	// 	ptr = var()->words->content;
-	// 	while (var()->words)
-	// 	{
-	// 		ptr = var()->words->content;
-	// 		current = var()->words->next;
-	// 		free(ptr->str);
-	// 		free(ptr);
-	// 		free(var()->words);
-	// 		var()->words = current;
-	// 	}
+	// 	ptr = var()->lstep_parsed->content;
+	// 	current = var()->lstep_parsed->next;
+	// 	free(ptr->str);
+	// 	ft_lstdelone(var()->lstep_parsed, free);
+	// 	var()->lstep_parsed = current;
 	// }
-}
-
-char	*search_cmd(char **cmdargs, char *cmd)
-{
-	int		i;
-
-	i = -1;
-	if (!ft_strchr(cmdargs[0], '/'))
-	{
-		if (var()->paths)
-		{
-			while (var()->paths[++i])
-			{
-				cmd = ft_strjoin(var()->paths[i], cmdargs[0]);
-				if (!access(cmd, F_OK | X_OK))
-					return (cmd);
-				free(cmd);
-			}
-		}
-	}
-	else
-		if (!access(cmdargs[0], F_OK | X_OK))
-			return (ft_strdup(cmdargs[0]));
-	perror(cmdargs[0]);
-	return (NULL);
-}
-
-void	cmd_execute(char **cmdargs, char **ep)
-{
-	char	*cmd;
-	int		pid;
-
-	cmd = search_cmd(cmdargs, cmdargs[0]);
-	if (!cmd)
-		return ;
-	pid = fork();
-	if (pid < 0)
-		perror("fork");
-	if (!pid)
-	{
-		execve(cmd, cmdargs, ep);
-		perror(cmdargs[0]);
-		free_strs(cmdargs);
-		free_all();
-		exit(127);
-	}
-	wait(0);
-	free(cmd);
-}
-
-void	print_lst(t_list *lst)
-{
-	while (lst)
-	{
-		prt("%s\n", lst->content);
-		lst = lst->next;
-	}
-}
-
-char	*m_get_env(char *key)
-{
-	t_list	*curr;
-	char 	*value;
-	
-	curr = var()->lstep;
-	value = ft_strjoin(key, "=");
-	while (curr)
-	{
-		if (!ft_strncmp(curr->content, value, ft_strlen(value)))
-		{
-			free(value);
-			return (ft_strchr(curr->content, '=') + 1);
-		}
-		curr = curr->next;
-	}
-	free(value);
-	return (NULL);
-}
-
-int	run_cd(char **cmdargs)
-{
-	char	*str;
-	char	*cwd;
-
-	cwd = NULL;
-	str = cmdargs[1];
-	if (!cmdargs[1])
-	{
-		if (!m_get_env("HOME"))
-		{
-			prt("cd: HOME not set\n");
-			return (0);
-		}
-		else
-			str = m_get_env("HOME");
-	}
-	if (!chdir(str))
-	{
-		str = ft_strjoin("OLDPWD=", m_get_env("PWD"));
-		run_export((char *[]){"export", str, NULL});
-		free(str);
-		cwd = getcwd(cwd, 0);
-		if (!cwd)
-		{
-			perror("getcwd");
-			return (0);
-		}
-		str = ft_strjoin("PWD=", cwd);
-		free(cwd);
-		run_export((char *[]){"export", str, NULL});
-		free(str);
-	}
-	else
-		perror(str);
-	return (0);
-}
-int	run_echo(char **cmdargs)
-{
-	int	i;
-
-	i = 2;
-	if (cmdargs[1] && !ft_strncmp(cmdargs[1], "-n", 2))
-	{
-		while (cmdargs[1][i] && cmdargs[1][i] == 'n')
-			i++;
-		if (!cmdargs[1][i])
-			prt_strs(cmdargs + 2, ' ');
-		else
-			prt_strs(cmdargs + 1, ' ');
-	}
-	else
-	{
-		prt_strs(cmdargs + 1, ' ');
-		prt("\n");
-	}
-	return (0);
-}
-int	run_env(char **cmdargs)
-{
-	if (cmdargs[1])
-		prt("env: too many arguments\n");
-	else
-		print_lst(var()->lstep);
-	return (0);
-}
-int	run_export(char **cmdargs)
-{
-	t_list	*curr;
-
-	curr = var()->lstep;
-	if (!cmdargs[1])
-	{
-		while (curr)
-		{
-			// fix this so the quotes are shown in the value of the var
-			prt("declare -x \"%s\"\n", curr->content);
-			curr = curr->next;
-		}
-	}
-	else if (ft_strchr(cmdargs[1], '='))
-	{
-		while (curr)
-		{
-			if (!ft_strncmp(curr->content, cmdargs[1], ft_strlen(cmdargs[1])
-					- ft_strlen(ft_strchr(cmdargs[1], '=') + 1)))
-			{
-				free(curr->content);
-				curr->content = ft_strdup(cmdargs[1]);
-				break ;
-			}
-			curr = curr->next;
-		}
-		if (!curr)
-			ft_lstadd_back(&var()->lstep, ft_lstnew(cmdargs[1]));
-	}
-	return (0);
-}
-int	run_pwd(char **cmdargs)
-{
-	char	*cwd;
-
-	cwd = NULL;
-	cwd = getcwd(cwd, 0);
-	if (!cwd)
-	{
-		perror("getcwd");
-		return (0);
-	}
-	prt("%s\n", cwd);
-	free(cwd);
-	(void)cmdargs;
-	return (0);
-}
-int	run_unset(char **cmdargs)
-{
-	t_list	*curr;
-	t_list	*prev;
-	char	*str;
-
-	while (*(++cmdargs))
-	{
-		prev = NULL;
-		curr = var()->lstep;
-		str = ft_strjoin(*cmdargs, "=");
-		while (curr)
-		{
-			if (!ft_strcmp(curr->content, str))
-			{
-				if (!curr->prev)
-					var()->lstep = curr->next;
-				else
-					prev->next = curr->next;
-				ft_lstdelone(curr, free);
-				break ;
-			}
-			prev = curr;
-			curr = curr->next;
-		}
-		free(str);
-	}
-	return (0);
-}
-
-char *builtin_str[] = {
-	"cd",
-	"echo",
-	"env",
-	"export",
-	"pwd",
-	"unset"
-};
-
-int (*builtin_func[]) (char **) = {
-	&run_cd,
-	&run_echo,
-	&run_env,
-	&run_export,
-	&run_pwd,
-	&run_unset
-};
-
-int	builtin(char **cmdargs, int *status)
-{
-	int		i;
-
-	i = -1;
-	var()->is_free_all = 1;
-	if (!cmdargs[0])
-		return (0);
-	while (++i < 6)
-		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
-			return (*builtin_func[i])(cmdargs);
-	if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
-		*status = 0;
-	return (*status);
-}
-void init_minishell(void)
-{
-	var()->words = NULL;
-	var()->lstep_parsed = NULL;
+	// ptr = var()->words->content;
+	// while (var()->words)
+	// {
+	// 	ptr = var()->words->content;
+	// 	current = var()->words->next;
+	// 	free(ptr->str);
+	// 	free(ptr);
+	// 	free(var()->words);
+	// 	var()->words = current;
+	// }
 }
 
 void	cmd_loop(char **ep)
@@ -342,15 +51,15 @@ void	cmd_loop(char **ep)
 	int		status;
 
 	status = 1;
-	var()->is_free_all = 0;
 	while (status)
 	{
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
 		cmdargs = ft_split(buf, ' ');
+		var()->lstep_parsed = NULL;
+		var()->words = NULL;
 		add_history(buf);
-		// init_minishell();
 		// lexer(buf);
 		// parse();
 		if (builtin(cmdargs, &status))
@@ -398,7 +107,7 @@ void	create_lstep(char **ep)
 	i = -1;
 	cwd = NULL;
 	while (ep[++i])
-		ft_lstadd_back(&var()->lstep, ft_lstnew(ep[i]));
+		ft_lstadd_back(&var()->ep, ft_lstnew(ep[i]));
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
 	{
@@ -417,13 +126,13 @@ void	handler(int num)
 	(void)num;
 	prt("\n\033[0;34mminishell\033[0m😎> ");
 }
-// to-do: make the built-ins work with more than 1 argument :)
+
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
 	var()->av = av;
-	var()->ep = ep;
-	// signal(SIGINT, handler);
+	if (!ep)
+		return (0);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	create_lstep(ep);

@@ -17,5 +17,6 @@
 		"stdarg.h": "c",
 		"algorithm": "c",
 		"readline.h": "c"
-	}
+	},
+	"functionHeaderExtension.headerFilePath": "/nfs/homes/analexan/minishell/include/minishell.h"
 }

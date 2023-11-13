@@ -78,14 +78,12 @@ SRCS = \
    \
    get_next_line/get_next_line_bonus.c\
 
-INCLUDES = include
-
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 CC= gcc
 RM= @rm -f
 
-CFLAGS = -Wall -I $(INCLUDES) -Wextra -Werror -g #-fsanitize=address
+CFLAGS = -Wall -I ../include -Wextra -Werror -g #-fsanitize=address
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@   
