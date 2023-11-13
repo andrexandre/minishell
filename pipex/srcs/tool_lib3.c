@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tool_lib3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:16:37 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 20:35:14 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/13 12:18:39 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*ft_strdup(const char *s)
 	i = 0;
 	while (s[i])
 		i++;
-	str = malloc(i + 1);
+	str = ft_calloc(i + 1, 1);
 	if (!str)
 		return (NULL);
 	i = 0;
