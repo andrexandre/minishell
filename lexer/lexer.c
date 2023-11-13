@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/10 19:16:09 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/13 14:24:12 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,7 @@ bool	token(char *str)
 	t_word	*word;
 
 	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str, "<<"))
-		|| (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")) || (ft_strcmpold(str,
-				"&")))
+		|| (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
 	{
 		word = ft_calloc(sizeof(t_word), 1);
 		word->type = TOKEN;

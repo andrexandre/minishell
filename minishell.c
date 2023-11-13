@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/10 19:51:04 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/11 17:34:24 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,28 +51,28 @@ void	free_all(void)
 		var()->lstep = current;
 	}
 	free_strs(var()->paths);
-	if (var()->is_free_all)
-	{
-		t_word *ptr = var()->lstep_parsed->content;
-		while (var()->lstep_parsed)
-		{
-			ptr = var()->lstep_parsed->content;
-			current = var()->lstep_parsed->next;
-			free(ptr->str);
-			ft_lstdelone(var()->lstep_parsed, free);
-			var()->lstep_parsed = current;
-		}
-		ptr = var()->words->content;
-		while (var()->words)
-		{
-			ptr = var()->words->content;
-			current = var()->words->next;
-			free(ptr->str);
-			free(ptr);
-			free(var()->words);
-			var()->words = current;
-		}
-	}
+	// if (var()->is_free_all)
+	// {
+	// 	t_word *ptr = var()->lstep_parsed->content;
+	// 	while (var()->lstep_parsed)
+	// 	{
+	// 		ptr = var()->lstep_parsed->content;
+	// 		current = var()->lstep_parsed->next;
+	// 		free(ptr->str);
+	// 		ft_lstdelone(var()->lstep_parsed, free);
+	// 		var()->lstep_parsed = current;
+	// 	}
+	// 	ptr = var()->words->content;
+	// 	while (var()->words)
+	// 	{
+	// 		ptr = var()->words->content;
+	// 		current = var()->words->next;
+	// 		free(ptr->str);
+	// 		free(ptr);
+	// 		free(var()->words);
+	// 		var()->words = current;
+	// 	}
+	// }
 }
 
 char	*search_cmd(char **cmdargs, char *cmd)
@@ -268,27 +268,30 @@ int	run_pwd(char **cmdargs)
 }
 int	run_unset(char **cmdargs)
 {
-	t_list	*prev;
 	t_list	*curr;
+	t_list	*prev;
+	char	*str;
 
-	if (cmdargs[1])
+	while (*(++cmdargs))
 	{
 		prev = NULL;
 		curr = var()->lstep;
+		str = ft_strjoin(*cmdargs, "=");
 		while (curr)
 		{
-			if (!ft_strncmp(curr->content, cmdargs[1], ft_strlen(cmdargs[1])))
+			if (!ft_strcmp(curr->content, str))
 			{
-				if (!prev)
+				if (!curr->prev)
 					var()->lstep = curr->next;
 				else
 					prev->next = curr->next;
 				ft_lstdelone(curr, free);
-				return (0);
+				break ;
 			}
 			prev = curr;
 			curr = curr->next;
 		}
+		free(str);
 	}
 	return (0);
 }
@@ -342,14 +345,14 @@ void	cmd_loop(char **ep)
 	var()->is_free_all = 0;
 	while (status)
 	{
-		buf = readline("\033[0;34mminishell\033[0m$ ");
+		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
 		cmdargs = ft_split(buf, ' ');
 		add_history(buf);
-		init_minishell();
-		lexer(buf);
-		parse();
+		// init_minishell();
+		// lexer(buf);
+		// parse();
 		if (builtin(cmdargs, &status))
 			cmd_execute(cmdargs, ep);
 		free(buf);
@@ -408,11 +411,21 @@ void	create_lstep(char **ep)
 	free(cwd);
 }
 
+// fix some bugs with SIGINT
+void	handler(int num)
+{
+	(void)num;
+	prt("\n\033[0;34mminishell\033[0m😎> ");
+}
+// to-do: make the built-ins work with more than 1 argument :)
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
 	var()->av = av;
 	var()->ep = ep;
+	// signal(SIGINT, handler);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	create_lstep(ep);
 	parsing_paths(ep, -1);
 	cmd_loop(ep);

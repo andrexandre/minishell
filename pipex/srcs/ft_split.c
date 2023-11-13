@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 11:05:24 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/19 16:55:43 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/13 12:18:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_strndup(char const *src, int n)
 	char	*str;
 
 	i = -1;
-	str = malloc(n + 1);
+	str = ft_calloc(n + 1, 1);
 	if (!str)
 		return (NULL);
 	while (src[++i] && i < n)
@@ -84,7 +84,7 @@ char	**ft_split(char const *s, char c)
 	wc = wordcount(s, c);
 	if (wc < 0)
 		return (NULL);
-	strs = malloc((wc + 1) * sizeof(char *));
+	strs = ft_calloc(wc + 1, sizeof(char *));
 	if (!strs || !s)
 		return (NULL);
 	strs = writestring(s, strs, c, wc);

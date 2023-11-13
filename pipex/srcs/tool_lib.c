@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tool_lib.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:16:37 by analexan          #+#    #+#             */
-/*   Updated: 2023/10/27 20:35:14 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/13 12:18:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	i = 0;
 	if (start >= ft_strlen(s) || len == 0)
 	{
-		str = malloc(1);
+		str = ft_calloc(1, 1);
 		if (!str)
 			return (NULL);
 		str[0] = 0;
@@ -87,7 +87,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	}
 	if (len > ft_strlen(s) - start)
 		len = ft_strlen(s) - start;
-	str = malloc(len + 1);
+	str = ft_calloc(len + 1, 1);
 	if (!str)
 		return (NULL);
 	while (s[i + start] && i < len)
@@ -106,7 +106,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	int		j;
 	char	*str;
 
-	str = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	str = (char *)ft_calloc(ft_strlen(s1) + ft_strlen(s2) + 1, 1);
 	if (!str)
 		return (NULL);
 	i = -1;
