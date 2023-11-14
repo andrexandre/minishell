@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/13 19:11:53 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 12:02:23 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 typedef struct s_list
 {
 	void			*content;
+	char			*name;
+	char			*data;
 	struct s_list	*prev;
 	struct s_list	*next;
 }					t_list;

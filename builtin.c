@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:45:37 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 14:35:05 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,19 +106,21 @@ int	run_export(char **cmdargs)
 	t_list	*curr;
 	char	str[500];
 
-	while (*(++cmdargs))
+	curr = var()->ep;
+	if (!cmdargs[1])
 	{
-		curr = var()->ep;
-		if (!*cmdargs)
+		while (curr)
 		{
-			while (curr)
-			{
-				// fix this so the quotes are shown in the value of the var
-				prt("declare -x \"%s\"\n", curr->content);
-				curr = curr->next;
-			}
+			ft_strlcpy(str, curr->content, ft_strlen(curr->content)
+					- ft_strlen(ft_strchr(curr->content, '=')) + 1);
+			prt("declare -x %s=\"%s\"\n", str, ft_strchr(curr->content, '=') + 1);
+			curr = curr->next;
 		}
-		else if (ft_strchr(*cmdargs, '='))
+		return (0);
+	}
+ 	while (*(++cmdargs))
+	{
+		if (ft_strchr(*cmdargs, '='))
 		{
 			ft_strlcpy(str, *cmdargs, ft_strlen(*cmdargs)
 					- ft_strlen(ft_strchr(*cmdargs, '=') + 1));
@@ -129,7 +131,7 @@ int	run_export(char **cmdargs)
 				curr->content = ft_strdup(*cmdargs);
 			}
 			if (!curr)
-				ft_lstadd_back(&var()->ep, ft_lstnew(*cmdargs));
+				ep_lstadd(&var()->ep, ft_lstnew(*cmdargs));
 		}
 	}
 	return (0);

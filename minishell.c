@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:49:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:26:46 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	free_all(void)
 	while (var()->ep)
 	{
 		current = var()->ep->next;
+		free(var()->ep->name);
 		ft_lstdelone(var()->ep, free);
 		var()->ep = current;
 	}
@@ -98,6 +99,27 @@ void	parsing_paths(char **ep, int i)
 	}
 }
 
+void	ep_lstadd(t_list **lst, t_list *new)
+{
+	t_list	*last;
+
+	if (!*lst)
+	{
+		*lst = new;
+		new->prev = NULL;
+		new->next = NULL;
+	}
+	else
+	{
+		last = ft_lstlast(*lst);
+		last->next = new;
+		new->prev = last;
+	}
+	new->name = ft_substr(new->content, 0, ft_strlen(new->content)
+			- ft_strlen(ft_strchr(new->content, '=')));
+	new->data = ft_strchr(new->content, '=') + 1;
+}
+
 void	create_lstep(char **ep)
 {
 	int		i;
@@ -107,7 +129,7 @@ void	create_lstep(char **ep)
 	i = -1;
 	cwd = NULL;
 	while (ep[++i])
-		ft_lstadd_back(&var()->ep, ft_lstnew(ep[i]));
+		ep_lstadd(&var()->ep, ft_lstnew(ep[i]));
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
 	{
