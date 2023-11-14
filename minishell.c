@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:49:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 22:16:18 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	free_all(void)
 
 void	cmd_loop(char **ep)
 {
-	char	**cmdargs;
+	//char	**cmdargs;
 	char	*buf;
 	int		status;
 
@@ -56,16 +56,15 @@ void	cmd_loop(char **ep)
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
-		cmdargs = ft_split(buf, ' ');
 		var()->lstep_parsed = NULL;
 		var()->words = NULL;
 		add_history(buf);
-		// lexer(buf);
-		// parse();
-		if (builtin(cmdargs, &status))
-			cmd_execute(cmdargs, ep);
+		lexer(buf);
+		parse();
+		if (builtin(&status))
+			cmd_execute(ep);
 		free(buf);
-		free_strs(cmdargs);
+		//free_strs(cmdargs);
 	}
 }
 
@@ -107,7 +106,7 @@ void	create_lstep(char **ep)
 	i = -1;
 	cwd = NULL;
 	while (ep[++i])
-		ft_lstadd_back(&var()->ep, ft_lstnew(ep[i]));
+		ft_lstadd_back(&var()->ep, ft_lstnew(ft_strdup(ep[i])));
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
 	{

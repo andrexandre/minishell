@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:21:06 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 22:15:40 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,17 @@ int (*builtin_func[]) (char **) = {
 	&run_unset
 };
 
-int	builtin(char **cmdargs, int *status)
+int	builtin(int *status)
 {
 	int		i;
+	t_word *word;
 
 	i = -1;
+	word = var()->lstep_parsed->content;
 	while (++i < 6)
-		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
-			return (*builtin_func[i])(cmdargs);
-	if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
+		if (!ft_strcmp(word->cmds[0], builtin_str[i]))
+			return (*builtin_func[i])(word->cmds);
+	if (!ft_strcmp(word->cmds[0], "exit") || !ft_strcmp(word->cmds[0], "q"))
 		*status = 0;
 	return (*status);
 }
@@ -61,12 +63,15 @@ char	*search_cmd(char **cmdargs, char *cmd)
 	return (NULL);
 }
 
-void	cmd_execute(char **cmdargs, char **ep)
+void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
+	t_word *word;
 
-	cmd = search_cmd(cmdargs, cmdargs[0]);
+	word = var()->lstep_parsed->content;
+
+	cmd = search_cmd(word->cmds, word->cmds[0]);
 	if (!cmd)
 		return ;
 	pid = fork();
@@ -74,9 +79,9 @@ void	cmd_execute(char **cmdargs, char **ep)
 		perror("fork");
 	if (!pid)
 	{
-		execve(cmd, cmdargs, ep);
-		perror(cmdargs[0]);
-		free_strs(cmdargs);
+		execve(cmd, word->cmds, ep);
+		perror(word->cmds[0]);
+		free_strs(word->cmds);
 		free_all();
 		exit(127);
 	}
