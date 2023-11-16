@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/16 13:40:27 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 21:08:51 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,7 @@ bool	cmd(char *str)
 		word->type = BUILD_IN;
 		word->is_builtin = true;
 		word->str = ft_strdup(str);
-		if (var()->words == NULL)
-			var()->words = ft_lstnew(word);
-		else
-			ft_lstadd_back(&var()->words, ft_lstnew(word));
+		ft_lstadd_back(&var()->words, ft_lstnew(word));
 		return (true);
 	}
 	return (false);
@@ -57,11 +54,8 @@ bool	token(char *str)
 		word->type = TOKEN;
 		word->is_builtin = false;
 		word->str = ft_strdup(str);
-		if (var()->words == NULL)
-			var()->words = ft_lstnew(word);
-		else
-			ft_lstadd_back(&var()->words, ft_lstnew(word));
-		return (true);
+		ft_lstadd_back(&var()->words, ft_lstnew(word));
+    return (true);
 	}
 	return (false);
 }
@@ -85,10 +79,7 @@ void	lexer(char *str)
 			word->type = WORD;
 			word->is_builtin = false;
 			word->str = ft_strdup(splitted[i]);
-			if (var()->words == NULL)
-				var()->words = ft_lstnew(word);
-			else
-				ft_lstadd_back(&var()->words, ft_lstnew(word));
+			ft_lstadd_back(&var()->words, ft_lstnew(word));
 		}
 		i++;
 	}

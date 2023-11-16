@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
 /*   Updated: 2023/11/16 13:36:14 by analexan         ###   ########.fr       */
@@ -36,7 +36,7 @@ typedef struct s_word
 	enum e_type	type;
 	char		*str;
 	bool		is_builtin;
-	t_list		*args;
+	char		**cmds;
 }				t_word;
 
 typedef struct s_var
@@ -63,8 +63,8 @@ int				run_unset(char **cmdargs);
 t_list			*m_get_env(char *key);
 
 // minishell_exec
-int				builtin(char **cmdargs, int *status);
-void			cmd_execute(char **cmdargs, char **ep);
+int				builtin(int *status);
+void			cmd_execute(char **ep);
 
 // minishell_utils
 void			print_lst(t_list *lst);

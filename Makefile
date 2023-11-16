@@ -29,7 +29,7 @@ all:	$(NAME)
 
 $(NAME): $(OBJ)
 	@make -s -C $(DIR_LIBFT)
-	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME)
+	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -lreadline
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
 
 
