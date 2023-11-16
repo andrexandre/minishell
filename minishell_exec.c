@@ -3,17 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
 /*   Updated: 2023/11/14 12:38:33 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 22:15:40 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin(char **cmdargs, int *status)
+int	builtin(int *status)
 {
+	t_word *word;
+	char **cmdargs;
+        word = var()->lstep_parsed->content
+	cmdargs = word->cmds;
 	if (!ft_strcmp(cmdargs[0], "cd"))
 		return (*run_cd)(cmdargs);
 	else if (!ft_strcmp(cmdargs[0], "echo"))
@@ -56,12 +61,15 @@ char	*search_cmd(char **cmdargs, char *cmd)
 	return (NULL);
 }
 
-void	cmd_execute(char **cmdargs, char **ep)
+void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
+	t_word *word;
 
-	cmd = search_cmd(cmdargs, cmdargs[0]);
+	word = var()->lstep_parsed->content;
+
+	cmd = search_cmd(word->cmds, word->cmds[0]);
 	if (!cmd)
 		return ;
 	pid = fork();
@@ -69,9 +77,9 @@ void	cmd_execute(char **cmdargs, char **ep)
 		perror("fork");
 	if (!pid)
 	{
-		execve(cmd, cmdargs, ep);
-		perror(cmdargs[0]);
-		free_strs(cmdargs);
+		execve(cmd, word->cmds, ep);
+		perror(word->cmds[0]);
+		free_strs(word->cmds);
 		free_all();
 		exit(127);
 	}
