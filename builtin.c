@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/14 14:35:05 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:53:44 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int	run_env(char **cmdargs)
 int	run_export(char **cmdargs)
 {
 	t_list	*curr;
+	t_list	*new;
 	char	str[500];
 
 	curr = var()->ep;
@@ -131,7 +132,13 @@ int	run_export(char **cmdargs)
 				curr->content = ft_strdup(*cmdargs);
 			}
 			if (!curr)
-				ep_lstadd(&var()->ep, ft_lstnew(*cmdargs));
+			{
+				new = ft_lstnew(ft_strdup(*cmdargs));
+				ft_lstadd_back(&var()->ep, new);
+				new->name = ft_substr(new->content, 0, ft_strlen(new->content)
+						- ft_strlen(ft_strchr(new->content, '=')));
+				new->data = ft_strchr(new->content, '=') + 1;
+			}
 		}
 	}
 	return (0);

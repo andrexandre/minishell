@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/10 19:41:25 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:40:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ void	join_str_word(t_word *word, t_word *src_word)
 		free(cmd);
 	}
 	if (word->args == NULL)
-		word->args = ft_lstnewold(src_word);
+		word->args = ft_lstnew(src_word);
 	else
-		ft_lstadd_back(&word->args, ft_lstnewold(src_word));
+		ft_lstadd_back(&word->args, ft_lstnew(src_word));
 }
 
 void	add_word_lst(t_word *word, bool *is_new_cmd)
@@ -49,9 +49,9 @@ void	add_word_lst(t_word *word, bool *is_new_cmd)
 	word->str = ft_strtrim(temp, " ");
 	free(temp);
 	if (var()->lstep_parsed == NULL)
-		var()->lstep_parsed = ft_lstnewold(word);
+		var()->lstep_parsed = ft_lstnew(word);
 	else
-		ft_lstadd_back(&var()->lstep_parsed, ft_lstnewold(word));
+		ft_lstadd_back(&var()->lstep_parsed, ft_lstnew(word));
 	*is_new_cmd = true;
 }
 

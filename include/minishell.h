@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/14 14:34:23 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:36:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_var
 
 // minishell
 void	free_all(void);
-void	ep_lstadd(t_list **lst, t_list *new);
 
 // builtin
 int				run_cd(char **cmdargs);
