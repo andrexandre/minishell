@@ -13,8 +13,12 @@
 
 #include "minishell.h"
 
-int	builtin(char **cmdargs, int *status)
+int	builtin(int *status)
 {
+	t_word *word;
+	char **cmdargs;
+        word = var()->lstep_parsed->content
+	cmdargs = word->cmds;
 	if (!ft_strcmp(cmdargs[0], "cd"))
 		return (*run_cd)(cmdargs);
 	else if (!ft_strcmp(cmdargs[0], "echo"))
