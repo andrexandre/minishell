@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/13 14:24:12 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:40:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ bool	cmd(char *str)
 		word->is_builtin = true;
 		word->str = ft_strdup(str);
 		if (var()->words == NULL)
-			var()->words = ft_lstnewold(word);
+			var()->words = ft_lstnew(word);
 		else
-			ft_lstadd_back(&var()->words, ft_lstnewold(word));
+			ft_lstadd_back(&var()->words, ft_lstnew(word));
 		return (true);
 	}
 	return (false);
@@ -58,9 +58,9 @@ bool	token(char *str)
 		word->is_builtin = false;
 		word->str = ft_strdup(str);
 		if (var()->words == NULL)
-			var()->words = ft_lstnewold(word);
+			var()->words = ft_lstnew(word);
 		else
-			ft_lstadd_back(&var()->words, ft_lstnewold(word));
+			ft_lstadd_back(&var()->words, ft_lstnew(word));
 		return (true);
 	}
 	return (false);
@@ -86,9 +86,9 @@ void	lexer(char *str)
 			word->is_builtin = false;
 			word->str = ft_strdup(splitted[i]);
 			if (var()->words == NULL)
-				var()->words = ft_lstnewold(word);
+				var()->words = ft_lstnew(word);
 			else
-				ft_lstadd_back(&var()->words, ft_lstnewold(word));
+				ft_lstadd_back(&var()->words, ft_lstnew(word));
 		}
 		i++;
 	}

@@ -6,32 +6,27 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:21:06 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/14 12:38:33 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*builtin_str[] = {"cd", "echo", "env", "export", "pwd", "unset"};
-
-int (*builtin_func[]) (char **) = {
-	&run_cd,
-	&run_echo,
-	&run_env,
-	&run_export,
-	&run_pwd,
-	&run_unset
-};
-
 int	builtin(char **cmdargs, int *status)
 {
-	int		i;
-
-	i = -1;
-	while (++i < 6)
-		if (!ft_strcmp(cmdargs[0], builtin_str[i]))
-			return (*builtin_func[i])(cmdargs);
-	if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
+	if (!ft_strcmp(cmdargs[0], "cd"))
+		return (*run_cd)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "echo"))
+		return (*run_echo)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "env"))
+		return (*run_env)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "export"))
+		return (*run_export)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "pwd"))
+		return (*run_pwd)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "unset"))
+		return (*run_unset)(cmdargs);
+	else if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
 		*status = 0;
 	return (*status);
 }

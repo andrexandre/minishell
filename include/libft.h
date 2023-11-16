@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/13 19:11:53 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:40:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 typedef struct s_list
 {
 	void			*content;
+	char			*name;
+	char			*data;
 	struct s_list	*prev;
 	struct s_list	*next;
 }					t_list;
@@ -105,7 +107,6 @@ t_list				*ft_lstlast(t_list *lst);
 t_list				*ft_lstmap(t_list *lst, void *(*f)(void *),
 						void (*del)(void *));
 t_list				*ft_lstnew(void *content);
-t_list				*ft_lstnewold(void *content);
 int					ft_lstsize(t_list *lst);
 
 char				**ft_cleanup_split(char **split, size_t j);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:29:52 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 12:01:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:30:18 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,11 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 	t_list	*last;
 
 	if (!*lst)
+	{
 		*lst = new;
+		new->prev = NULL;
+		new->next = NULL;
+	}
 	else
 	{
 		last = ft_lstlast(*lst);

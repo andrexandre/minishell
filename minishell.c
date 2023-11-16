@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 19:49:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 13:53:59 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	free_all(void)
 	while (var()->ep)
 	{
 		current = var()->ep->next;
+		free(var()->ep->name);
 		ft_lstdelone(var()->ep, free);
 		var()->ep = current;
 	}
@@ -103,11 +104,18 @@ void	create_lstep(char **ep)
 	int		i;
 	char	*cwd;
 	char	*str;
+	t_list	*new;
 
 	i = -1;
 	cwd = NULL;
 	while (ep[++i])
-		ft_lstadd_back(&var()->ep, ft_lstnew(ep[i]));
+	{
+		new = ft_lstnew(ft_strdup(ep[i]));
+		ft_lstadd_back(&var()->ep, new);
+		new->name = ft_substr(new->content, 0, ft_strlen(new->content)
+				- ft_strlen(ft_strchr(new->content, '=')));
+		new->data = ft_strchr(new->content, '=') + 1;
+	}
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
 	{
