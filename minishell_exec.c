@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/14 12:38:33 by analexan         ###   ########.fr       */
-/*   Updated: 2023/11/14 22:15:40 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:41:24 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 
@@ -68,7 +68,6 @@ void	cmd_execute(char **ep)
 	t_word *word;
 
 	word = var()->lstep_parsed->content;
-
 	cmd = search_cmd(word->cmds, word->cmds[0]);
 	if (!cmd)
 		return ;
@@ -86,4 +85,3 @@ void	cmd_execute(char **ep)
 	wait(0);
 	free(cmd);
 }
-
