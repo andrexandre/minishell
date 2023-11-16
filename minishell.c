@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 13:53:59 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:10:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	free_all(void)
 	while (var()->ep)
 	{
 		current = var()->ep->next;
-		free(var()->ep->name);
 		ft_lstdelone(var()->ep, free);
 		var()->ep = current;
 	}
@@ -62,10 +61,21 @@ void	cmd_loop(char **ep)
 		add_history(buf);
 		lexer(buf);
 		parse();
+		char **cmdargs = ft_split(buf, ' ');
+		int i = -1;
+		while (cmdargs[++i])
+			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i])));
 		if (builtin(&status))
 			cmd_execute(ep);
+		t_list *curr = var()->words;
+		while (var()->words)
+		{
+			curr = var()->words->next;
+			ft_lstdelone(var()->words, free);
+			var()->words = curr;
+		}
+		free_strs(cmdargs);
 		free(buf);
-		//free_strs(cmdargs);
 	}
 }
 
@@ -102,7 +112,7 @@ void	create_lstep(char **ep)
 {
 	int		i;
 	char	*cwd;
-	char	*str;
+	// char	*str;
 	t_list	*new;
 
 	i = -1;
@@ -111,9 +121,9 @@ void	create_lstep(char **ep)
 	{
 		new = ft_lstnew(ft_strdup(ep[i]));
 		ft_lstadd_back(&var()->ep, new);
-		new->name = ft_substr(new->content, 0, ft_strlen(new->content)
-				- ft_strlen(ft_strchr(new->content, '=')));
-		new->data = ft_strchr(new->content, '=') + 1;
+		// new->name = ft_substr(new->content, 0, ft_strlen(new->content)
+		// 		- ft_strlen(ft_strchr(new->content, '=')));
+		// new->data = ft_strchr(new->content, '=') + 1;
 	}
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
@@ -121,9 +131,9 @@ void	create_lstep(char **ep)
 		perror("getcwd");
 		return ;
 	}
-	str = ft_strjoin("PWD=", cwd);
-	run_export((char *[]){"export", str, NULL});
-	free(str);
+	// str = ft_strjoin("PWD=", cwd);
+	// run_export((char *[]){"export", str, NULL});
+	// free(str);
 	free(cwd);
 }
 

@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 15:41:24 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:52:25 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,36 @@
 
 int	builtin(int *status)
 {
-	t_word *word;
-	char **cmdargs;
-        word = var()->lstep_parsed->content
-	cmdargs = word->cmds;
-	if (!ft_strcmp(cmdargs[0], "cd"))
-		return (*run_cd)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "echo"))
-		return (*run_echo)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "env"))
-		return (*run_env)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "export"))
-		return (*run_export)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "pwd"))
-		return (*run_pwd)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "unset"))
-		return (*run_unset)(cmdargs);
-	else if (!ft_strcmp(cmdargs[0], "exit") || !ft_strcmp(cmdargs[0], "q"))
+	if (!ft_strcmp(var()->words->content, "cd"))
+		return (*run_cd)();
+	else if (!ft_strcmp(var()->words->content, "echo"))
+		return (*run_echo)();
+	else if (!ft_strcmp(var()->words->content, "env"))
+		return (*run_env)();
+	else if (!ft_strcmp(var()->words->content, "export"))
+		return (*run_export)();
+	else if (!ft_strcmp(var()->words->content, "pwd"))
+		return (*run_pwd)();
+	else if (!ft_strcmp(var()->words->content, "unset"))
+		return (*run_unset)();
+	else if (!ft_strcmp(var()->words->content, "exit") || !ft_strcmp(var()->words->content, "q"))
 		*status = 0;
 	return (*status);
 }
 
-char	*search_cmd(char **cmdargs, char *cmd)
+char	*search_cmd(char *cmdargs)
 {
 	int		i;
+	char	*cmd;
 
 	i = -1;
-	if (!ft_strchr(cmdargs[0], '/'))
+	if (!ft_strchr(cmdargs, '/'))
 	{
 		if (var()->paths)
 		{
 			while (var()->paths[++i])
 			{
-				cmd = ft_strjoin(var()->paths[i], cmdargs[0]);
+				cmd = ft_strjoin(var()->paths[i], cmdargs);
 				if (!access(cmd, F_OK | X_OK))
 					return (cmd);
 				free(cmd);
@@ -55,9 +52,9 @@ char	*search_cmd(char **cmdargs, char *cmd)
 		}
 	}
 	else
-		if (!access(cmdargs[0], F_OK | X_OK))
-			return (ft_strdup(cmdargs[0]));
-	perror(cmdargs[0]);
+		if (!access(cmdargs, F_OK | X_OK))
+			return (ft_strdup(cmdargs));
+	perror(cmdargs);
 	return (NULL);
 }
 
@@ -65,10 +62,10 @@ void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
-	t_word *word;
+	// t_word *word;
 
-	word = var()->lstep_parsed->content;
-	cmd = search_cmd(word->cmds, word->cmds[0]);
+	// word = var()->lstep_parsed->content;
+	cmd = search_cmd(var()->words->content);
 	if (!cmd)
 		return ;
 	pid = fork();
@@ -76,9 +73,10 @@ void	cmd_execute(char **ep)
 		perror("fork");
 	if (!pid)
 	{
-		execve(cmd, word->cmds, ep);
-		perror(word->cmds[0]);
-		free_strs(word->cmds);
+		// change the var()->words to char **cmdargs
+		execve(cmd, (char *const[]){cmd, NULL}, ep);
+		perror(cmd);
+		// free_strs(cmdargs);
 		free_all();
 		exit(127);
 	}

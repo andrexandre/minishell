@@ -1,14 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 13:53:44 by analexan         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+// /* ************************************************************************** */
+// /*                                                                            */
+// /*                                                        :::      ::::::::   */
+// /*   builtin.c                                          :+:      :+:    :+:   */
+// /*                                                    +:+ +:+         +:+     */
+// /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+// /*                                                +#+#+#+#+#+   +#+           */
+// /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
+// /*   Updated: 2023/11/16 18:01:33 by analexan         ###   ########.fr       */
+// /*                                                                            */
+// /* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -32,14 +32,14 @@ t_list	*m_get_env(char *key)
 	return (NULL);
 }
 
-int	run_cd(char **cmdargs)
+int	run_cd(void)
 {
 	char	*str;
-	char	*cwd;
+	// char	*cwd;
 
-	cwd = NULL;
-	str = cmdargs[1];
-	if (!cmdargs[1])
+	// cwd = NULL;
+	str = var()->words->next->content;
+	if (!var()->words->next)
 	{
 		if (!m_get_env("HOME"))
 		{
@@ -51,64 +51,65 @@ int	run_cd(char **cmdargs)
 	}
 	if (!chdir(str))
 	{
-		str = ft_strjoin("OLDPWD=", ft_strchr(m_get_env("HOME")->content, '=') + 1);
-		run_export((char *[]){"export", str, NULL});
-		free(str);
-		cwd = getcwd(cwd, 0);
-		if (!cwd)
-		{
-			perror("getcwd");
-			return (0);
-		}
-		str = ft_strjoin("PWD=", cwd);
-		free(cwd);
-		run_export((char *[]){"export", str, NULL});
-		free(str);
+		// str = ft_strjoin("OLDPWD=", ft_strchr(m_get_env("HOME")->content, '=') + 1);
+		// run_export((char *[]){"export", str, NULL});
+		// free(str);
+		// cwd = getcwd(cwd, 0);
+		// if (!cwd)
+		// {
+		// 	perror("getcwd");
+		// 	return (0);
+		// }
+		// str = ft_strjoin("PWD=", cwd);
+		// free(cwd);
+		// run_export((char *[]){"export", str, NULL});
+		// free(str);
 	}
 	else
 		perror(str);
 	return (0);
 }
 
-int	run_echo(char **cmdargs)
+int	run_echo(void)
 {
-	int	i;
+	// int	i;
 
-	i = 2;
-	if (cmdargs[1] && !ft_strncmp(cmdargs[1], "-n", 2))
+	// i = 2;
+	// if (var()->words->next->content && !ft_strncmp(var()->words->next->content, "-n", 2))
+	// {
+	// 	while (var()->words->next->content[i] && var()->words->next->content[i] == 'n')
+	// 		i++;
+	// 	if (!var()->words->next->content[i])
+	// 		prt_strs(cmdargs + 2, ' ');
+	// 	else
+	// 		prt_strs(cmdargs + 1, ' ');
+	// }
+	// else
 	{
-		while (cmdargs[1][i] && cmdargs[1][i] == 'n')
-			i++;
-		if (!cmdargs[1][i])
-			prt_strs(cmdargs + 2, ' ');
-		else
-			prt_strs(cmdargs + 1, ' ');
-	}
-	else
-	{
-		prt_strs(cmdargs + 1, ' ');
+		print_lst(var()->words->next);
+		// prt_strs(cmdargs + 1, ' ');
 		prt("\n");
 	}
 	return (0);
 }
 
-int	run_env(char **cmdargs)
+int	run_env(void)
 {
-	if (cmdargs[1])
+	if (var()->words->next->content)
 		prt("env: too many arguments\n");
 	else
 		print_lst(var()->ep);
 	return (0);
 }
 
-int	run_export(char **cmdargs)
+int	run_export(void)
 {
 	t_list	*curr;
 	t_list	*new;
 	char	str[500];
 
 	curr = var()->ep;
-	if (!cmdargs[1])
+	if (!var()->words->next)
 	{
 		while (curr)
 		{
@@ -119,32 +120,34 @@ int	run_export(char **cmdargs)
 		}
 		return (0);
 	}
- 	while (*(++cmdargs))
+	new = var()->words;
+ 	while (new)
 	{
-		if (ft_strchr(*cmdargs, '='))
+		if (ft_strchr(new->content, '='))
 		{
-			ft_strlcpy(str, *cmdargs, ft_strlen(*cmdargs)
-					- ft_strlen(ft_strchr(*cmdargs, '=') + 1));
+			ft_strlcpy(str, new->content, ft_strlen(new->content)
+					- ft_strlen(ft_strchr(new->content, '=') + 1));
 			curr = m_get_env(str);
 			if (curr)
 			{
 				free(curr->content);
-				curr->content = ft_strdup(*cmdargs);
+				curr->content = ft_strdup(new->content);
 			}
 			if (!curr)
 			{
-				new = ft_lstnew(ft_strdup(*cmdargs));
+				new = ft_lstnew(ft_strdup(new->content));
 				ft_lstadd_back(&var()->ep, new);
-				new->name = ft_substr(new->content, 0, ft_strlen(new->content)
-						- ft_strlen(ft_strchr(new->content, '=')));
-				new->data = ft_strchr(new->content, '=') + 1;
+				// new->name = ft_substr(new->content, 0, ft_strlen(new->content)
+				// 		- ft_strlen(ft_strchr(new->content, '=')));
+				// new->data = ft_strchr(new->content, '=') + 1;
 			}
 		}
+		new = new->next;
 	}
 	return (0);
 }
 
-int	run_pwd(char **cmdargs)
+int	run_pwd(void)
 {
 	char	*cwd;
 
@@ -157,22 +160,24 @@ int	run_pwd(char **cmdargs)
 	}
 	prt("%s\n", cwd);
 	free(cwd);
-	(void)cmdargs;
+	// (void)cmdargs;
 	return (0);
 }
 
-int	run_unset(char **cmdargs)
+int	run_unset(void)
 {
 	t_list	*curr;
+	t_list	*new;
 
-	if (!cmdargs[1])
+	if (!var()->words->next->content)
 	{
 		prt("unset: not enough arguments\n");
 		return (0);
 	}
-	while (*(++cmdargs))
+	new = var()->words->next;
+	while (new)
 	{
-		curr = m_get_env(*cmdargs);
+		curr = m_get_env(new->content);
 		if (curr)
 		{
 			if (!curr->prev)
@@ -186,6 +191,7 @@ int	run_unset(char **cmdargs)
 			}
 			ft_lstdelone(curr, free);
 		}
+		new = new->next;
 	}
 	return (0);
 }

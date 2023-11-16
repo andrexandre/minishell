@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 13:36:14 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:40:38 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ typedef struct s_var
 void	free_all(void);
 
 // builtin
-int				run_cd(char **cmdargs);
-int				run_echo(char **cmdargs);
-int				run_env(char **cmdargs);
-int				run_export(char **cmdargs);
-int				run_pwd(char **cmdargs);
-int				run_unset(char **cmdargs);
+int				run_cd(void);
+int				run_echo(void);
+int				run_env(void);
+int				run_export(void);
+int				run_pwd(void);
+int				run_unset(void);
 t_list			*m_get_env(char *key);
 
 // minishell_exec
