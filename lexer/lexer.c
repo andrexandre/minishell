@@ -55,7 +55,7 @@ bool	token(char *str)
 		word->is_builtin = false;
 		word->str = ft_strdup(str);
 		ft_lstadd_back(&var()->words, ft_lstnew(word));
-		return (true);
+    return (true);
 	}
 	return (false);
 }
