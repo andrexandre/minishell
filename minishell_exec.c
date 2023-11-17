@@ -6,16 +6,17 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 18:52:25 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/17 18:43:34 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
 int	builtin(int *status)
 {
-	if (!ft_strcmp(var()->words->content, "cd"))
+	if (!var()->words)
+		return (0);
+	else if (!ft_strcmp(var()->words->content, "cd"))
 		return (*run_cd)();
 	else if (!ft_strcmp(var()->words->content, "echo"))
 		return (*run_echo)();

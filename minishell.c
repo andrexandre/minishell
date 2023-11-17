@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 19:10:57 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/17 18:59:56 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	free_all(void)
 
 void	cmd_loop(char **ep)
 {
-	//char	**cmdargs;
+	char	**cmdargs;
 	char	*buf;
 	int		status;
 
@@ -56,24 +56,18 @@ void	cmd_loop(char **ep)
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
-		var()->lstep_parsed = NULL;
-		var()->words = NULL;
 		add_history(buf);
-		lexer(buf);
-		parse();
-		char **cmdargs = ft_split(buf, ' ');
+		// var()->lstep_parsed = NULL;
+		// var()->words = NULL;
+		// lexer(buf);
+		// parse();
+		cmdargs = ft_split(buf, ' ');
 		int i = -1;
 		while (cmdargs[++i])
 			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i])));
 		if (builtin(&status))
 			cmd_execute(ep);
-		t_list *curr = var()->words;
-		while (var()->words)
-		{
-			curr = var()->words->next;
-			ft_lstdelone(var()->words, free);
-			var()->words = curr;
-		}
+		ft_lstclear(&var()->words, free);
 		free_strs(cmdargs);
 		free(buf);
 	}
@@ -144,6 +138,7 @@ void	handler(int num)
 	prt("\n\033[0;34mminishell\033[0m😎> ");
 }
 
+// to-do: change from t_list to t_ep
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;

@@ -1,14 +1,14 @@
-// /* ************************************************************************** */
-// /*                                                                            */
-// /*                                                        :::      ::::::::   */
-// /*   builtin.c                                          :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-// /*   Updated: 2023/11/16 18:01:33 by analexan         ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
+/*   Updated: 2023/11/17 18:46:00 by analexan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -38,7 +38,6 @@ int	run_cd(void)
 	// char	*cwd;
 
 	// cwd = NULL;
-	str = var()->words->next->content;
 	if (!var()->words->next)
 	{
 		if (!m_get_env("HOME"))
@@ -49,6 +48,8 @@ int	run_cd(void)
 		else
 			str = ft_strchr(m_get_env("HOME")->content, '=') + 1;
 	}
+	else
+		str = var()->words->next->content;
 	if (!chdir(str))
 	{
 		// str = ft_strjoin("OLDPWD=", ft_strchr(m_get_env("HOME")->content, '=') + 1);
@@ -72,33 +73,31 @@ int	run_cd(void)
 
 int	run_echo(void)
 {
-	// int	i;
+	int		i;
+	char	*str;
 
-	// i = 2;
-	// if (var()->words->next->content && !ft_strncmp(var()->words->next->content, "-n", 2))
-	// {
-	// 	while (var()->words->next->content[i] && var()->words->next->content[i] == 'n')
-	// 		i++;
-	// 	if (!var()->words->next->content[i])
-	// 		prt_strs(cmdargs + 2, ' ');
-	// 	else
-	// 		prt_strs(cmdargs + 1, ' ');
-	// }
-	// else
+	i = 2;
+	if (var()->words->next && !ft_strncmp(var()->words->next->content, "-n", 2))
 	{
-		print_lst(var()->words->next);
-		// prt_strs(cmdargs + 1, ' ');
-		prt("\n");
+		str = var()->words->next->content;
+		while (str[i] && str[i] == 'n')
+			i++;
+		if (!str[i])
+			print_lst(var()->words->next->next, 1);
+		else
+			print_lst(var()->words->next, 0);
 	}
+	else
+		print_lst(var()->words->next, 0);
 	return (0);
 }
 
 int	run_env(void)
 {
-	if (var()->words->next->content)
+	if (var()->words->next)
 		prt("env: too many arguments\n");
 	else
-		print_lst(var()->ep);
+		print_lst(var()->ep, 0);
 	return (0);
 }
 
@@ -160,7 +159,6 @@ int	run_pwd(void)
 	}
 	prt("%s\n", cwd);
 	free(cwd);
-	// (void)cmdargs;
 	return (0);
 }
 
@@ -169,11 +167,6 @@ int	run_unset(void)
 	t_list	*curr;
 	t_list	*new;
 
-	if (!var()->words->next->content)
-	{
-		prt("unset: not enough arguments\n");
-		return (0);
-	}
 	new = var()->words->next;
 	while (new)
 	{

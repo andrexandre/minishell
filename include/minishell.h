@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/16 18:40:38 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/17 12:08:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int				builtin(int *status);
 void			cmd_execute(char **ep);
 
 // minishell_utils
-void			print_lst(t_list *lst);
+void			print_lst(t_list *lst, int n);
 void			*free_strs(char **strs);
 void			prt_strs(char **strs, char sep);
 t_var			*var(void);
