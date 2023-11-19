@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:45:30 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/09 16:58:51 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/19 17:34:32 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ enum	e_type
 {
 	WORD,
 	TOKEN,
-	BUILD_IN,
-	CMD
+	BUILD_IN
 };
 //AND,
 //PIPE,

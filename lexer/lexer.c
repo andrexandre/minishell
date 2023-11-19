@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/14 21:08:51 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/19 17:21:05 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	lexer(char *str)
 	i = 0;
 	search_and_replace(str, '\t', ' ');
 	char *trimmed = ft_strtrim(str, " ");
-	splitted = ft_split(trimmed, ' ');
+	splitted = ft_split_without(trimmed, ' ',"'\"");
 	free(trimmed);
 	while (splitted[i])
 	{
