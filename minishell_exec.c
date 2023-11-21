@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/17 18:43:34 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/20 16:50:08 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,7 @@ void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
-	// t_word *word;
 
-	// word = var()->lstep_parsed->content;
 	cmd = search_cmd(var()->words->content);
 	if (!cmd)
 		return ;
@@ -74,7 +72,7 @@ void	cmd_execute(char **ep)
 		perror("fork");
 	if (!pid)
 	{
-		// change the var()->words to char **cmdargs
+		// give the char **currcmdargs to execve
 		execve(cmd, (char *const[]){cmd, NULL}, ep);
 		perror(cmd);
 		// free_strs(cmdargs);

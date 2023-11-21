@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/19 17:06:11 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/20 11:04:34 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@
 #  define BUFFER_SIZE 42
 # endif
 
+	// enum e_type		type;
 typedef struct s_list
 {
 	void			*content;
-	// enum e_type		type;
 	char			*str;
 	char			**cmds;
 	struct s_list	*prev;

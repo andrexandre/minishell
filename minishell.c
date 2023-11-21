@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/17 18:59:56 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:07:37 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,8 @@
 
 void	free_all(void)
 {
-	t_list	*current;
-
-	while (var()->ep)
-	{
-		current = var()->ep->next;
-		ft_lstdelone(var()->ep, free);
-		var()->ep = current;
-	}
+	ep_lclear(&var()->epl);
 	free_strs(var()->paths);
-	// t_word *ptr = var()->lstep_parsed->content;
-	// while (var()->lstep_parsed)
-	// {
-	// 	ptr = var()->lstep_parsed->content;
-	// 	current = var()->lstep_parsed->next;
-	// 	free(ptr->str);
-	// 	ft_lstdelone(var()->lstep_parsed, free);
-	// 	var()->lstep_parsed = current;
-	// }
-	// ptr = var()->words->content;
-	// while (var()->words)
-	// {
-	// 	ptr = var()->words->content;
-	// 	current = var()->words->next;
-	// 	free(ptr->str);
-	// 	free(ptr);
-	// 	free(var()->words);
-	// 	var()->words = current;
-	// }
 }
 
 void	cmd_loop(char **ep)
@@ -106,46 +80,42 @@ void	create_lstep(char **ep)
 {
 	int		i;
 	char	*cwd;
-	// char	*str;
-	t_list	*new;
+	char	*str;
 
 	i = -1;
 	cwd = NULL;
 	while (ep[++i])
-	{
-		new = ft_lstnew(ft_strdup(ep[i]));
-		ft_lstadd_back(&var()->ep, new);
-		// new->name = ft_substr(new->content, 0, ft_strlen(new->content)
-		// 		- ft_strlen(ft_strchr(new->content, '=')));
-		// new->data = ft_strchr(new->content, '=') + 1;
-	}
+		ep_ladd_back(&var()->epl, ep_lnew(ft_strdup(ep[i])));
 	cwd = getcwd(cwd, 0);
 	if (!cwd)
 	{
 		perror("getcwd");
 		return ;
 	}
-	// str = ft_strjoin("PWD=", cwd);
-	// run_export((char *[]){"export", str, NULL});
-	// free(str);
+	str = ft_strjoin("PWD=", cwd);
 	free(cwd);
+	ep_export_value(str);
+	free(str);
 }
 
-// fix some bugs with SIGINT
 void	handler(int num)
 {
-	(void)num;
-	prt("\n\033[0;34mminishell\033[0m😎> ");
+	if (num == SIGINT)
+	{
+		prt("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
-// to-do: change from t_list to t_ep
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
 	var()->av = av;
 	if (!ep)
 		return (0);
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, handler);
 	signal(SIGQUIT, SIG_IGN);
 	create_lstep(ep);
 	parsing_paths(ep, -1);
@@ -154,3 +124,12 @@ int	main(int ac, char **av, char **ep)
 	free_all();
 	return (0);
 }
+
+/*
+gets as input the last </<< from the prompt
+redirect from the last redirected file
+
+redirect to the last redirected file
+
+if pipe start all over again
+*/
