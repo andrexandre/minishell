@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/21 14:11:02 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:35:49 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,38 +27,28 @@ t_word	*create_word(bool *is_new_cmd)
 	t_word	*word;
 
 	word = ft_calloc(sizeof(t_word), 1);
+	word->cmds = ft_calloc(sizeof(char *), 1);
 	*is_new_cmd = false;
 	return (word);
 }
 
 void	join_str_word(t_word *word, t_word *src_word, int cmd_s)
 {
-	char	*cmd;
-	char	**cmds;
-	int		i;
-	i = 0;
+	//int		i;
+	//i = 0;
 	if (word->str == NULL)
 		word->str = ft_strdup(src_word->str);
 	else
 	{
-		cmd = ft_strjoin(word->str, " ");
-		free(word->str);
-		word->str = ft_strjoin(cmd, src_word->str);
-		free(cmd);
+		ft_strlcat(word->str, " ", ft_strlen(word->str) + 2);		
+		ft_strlcat(word->str, src_word->str, ft_strlen(word->str) + ft_strlen(src_word->str) + 1);
 	}
 	if(word->type != BUILT_IN)
 		word->type = src_word->type;	
 	
-	cmds = ft_calloc(cmd_s,1);
-	while (cmd_s > i)
-	{
-		cmds[i] = ft_strdup(word->cmds[i]);
-		i++;
-	}	
-	cmds[cmd_s] = src_word->str;
-	if(cmd_s > 0)
-		ft_cleanup_split(word->cmds, i);
-	word->cmds = cmds;
+	word->cmds = (char **)ft_realloc(word->cmds, (cmd_s + 2) * sizeof(char *));
+	word->cmds[cmd_s] = src_word->str;
+	word->cmds[cmd_s + 1] = NULL;
 }
 
 void	add_word_lst(t_word *word, bool *is_new_cmd, int *cmd_s)
