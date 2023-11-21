@@ -16,7 +16,10 @@
 		"libft.h": "c",
 		"stdarg.h": "c",
 		"algorithm": "c",
-		"readline.h": "c"
+		"readline.h": "c",
+		"random": "c",
+		"initializer_list": "c",
+		"utility": "c"
 	},
 	"functionHeaderExtension.headerFilePath": "/nfs/homes/analexan/minishell/include/minishell.h"
 }
