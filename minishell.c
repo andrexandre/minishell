@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 17:48:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:07:37 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,15 @@ void	create_lstep(char **ep)
 	free(str);
 }
 
-// fix some bugs with SIGINT
 void	handler(int num)
 {
-	(void)num;
-	prt("\n\033[0;34mminishell\033[0m😎> ");
+	if (num == SIGINT)
+	{
+		prt("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
 int	main(int ac, char **av, char **ep)
@@ -111,7 +115,7 @@ int	main(int ac, char **av, char **ep)
 	var()->av = av;
 	if (!ep)
 		return (0);
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, handler);
 	signal(SIGQUIT, SIG_IGN);
 	create_lstep(ep);
 	parsing_paths(ep, -1);
@@ -120,3 +124,12 @@ int	main(int ac, char **av, char **ep)
 	free_all();
 	return (0);
 }
+
+/*
+gets as input the last </<< from the prompt
+redirect from the last redirected file
+
+redirect to the last redirected file
+
+if pipe start all over again
+*/

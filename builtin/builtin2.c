@@ -6,27 +6,24 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 17:06:34 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:10:50 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ep_change_value(char *key, char *value, int n)
+void	ep_change_value(char *key, char *value)
 {
 	t_eplist	*node;
 	char		*str;
 	char		*temp;
 
 	node = get_env(key);
-	if (node || n)
-	{
-		temp = ft_strjoin(key, "=");
-		str = ft_strjoin(temp, value);
-		free(temp);
-		ep_export_value(str);
-		free(str);
-	}
+	temp = ft_strjoin(key, "=");
+	str = ft_strjoin(temp, value);
+	free(temp);
+	ep_export_value(str);
+	free(str);
 }
 
 int	run_cd(void)
