@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
 /*   Updated: 2023/11/20 11:04:34 by analexan         ###   ########.fr       */
@@ -91,6 +91,7 @@ char				*ft_strjoin_gnl(char *dest, char *src);
 char				*ft_strtrim(char const *s1, char const *set);
 char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char				**ft_split(char const *s, char c);
+char	**ft_split_without(char const *s, char c, char *ignored_lst);
 void				ft_striteri(char *s, void (*f)(unsigned int, char *));
 char				*ft_itoa(int n);
 

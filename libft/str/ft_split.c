@@ -82,21 +82,3 @@ char	**ft_split(char const *s, char c)
 		return (0);
 	return (ft_write_words(split, s, c));
 }
-
-/*int	main(void)
-{
-	char **tab;
-	unsigned int i;
-
-	i = 0;
-	tab = ft_split("ola meu nome é", ' ');
-	if (!tab[0])
-		ft_putstr_fd("ok\n", 1);
-	while (tab[i] != NULL)
-	{
-		ft_putstr_fd(tab[i], 1);
-		write(2, "\n", 1);
-		i++;
-	}
-}
-*/
