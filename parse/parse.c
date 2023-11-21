@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/19 19:01:45 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:11:02 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	join_str_word(t_word *word, t_word *src_word, int cmd_s)
 		word->str = ft_strjoin(cmd, src_word->str);
 		free(cmd);
 	}
-	if(word->type != BUILD_IN)
+	if(word->type != BUILT_IN)
 		word->type = src_word->type;	
 	
 	cmds = ft_calloc(cmd_s,1);
@@ -61,10 +61,11 @@ void	join_str_word(t_word *word, t_word *src_word, int cmd_s)
 	word->cmds = cmds;
 }
 
-void	add_word_lst(t_word *word, bool *is_new_cmd)
+void	add_word_lst(t_word *word, bool *is_new_cmd, int *cmd_s)
 {
 	ft_lstadd_back(&var()->lstep_parsed, ft_lstnew(word));
 	*is_new_cmd = true;
+	*cmd_s = 0;
 }
 
 void	parse(void)
@@ -86,7 +87,7 @@ void	parse(void)
 		if (!ft_strcmpold(word->str, "|"))
 			join_str_word(word_p, word, cmd_s++);
 		if (ft_strcmpold(word->str, "|") || curr->next == NULL)
-			add_word_lst(word_p, &is_new_cmd);
+			add_word_lst(word_p, &is_new_cmd, &cmd_s);
 		curr = curr->next;
 	}
 	curr = var()->lstep_parsed;
@@ -94,9 +95,8 @@ void	parse(void)
 	{
 		int i = 0;
 		word = curr->content;
-		prt("Parser : tipo = %d, palavra = %s, built-in = %s\n", word->type,
-				word->str, word->is_builtin ? "true" : "false");
-		while (word->cmds[i])
+		prt("Parser : tipo = %d, palavra = %s\n", word->type, word->str);
+		while (word->cmds[i] != NULL)
 		{
 			prt("Lexer: palavra = %s\n", word->cmds[i]);
 			i++;

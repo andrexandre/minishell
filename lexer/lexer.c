@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/19 17:21:05 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:05:56 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ bool	cmd(char *str)
 			"unset") || ft_strcmpold(str, "exit"))
 	{
 		word = ft_calloc(sizeof(t_word), 1);
-		word->type = BUILD_IN;
+		word->type = BUILT_IN;
 		word->is_builtin = true;
 		word->str = ft_strdup(str);
 		ft_lstadd_back(&var()->words, ft_lstnew(word));
