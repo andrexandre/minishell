@@ -6,16 +6,17 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 15:40:00 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:40:28 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
 int	builtin(int *status)
 {
-	if (!ft_strcmp(var()->words->content, "cd"))
+	if (!var()->words)
+		return (0);
+	else if (!ft_strcmp(var()->words->content, "cd"))
 		return (*run_cd)();
 	else if (!ft_strcmp(var()->words->content, "echo"))
 		return (*run_echo)();
@@ -62,9 +63,7 @@ void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
-	// t_word *word;
 
-	// word = var()->lstep_parsed->content;
 	cmd = search_cmd(var()->words->content);
 	if (!cmd)
 		return ;
@@ -73,7 +72,7 @@ void	cmd_execute(char **ep)
 		perror("fork");
 	if (!pid)
 	{
-		// change the var()->words to char **cmdargs
+		// give the char **currcmdargs to execve
 		execve(cmd, (char *const[]){cmd, NULL}, ep);
 		perror(cmd);
 		// free_strs(cmdargs);

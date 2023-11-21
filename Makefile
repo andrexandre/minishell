@@ -20,8 +20,11 @@ SRC		= minishell_utils.c\
 		  minishell.c \
 		  lexer/lexer.c \
 		  parse/parse.c \
-		  builtin.c \
-		  minishell_exec.c
+		  minishell_exec.c \
+		  builtin/builtin.c \
+		  builtin/builtin2.c \
+		  builtin/ep_lst.c \
+		  builtin/ep_lst2.c
 
 OBJ		= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 

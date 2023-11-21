@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/13 16:31:08 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/17 12:17:38 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,14 @@ void	*free_strs(char **strs)
 	return (NULL);
 }
 
-void	print_lst(t_list *lst)
+void	print_lst(t_list *lst, int n)
 {
 	while (lst)
 	{
-		prt("%s\n", lst->content);
+		if (!lst->next && n)
+			prt("%s", lst->content);
+		else
+			prt("%s\n", lst->content);
 		lst = lst->next;
 	}
 }
