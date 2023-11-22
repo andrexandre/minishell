@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 19:42:29 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 21:59:11 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	cmd_loop(char **ep)
 		if (!buf)
 			break ;
 		add_history(buf);
-		var()->lstep_parsed = NULL;
+		var()->lst_parse = NULL;
 		var()->words = NULL;
 		lexer(buf);
 		parse();
@@ -42,6 +42,7 @@ void	cmd_loop(char **ep)
 		if (builtin(&status))
 			cmd_execute(ep);
 		ft_lstclear(&var()->words, free);
+		ft_lstclear(&var()->lst_parse, free_word);
 		free_strs(cmdargs);
 		free(buf);
 	}

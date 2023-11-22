@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/22 17:17:23 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 22:01:11 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #  define BUFFER_SIZE 42
 # endif
 
-	// enum e_type		type;
+// enum e_type		type;
 typedef struct s_list
 {
 	void			*content;
@@ -62,8 +62,7 @@ long long			ft_atoll(const char *nptr);
 
 char				*ft_strdup(const char *s);
 void				*ft_calloc(size_t nmemb, size_t size);
-void 				*ft_realloc(void *ptr, size_t new_size);
-
+void				*ft_realloc(void *ptr, size_t new_size);
 
 void				ft_bzero(void *s, size_t n);
 void				*ft_memset(void *s, int c, size_t n);
@@ -93,7 +92,8 @@ char				*ft_strjoin_gnl(char *dest, char *src);
 char				*ft_strtrim(char const *s1, char const *set);
 char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char				**ft_split(char const *s, char c);
-char	**ft_split_without(char const *s, char c, char *ignored_lst);
+char				**ft_split_without(char const *s, char c,
+						char *ignored_lst);
 void				ft_striteri(char *s, void (*f)(unsigned int, char *));
 char				*ft_itoa(int n);
 

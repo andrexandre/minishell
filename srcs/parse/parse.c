@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/21 22:41:40 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 22:08:47 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,71 +24,82 @@ int	ft_strlen_matrix(char **str)
 
 t_word	*create_word(bool *is_new_cmd)
 {
-	t_word	*word;
+	t_word	*word_p;
 
-	word = ft_calloc(sizeof(t_word), 1);
-	word->cmds = ft_calloc(sizeof(char *), 1);
+	word_p = ft_calloc(sizeof(t_word), 1);
+	word_p->cmds = ft_calloc(sizeof(char *), 1);
 	*is_new_cmd = false;
-	return (word);
+	return (word_p);
 }
 
-void	join_str_word(t_word *word, t_word *src_word, int cmd_s)
+void	join_str_word(t_word *word_p, t_word *word_l, int cmd_index)
 {
-	if (word->str == NULL)
-		word->str = ft_strdup(src_word->str);
+	if (word_p->str == NULL)
+		word_p->str = ft_strdup(word_l->str);
 	else
 	{
-		ft_strlcat(word->str, " ", ft_strlen(word->str) + 2);		
-		ft_strlcat(word->str, src_word->str, ft_strlen(word->str) + ft_strlen(src_word->str) + 1);
+		ft_strlcat(word_p->str, " ", ft_strlen(word_p->str) + 2);
+		ft_strlcat(word_p->str, word_l->str, ft_strlen(word_p->str)
+			+ ft_strlen(word_l->str) + 1);
 	}
-	if(word->type != BUILT_IN)
-		word->type = src_word->type;	
-	
-	word->cmds = (char **)ft_realloc(word->cmds, (cmd_s + 2) * sizeof(char *));
-	word->cmds[cmd_s] = src_word->str;
-	word->cmds[cmd_s + 1] = NULL;
+	if (word_p->type != BUILT_IN)
+		word_p->type = word_l->type;
+	word_p->cmds = (char **)ft_realloc(word_p->cmds, (cmd_index + 2)
+			* sizeof(char *));
+	word_p->cmds[cmd_index] = word_l->str;
+	word_p->cmds[cmd_index + 1] = NULL;
 }
 
-void	add_word_lst(t_word *word, bool *is_new_cmd, int *cmd_s)
+void	add_word_lst(t_word *word_p, bool *is_new_cmd, int *cmd_index)
 {
-	ft_lstadd_back(&var()->lstep_parsed, ft_lstnew(word));
+	ft_lstadd_back(&var()->lst_parse, ft_lstnew(word_p));
 	*is_new_cmd = true;
-	*cmd_s = 0;
+	*cmd_index = 0;
 }
 
-void	parse(void)
+void	print(void)
 {
+	int		i;
 	t_word	*word;
-	t_word	*word_p;
-	bool	is_new_cmd;
-	t_list	*curr;
-	int		cmd_s;
+	t_list	*lst;
 
-	is_new_cmd = true;
-	cmd_s = 0;
-	curr = var()->words;
-	while (curr)
+	lst = var()->lst_parse;
+	while (lst)
 	{
-		word = curr->content;
-		if (is_new_cmd)
-			word_p = create_word(&is_new_cmd);
-		if (!ft_strcmpold(word->str, "|"))
-			join_str_word(word_p, word, cmd_s++);
-		if (ft_strcmpold(word->str, "|") || curr->next == NULL)
-			add_word_lst(word_p, &is_new_cmd, &cmd_s);
-		curr = curr->next;
-	}
-	curr = var()->lstep_parsed;
-	while (curr)
-	{
-		int i = 0;
-		word = curr->content;
+		i = 0;
+		word = lst->content;
 		prt("Parser : tipo = %d, palavra = %s\n", word->type, word->str);
 		while (word->cmds[i] != NULL)
 		{
 			prt("Lexer: palavra = %s\n", word->cmds[i]);
 			i++;
 		}
-		curr = curr->next;
+		lst = lst->next;
 	}
+}
+
+void	parse(void)
+{
+	t_word	*word_l;
+	t_word	*word_p;
+	t_list	*lst_lexer;
+	bool	is_new_cmd;
+	int		cmd_index;
+
+	is_new_cmd = true;
+	cmd_index = 0;
+	lst_lexer = var()->words;
+	while (lst_lexer)
+	{
+		word_l = lst_lexer->content;
+		if (is_new_cmd)
+			word_p = create_word(&is_new_cmd);
+		if (!ft_strcmpold(word_l->str, "|"))
+			join_str_word(word_p, word_l, cmd_index++);
+		if (ft_strcmpold(word_l->str, "|") || lst_lexer->next == NULL)
+			add_word_lst(word_p, &is_new_cmd, &cmd_index);
+		lst_lexer = lst_lexer->next;
+	}
+	ft_lstclear(&var()->words, free_word);
+	print();
 }
