@@ -19,7 +19,9 @@
 		"readline.h": "c",
 		"random": "c",
 		"initializer_list": "c",
-		"utility": "c"
+		"utility": "c",
+		"history.h": "c",
+		"curses.h": "c"
 	},
 	"functionHeaderExtension.headerFilePath": "/nfs/homes/analexan/minishell/include/minishell.h"
 }

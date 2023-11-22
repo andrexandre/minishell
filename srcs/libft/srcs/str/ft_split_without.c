@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 16:58:53 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/21 16:23:03 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 17:19:19 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static int	count_words_without(const char *str, char c, char *ignored_lst)
 		else if (*str == c)
 			trigger = 0;
 		j = 0;
+		
 		while (ignored_lst[j])
 			if (*str == ignored_lst[j++])
 				ignored[j - 1] = !ignored[j - 1];

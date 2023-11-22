@@ -9,9 +9,10 @@ RM		= rm -f
 NAME	= minishell
 INCLUDES = include
 
-DIR_LIBFT = libft
+DIR_LIBFT = srcs/libft
+INCLUDE_LIB = $(DIR_LIBFT)/include
 LIB = $(DIR_LIBFT)/libft.a
-CFLAGS = -Wall -Wextra -Werror -lreadline -I$(INCLUDES) -Ilibft/include -g
+CFLAGS = -Wall -Wextra -Werror -lreadline -I$(INCLUDES) -I $(INCLUDE_LIB) -g
 
 SRCDIR	= srcs
 OBJDIR	= objs
@@ -26,17 +27,21 @@ SRC		= minishell_utils.c\
 		  builtin/ep_lst.c \
 		  builtin/ep_lst2.c
 
+SRC		:= $(addprefix srcs/,$(SRC))
+
 OBJ		= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 
 all:	$(NAME)
 
-$(NAME): $(OBJ)
+$(LIB): | $(OBJDIR)
 	@make -s -C $(DIR_LIBFT)
+
+$(NAME): $(LIB) $(OBJ)
 	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -lreadline
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
 
-
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(LIB)
+	@mkdir -p $(@D)
 	@cc $(CFLAGS) -c $< -o $@
 
 $(OBJDIR):

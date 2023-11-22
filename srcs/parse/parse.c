@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/21 19:35:49 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/21 22:41:40 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ t_word	*create_word(bool *is_new_cmd)
 
 void	join_str_word(t_word *word, t_word *src_word, int cmd_s)
 {
-	//int		i;
-	//i = 0;
 	if (word->str == NULL)
 		word->str = ft_strdup(src_word->str);
 	else
