@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 15:07:37 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:42:29 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ void	cmd_loop(char **ep)
 		if (!buf)
 			break ;
 		add_history(buf);
-		// var()->lstep_parsed = NULL;
-		// var()->words = NULL;
-		// lexer(buf);
-		// parse();
+		var()->lstep_parsed = NULL;
+		var()->words = NULL;
+		lexer(buf);
+		parse();
 		cmdargs = ft_split(buf, ' ');
 		int i = -1;
 		while (cmdargs[++i])

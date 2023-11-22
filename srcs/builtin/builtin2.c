@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 13:10:50 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:42:05 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 void	ep_change_value(char *key, char *value)
 {
-	t_eplist	*node;
+	//t_eplist	*node;
 	char		*str;
 	char		*temp;
 
-	node = get_env(key);
+	//node = get_env(key);
 	temp = ft_strjoin(key, "=");
 	str = ft_strjoin(temp, value);
 	free(temp);

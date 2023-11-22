@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/20 11:04:34 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 17:17:23 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ long long			ft_atoll(const char *nptr);
 
 char				*ft_strdup(const char *s);
 void				*ft_calloc(size_t nmemb, size_t size);
+void 				*ft_realloc(void *ptr, size_t new_size);
+
 
 void				ft_bzero(void *s, size_t n);
 void				*ft_memset(void *s, int c, size_t n);

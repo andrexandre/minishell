@@ -14,6 +14,9 @@ NAME = libft.a
 
 PROJECT = libft
 
+SRCDIR	= srcs
+OBJDIR	= objs
+
 SRCS = \
    file/ft_putstr_fd.c\
    file/ft_putnbr_fd.c\
@@ -35,6 +38,7 @@ SRCS = \
    \
    mem/ft_bzero.c\
    mem/ft_calloc.c\
+   mem/ft_realloc.c\
    mem/ft_memchr.c\
    mem/ft_memcmp.c\
    mem/ft_memmove.c\
@@ -79,12 +83,16 @@ SRCS = \
    \
    get_next_line/get_next_line_bonus.c\
 
-OBJS = $(patsubst %.c,%.o,$(SRCS))
+INCLUDES = include
+
+SRCS		:= $(addprefix srcs/,$(SRCS))
+
+OBJS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))
 
 CC= gcc
 RM= @rm -f
 
-CFLAGS = -Wall -I ../include -Wextra -Werror -g #-fsanitize=address
+CFLAGS = -I $(INCLUDES) -Wall -Wextra -Werror -g #-fsanitize=address
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@   
@@ -92,7 +100,13 @@ CFLAGS = -Wall -I ../include -Wextra -Werror -g #-fsanitize=address
 $(NAME): $(OBJS)         
 	@ar -rcs $(NAME) $(OBJS)
 	@printf "\n$(BLUE)$(PROJECT)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
-	@make clean
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(LIB)
+	@mkdir -p $(@D)
+	@cc $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
 
 all:	$(NAME)
 
