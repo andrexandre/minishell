@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 16:33:54 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 16:58:39 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,24 @@ typedef struct s_eplist
 	struct s_eplist	*prev;
 	struct s_eplist	*next;
 }					t_eplist;
+/*
+char *string;
 
+
+t_word	*ptr = var()->words->content;
+string = ptr->str;
+
+string = var()->words->word->str;
+*/
+//
+// string = var()->words->str;
 typedef struct s_var
 {
-	int			signal;
+	int			status;
 	char		**paths;
 	int			ac;
 	char		**av;
+	char		**cmdargs;
 	t_eplist	*epl;
 	t_list		*words;
 	t_list		*lstep_parsed;
@@ -66,11 +77,12 @@ void		free_all(void);
 int			run_echo(void);
 int			run_env(void);
 int			run_export(void);
-int			run_pwd(void);
+int			run_pwd(void); // a 0
 int			run_unset(void);
 
-// builtin
+// builtin2
 int			run_cd(void);
+void		ep_change_value(char *key, char *value);
 
 // minishell_exec
 int			builtin(int *status);
@@ -96,6 +108,5 @@ void		print_eplst(t_eplist *lst);
 // ep_lst2
 t_eplist	*get_env(char *key);
 t_eplist	*ep_export_value(char *str);
-
 
 #endif

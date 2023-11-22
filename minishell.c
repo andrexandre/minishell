@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 15:07:37 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 19:14:22 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	free_all(void)
 
 void	cmd_loop(char **ep)
 {
-	char	**cmdargs;
 	char	*buf;
 	int		status;
 
@@ -35,14 +34,14 @@ void	cmd_loop(char **ep)
 		// var()->words = NULL;
 		// lexer(buf);
 		// parse();
-		cmdargs = ft_split(buf, ' ');
+		var()->cmdargs = ft_split(buf, ' ');
 		int i = -1;
-		while (cmdargs[++i])
-			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i])));
+		while (var()->cmdargs[++i])
+			ft_lstadd_back(&var()->words, ft_lstnew(var()->cmdargs[i]));
 		if (builtin(&status))
 			cmd_execute(ep);
 		ft_lstclear(&var()->words, free);
-		free_strs(cmdargs);
+		free(var()->cmdargs);
 		free(buf);
 	}
 }
@@ -80,22 +79,25 @@ void	create_lstep(char **ep)
 {
 	int		i;
 	char	*cwd;
-	char	*str;
 
 	i = -1;
-	cwd = NULL;
 	while (ep[++i])
-		ep_ladd_back(&var()->epl, ep_lnew(ft_strdup(ep[i])));
-	cwd = getcwd(cwd, 0);
+		ep_ladd_back(&var()->epl, ep_lnew(ep[i]));
+	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
 		perror("getcwd");
 		return ;
 	}
-	str = ft_strjoin("PWD=", cwd);
+	ep_change_value("PWD", cwd);
 	free(cwd);
-	ep_export_value(str);
-	free(str);
+	if (get_env("SHLVL"))
+		i = ft_atoi(get_env("SHLVL")->data) + 1;
+	else
+		i = 1;
+	cwd = ft_itoa(i);
+	ep_change_value("SHLVL", cwd);
+	free(cwd);
 }
 
 void	handler(int num)
@@ -122,10 +124,13 @@ int	main(int ac, char **av, char **ep)
 	cmd_loop(ep);
 	prt("exit\n");
 	free_all();
-	return (0);
+	return (var()->status);
 }
 
 /*
+pass envp to execve in char **
+fix error when other processes are running and you type ctrl+C
+fix SHLVL and _. PATH is impossible
 gets as input the last </<< from the prompt
 redirect from the last redirected file
 

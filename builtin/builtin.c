@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 17:05:31 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 16:51:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@ int	run_echo(void)
 
 int	run_env(void)
 {
-	if (var()->words->next)
-		prt("env: too many arguments\n");
-	else
+	if (!var()->words->next)
 		print_eplst(var()->epl);
 	return (0);
 }
@@ -71,12 +69,11 @@ int	run_pwd(void)
 {
 	char	*cwd;
 
-	cwd = NULL;
-	cwd = getcwd(cwd, 0);
+	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
 		perror("getcwd");
-		return (0);
+		return (1);
 	}
 	prt("%s\n", cwd);
 	free(cwd);
@@ -87,12 +84,18 @@ int	run_unset(void)
 {
 	t_eplist	*curr;
 	t_list		*new;
+	int			exit_code;
 
+	exit_code = 0;
 	new = var()->words->next;
 	while (new)
 	{
 		if (ft_strchr(new->content, '='))
+		{
 			prt("unset: `%s': not a valid identifier\n", new->content);
+			exit_code = 1;
+			new = new->next;
+		}
 		curr = get_env(new->content);
 		if (curr)
 		{
@@ -109,5 +112,5 @@ int	run_unset(void)
 		}
 		new = new->next;
 	}
-	return (0);
+	return (exit_code);
 }
