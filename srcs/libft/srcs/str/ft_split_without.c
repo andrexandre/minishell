@@ -6,12 +6,11 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 16:58:53 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/22 17:19:19 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 22:01:04 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
 
 bool	ft_ignored_lst(bool *ignored, char *ignored_lst)
 {
@@ -63,12 +62,12 @@ static int	count_words_without(const char *str, char c, char *ignored_lst)
 		else if (*str == c)
 			trigger = 0;
 		j = 0;
-		
 		while (ignored_lst[j])
 			if (*str == ignored_lst[j++])
 				ignored[j - 1] = !ignored[j - 1];
 		str++;
 	}
+	free(ignored);
 	return (i);
 }
 
@@ -95,7 +94,7 @@ char	**ft_write_words_without(char **split, char const *s, char c,
 		if (s[i] != c && start < 0)
 			start = i;
 		else if ((s[i] == c || i == ft_strlen(s)) && start >= 0
-			&& !ft_ignored_lst(ignored, ignored_lst))
+				&& !ft_ignored_lst(ignored, ignored_lst))
 		{
 			split[j] = ft_calloc((i - start + 1), sizeof(char));
 			if (!split[j])
@@ -115,7 +114,7 @@ char	**ft_split_without(char const *s, char c, char *ignored_lst)
 	char	**split;
 
 	split = ft_calloc((count_words_without(s, c, ignored_lst) + 1),
-			sizeof(char *));
+						sizeof(char *));
 	if (!s || !split)
 		return (0);
 	return (ft_write_words_without(split, s, c, ignored_lst));

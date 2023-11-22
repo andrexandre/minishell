@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/17 12:17:38 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 20:56:14 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,13 @@ void	print_lst(t_list *lst, int n)
 			prt("%s\n", lst->content);
 		lst = lst->next;
 	}
+}
+
+void free_word(void *arg)
+{
+	t_word	*word;
+	
+	word = (t_word*) arg;
+	free(word);
 }
 

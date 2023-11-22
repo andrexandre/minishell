@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/22 16:37:12 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/22 22:08:33 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,24 @@ void	search_and_replace(char *str, char src, char dest)
 	}
 }
 
-bool	cmd(char *str)
+void	init(char *str, enum e_type type)
 {
 	t_word	*word;
 
-	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo") || ft_strcmpold(str, "env")
-		|| ft_strcmpold(str, "export") || ft_strcmpold(str, "pwd") || ft_strcmpold(str,
-			"unset") || ft_strcmpold(str, "exit"))
+	word = ft_calloc(sizeof(t_word), 1);
+	word->type = type;
+	word->str = ft_strdup(str);
+	ft_lstadd_back(&var()->words, ft_lstnew(word));
+}
+
+bool	cmd(char *str)
+{
+	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
+		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
+		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
+		|| ft_strcmpold(str, "exit"))
 	{
-		word = ft_calloc(sizeof(t_word), 1);
-		word->type = BUILT_IN;
-		word->is_builtin = true;
-		word->str = ft_strdup(str);
-		ft_lstadd_back(&var()->words, ft_lstnew(word));
+		init(str, BUILT_IN);
 		return (true);
 	}
 	return (false);
@@ -45,17 +50,11 @@ bool	cmd(char *str)
 
 bool	token(char *str)
 {
-	t_word	*word;
-
-	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str, "<<"))
-		|| (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
+	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str,
+				"<<")) || (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
 	{
-		word = ft_calloc(sizeof(t_word), 1);
-		word->type = TOKEN;
-		word->is_builtin = false;
-		word->str = ft_strdup(str);
-		ft_lstadd_back(&var()->words, ft_lstnew(word));
-    return (true);
+		init(str, TOKEN);
+		return (true);
 	}
 	return (false);
 }
@@ -64,24 +63,18 @@ void	lexer(char *str)
 {
 	int		i;
 	char	**splitted;
-	t_word	*word;
+	char	*trimmed;
 
 	i = 0;
 	search_and_replace(str, '\t', ' ');
-	char *trimmed = ft_strtrim(str, " ");
-	splitted = ft_split_without(trimmed, ' ',"'\"");
+	trimmed = ft_strtrim(str, " ");
+	splitted = ft_split_without(trimmed, ' ', "'\"");
 	free(trimmed);
 	while (splitted[i])
 	{
 		if (!cmd(splitted[i]) && !token(splitted[i]))
-		{
-			word = ft_calloc(sizeof(t_word), 1);
-			word->type = WORD;
-			word->is_builtin = false;
-			word->str = ft_strdup(splitted[i]);
-			ft_lstadd_back(&var()->words, ft_lstnew(word));
-		}
+			init(splitted[i], WORD);
 		i++;
 	}
-	ft_cleanup_split(splitted, i);
+	free_strs(splitted);
 }
