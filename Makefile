@@ -37,7 +37,7 @@ $(LIB): | $(OBJDIR)
 	@make -s -C $(DIR_LIBFT)
 
 $(NAME): $(LIB) $(OBJ)
-	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -lreadline
+	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) 
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(LIB)

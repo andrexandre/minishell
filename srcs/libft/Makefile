@@ -111,10 +111,11 @@ $(OBJDIR):
 all:	$(NAME)
 
 clean :
-	$(RM) $(OBJS)
+	$(RM) $(OBJDIR)/*.o
 
 fclean :
 	$(RM) $(NAME)
+	@$(RM)r objs
 	@printf "\n$(BLUE)$(PROJECT)$(END) $(GREEN)All stuff removed 🗑️\n$(END)"
 
 re: fclean all
