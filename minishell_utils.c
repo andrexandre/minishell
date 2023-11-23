@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 16:08:20 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:02:29 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	*free_strs(char **strs)
 void	print_lst(t_list *lst, int n)
 {
 	char	*str;
+
 	while (lst)
 	{
 		str = lst->content;
@@ -66,12 +67,10 @@ void	print_lst(t_list *lst, int n)
 			else
 				prt("\n");
 		}
-		else
-		if (!lst->next && n)
+		else if (!lst->next && n)
 			prt("%s", lst->content);
 		else
 			prt("%s\n", lst->content);
 		lst = lst->next;
 	}
 }
-

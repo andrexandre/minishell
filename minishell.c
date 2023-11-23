@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 19:14:22 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:01:54 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	cmd_loop(char **ep)
 		// lexer(buf);
 		// parse();
 		var()->cmdargs = ft_split(buf, ' ');
-		int i = -1;
+		int	i = -1;
 		while (var()->cmdargs[++i])
 			ft_lstadd_back(&var()->words, ft_lstnew(var()->cmdargs[i]));
 		if (builtin(&status))
@@ -128,10 +128,13 @@ int	main(int ac, char **av, char **ep)
 }
 
 /*
+Stop saving newlines
+send SIGSctrl+c-\-d) in a cmd like cat
+make the env path work as intended
 pass envp to execve in char **
-fix error when other processes are running and you type ctrl+C
 fix SHLVL and _. PATH is impossible
 gets as input the last </<< from the prompt
+Execution "tree" WIP:
 redirect from the last redirected file
 
 redirect to the last redirected file

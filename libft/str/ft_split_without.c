@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_without.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 16:58:53 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/21 14:08:28 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:04:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
 
 bool	ft_ignored_lst(bool *ignored, char *ignored_lst)
 {

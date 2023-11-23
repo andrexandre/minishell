@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 16:51:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:03:37 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ int	run_unset(void)
 			prt("unset: `%s': not a valid identifier\n", new->content);
 			exit_code = 1;
 			new = new->next;
+			continue ;
 		}
 		curr = get_env(new->content);
 		if (curr)

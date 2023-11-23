@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 19:12:44 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:01:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int	builtin(int *status)
 		var()->status = (*run_pwd)();
 	else if (!ft_strcmp(var()->words->content, "unset"))
 		var()->status = (*run_unset)();
-	else if (!ft_strcmp(var()->words->content, "exit") || !ft_strcmp(var()->words->content, "q"))
+	else if (!ft_strcmp(var()->words->content, "exit")
+		|| !ft_strcmp(var()->words->content, "q"))
 		*status = 0;
 	else
 		return (1);
