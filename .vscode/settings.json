@@ -21,7 +21,13 @@
 		"initializer_list": "c",
 		"utility": "c",
 		"history.h": "c",
-		"curses.h": "c"
+		"curses.h": "c",
+		"chrono": "c",
+		"compare": "c",
+		"functional": "c",
+		"ratio": "c",
+		"tuple": "c",
+		"type_traits": "c"
 	},
 	"functionHeaderExtension.headerFilePath": "/nfs/homes/analexan/minishell/include/minishell.h"
 }

@@ -6,20 +6,22 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:32:46 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/16 13:40:46 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:27:58 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstnew(void *content)
+t_list	*ft_lstnew(char *str, char **cmds, enum e_type type)
 {
 	t_list	*node;
 
 	node = (t_list *)ft_calloc(1, sizeof(t_list));
 	if (!node)
 		return (NULL);
-	node->content = content;
+	node->str = str;
+	node->cmds = cmds;
+	node->type = type;
 	node->next = NULL;
 	node->prev = NULL;
 	return (node);

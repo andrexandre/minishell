@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/22 22:08:33 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:24:39 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,6 @@ void	search_and_replace(char *str, char src, char dest)
 	}
 }
 
-void	init(char *str, enum e_type type)
-{
-	t_word	*word;
-
-	word = ft_calloc(sizeof(t_word), 1);
-	word->type = type;
-	word->str = ft_strdup(str);
-	ft_lstadd_back(&var()->words, ft_lstnew(word));
-}
-
 bool	cmd(char *str)
 {
 	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
@@ -42,7 +32,8 @@ bool	cmd(char *str)
 		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
 		|| ft_strcmpold(str, "exit"))
 	{
-		init(str, BUILT_IN);
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL,
+				BUILT_IN));
 		return (true);
 	}
 	return (false);
@@ -53,7 +44,7 @@ bool	token(char *str)
 	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str,
 				"<<")) || (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
 	{
-		init(str, TOKEN);
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, TOKEN));
 		return (true);
 	}
 	return (false);
@@ -73,7 +64,8 @@ void	lexer(char *str)
 	while (splitted[i])
 	{
 		if (!cmd(splitted[i]) && !token(splitted[i]))
-			init(splitted[i], WORD);
+			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(splitted[i]),
+					NULL, WORD));
 		i++;
 	}
 	free_strs(splitted);

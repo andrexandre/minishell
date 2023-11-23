@@ -6,14 +6,13 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 22:01:30 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 21:58:02 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "lexer.h"
 # include "libft.h"
 # include <curses.h>
 # include <dirent.h>
@@ -60,7 +59,7 @@ typedef struct s_var
 
 // minishell
 void				free_all(void);
-void				free_word(void *arg);
+void				free_lst(t_list *word);
 
 // builtin
 int					run_echo(void);
