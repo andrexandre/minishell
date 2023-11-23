@@ -6,13 +6,13 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:30:15 by jealves-          #+#    #+#             */
-/*   Updated: 2023/09/30 10:16:32 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 21:53:10 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_lstclear(t_list **lst, void (*del)(t_list *))
 {
 	t_list	*current;
 

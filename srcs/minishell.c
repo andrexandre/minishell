@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 21:59:11 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:29:35 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	cmd_loop(char **ep)
 	char	**cmdargs;
 	char	*buf;
 	int		status;
+	int		i;
 
 	status = 1;
 	while (status)
@@ -36,13 +37,14 @@ void	cmd_loop(char **ep)
 		lexer(buf);
 		parse();
 		cmdargs = ft_split(buf, ' ');
-		int i = -1;
+		i = -1;
 		while (cmdargs[++i])
-			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i])));
+			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i]), NULL,
+					NONE));
 		if (builtin(&status))
 			cmd_execute(ep);
-		ft_lstclear(&var()->words, free);
-		ft_lstclear(&var()->lst_parse, free_word);
+		ft_lstclear(&var()->words, free_lst);
+		ft_lstclear(&var()->lst_parse, free_lst);
 		free_strs(cmdargs);
 		free(buf);
 	}

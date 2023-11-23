@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 19:42:05 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:28:37 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	run_cd(void)
 			str = get_env("HOME")->data;
 	}
 	else
-		str = var()->words->next->content;
+		str = var()->words->next->str;
 	if (!chdir(str))
 	{
 		new = get_env("PWD");

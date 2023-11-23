@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 20:56:14 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:28:54 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,18 +52,15 @@ void	print_lst(t_list *lst, int n)
 	while (lst)
 	{
 		if (!lst->next && n)
-			prt("%s", lst->content);
+			prt("%s", lst->str);
 		else
-			prt("%s\n", lst->content);
+			prt("%s\n", lst->str);
 		lst = lst->next;
 	}
 }
 
-void free_word(void *arg)
+void	free_lst(t_list *word)
 {
-	t_word	*word;
-	
-	word = (t_word*) arg;
-	free(word);
+	free_strs(word->cmds);
+	free(word->str);
 }
-

@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/21 19:40:28 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:09:40 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@ int	builtin(int *status)
 {
 	if (!var()->words)
 		return (0);
-	else if (!ft_strcmp(var()->words->content, "cd"))
+	else if (!ft_strcmp(var()->words->str, "cd"))
 		return (*run_cd)();
-	else if (!ft_strcmp(var()->words->content, "echo"))
+	else if (!ft_strcmp(var()->words->str, "echo"))
 		return (*run_echo)();
-	else if (!ft_strcmp(var()->words->content, "env"))
+	else if (!ft_strcmp(var()->words->str, "env"))
 		return (*run_env)();
-	else if (!ft_strcmp(var()->words->content, "export"))
+	else if (!ft_strcmp(var()->words->str, "export"))
 		return (*run_export)();
-	else if (!ft_strcmp(var()->words->content, "pwd"))
+	else if (!ft_strcmp(var()->words->str, "pwd"))
 		return (*run_pwd)();
-	else if (!ft_strcmp(var()->words->content, "unset"))
+	else if (!ft_strcmp(var()->words->str, "unset"))
 		return (*run_unset)();
-	else if (!ft_strcmp(var()->words->content, "exit") || !ft_strcmp(var()->words->content, "q"))
+	else if (!ft_strcmp(var()->words->str, "exit") || !ft_strcmp(var()->words->str, "q"))
 		*status = 0;
 	return (*status);
 }
@@ -64,7 +64,7 @@ void	cmd_execute(char **ep)
 	char	*cmd;
 	int		pid;
 
-	cmd = search_cmd(var()->words->content);
+	cmd = search_cmd(var()->words->str);
 	if (!cmd)
 		return ;
 	pid = fork();

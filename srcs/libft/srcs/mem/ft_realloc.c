@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 23:02:07 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/22 22:02:53 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:27:43 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	*ft_realloc(void *ptr, size_t new_size)
 {
 	void	*new_ptr;
-	int		i;
+	size_t	i;
 
 	i = 0;
 	new_ptr = malloc(new_size);

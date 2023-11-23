@@ -12,14 +12,14 @@ INCLUDES = include
 DIR_LIBFT = srcs/libft
 INCLUDE_LIB = $(DIR_LIBFT)/include
 LIB = $(DIR_LIBFT)/libft.a
-CFLAGS = -Wall -Wextra -Werror -lreadline -I$(INCLUDES) -I $(INCLUDE_LIB) -g #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDES) -I $(INCLUDE_LIB) -g #-fsanitize=address
 
 SRCDIR	= srcs
 OBJDIR	= objs
 
 SRC		= minishell_utils.c\
 		  minishell.c \
-		  lexer/lexer.c \
+		  parse/lexer.c \
 		  parse/parse.c \
 		  minishell_exec.c \
 		  builtin/builtin.c \
@@ -37,7 +37,7 @@ $(LIB): | $(OBJDIR)
 	@make -s -C $(DIR_LIBFT)
 
 $(NAME): $(LIB) $(OBJ)
-	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) #-lreadline
+	@cc $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -lreadline
 	@echo "\n$(BLUE)$(NAME)$(END) $(GREEN)Stuff compiled 🛠️\n$(END)"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(LIB)

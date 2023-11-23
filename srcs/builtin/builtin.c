@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 17:05:31 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:10:13 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int	run_echo(void)
 	char	*str;
 
 	i = 2;
-	if (var()->words->next && !ft_strncmp(var()->words->next->content, "-n", 2))
+	if (var()->words->next && !ft_strncmp(var()->words->next->str, "-n", 2))
 	{
-		str = var()->words->next->content;
+		str = var()->words->next->str;
 		while (str[i] && str[i] == 'n')
 			i++;
 		if (!str[i])
@@ -60,8 +60,8 @@ int	run_export(void)
 	new = var()->words;
 	while (new)
 	{
-		if (ft_strchr(new->content, '='))
-			ep_export_value(new->content);
+		if (ft_strchr(new->str, '='))
+			ep_export_value(new->str);
 		new = new->next;
 	}
 	return (0);
@@ -91,9 +91,9 @@ int	run_unset(void)
 	new = var()->words->next;
 	while (new)
 	{
-		if (ft_strchr(new->content, '='))
-			prt("unset: `%s': not a valid identifier\n", new->content);
-		curr = get_env(new->content);
+		if (ft_strchr(new->str, '='))
+			prt("unset: `%s': not a valid identifier\n", new->str);
+		curr = get_env(new->str);
 		if (curr)
 		{
 			if (!curr->prev)
