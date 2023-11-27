@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/23 22:28:54 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:29:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,25 @@ void	*free_strs(char **strs)
 
 void	print_lst(t_list *lst, int n)
 {
+	char	*str;
+
 	while (lst)
 	{
-		if (!lst->next && n)
+		str = lst->str;
+		if (ft_strchr(str, '$'))
+		{
+			str = ft_strchr(str, '$');
+			str++;
+			if (!ft_strcmp(str, "?"))
+				prt("%d", var()->status);
+			else if (get_env(str))
+				prt("%s", get_env(str)->data);
+			if (lst->next)
+				prt(" ");
+			else
+				prt("\n");
+		}
+		else if (!lst->next && n)
 			prt("%s", lst->str);
 		else
 			prt("%s\n", lst->str);

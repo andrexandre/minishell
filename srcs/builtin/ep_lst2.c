@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 16:38:23 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 10:35:23 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_eplist	*ep_export_value(char *str)
 			ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
 	curr = get_env(name);
 	if (!curr)
-		ep_ladd_back(&var()->epl, ep_lnew(ft_strdup(str)));
+		ep_ladd_back(&var()->epl, ep_lnew(str));
 	else
 	{
 		free(curr->str);

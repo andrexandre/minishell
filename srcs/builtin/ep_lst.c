@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/20 16:22:46 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/22 15:28:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_eplist	*ep_lnew(char *str)
 	node = (t_eplist *)ft_calloc(1, sizeof(t_eplist));
 	if (!node)
 		return (NULL);
-	node->str = str;
+	node->str = ft_strdup(str);
 	if (str)
 	{
 		node->name = ft_substr(node->str, 0,
@@ -91,7 +91,7 @@ int	main(int ac, char **av, char **ep)
 
 	i = -1;
 	while (ep[++i])
-		ep_ladd_back(&var()->epl, ep_lnew(ft_strdup(ep[i])));
+		ep_ladd_back(&var()->epl, ep_lnew(ep[i]));
 	lst = var()->epl;
 		
 	ep_export_value("ASD=ASD");

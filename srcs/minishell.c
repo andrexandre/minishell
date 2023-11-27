@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/23 22:29:35 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:47:55 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,8 @@ void	free_all(void)
 
 void	cmd_loop(char **ep)
 {
-	char	**cmdargs;
 	char	*buf;
 	int		status;
-	int		i;
 
 	status = 1;
 	while (status)
@@ -36,8 +34,8 @@ void	cmd_loop(char **ep)
 		var()->words = NULL;
 		lexer(buf);
 		parse();
-		cmdargs = ft_split(buf, ' ');
-		i = -1;
+		char	**cmdargs = ft_split(buf, ' ');
+		int	i = -1;
 		while (cmdargs[++i])
 			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i]), NULL,
 					NONE));
@@ -83,22 +81,25 @@ void	create_lstep(char **ep)
 {
 	int		i;
 	char	*cwd;
-	char	*str;
 
 	i = -1;
-	cwd = NULL;
 	while (ep[++i])
-		ep_ladd_back(&var()->epl, ep_lnew(ft_strdup(ep[i])));
-	cwd = getcwd(cwd, 0);
+		ep_ladd_back(&var()->epl, ep_lnew(ep[i]));
+	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
 		perror("getcwd");
 		return ;
 	}
-	str = ft_strjoin("PWD=", cwd);
+	ep_change_value("PWD", cwd);
 	free(cwd);
-	ep_export_value(str);
-	free(str);
+	if (get_env("SHLVL"))
+		i = ft_atoi(get_env("SHLVL")->data) + 1;
+	else
+		i = 1;
+	cwd = ft_itoa(i);
+	ep_change_value("SHLVL", cwd);
+	free(cwd);
 }
 
 void	handler(int num)
@@ -125,11 +126,17 @@ int	main(int ac, char **av, char **ep)
 	cmd_loop(ep);
 	prt("exit\n");
 	free_all();
-	return (0);
+	return (var()->status);
 }
 
 /*
+Stop saving newlines
+send SIGSctrl+c-\-d) in a cmd like cat
+make the env path work as intended
+pass envp to execve in char **
+fix SHLVL and _. PATH is impossible
 gets as input the last </<< from the prompt
+Execution "tree" WIP:
 redirect from the last redirected file
 
 redirect to the last redirected file
