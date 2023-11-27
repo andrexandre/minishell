@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/23 21:58:02 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:47:12 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-typedef struct s_word
-{
-	enum e_type		type;
-	char			*str;
-	char			**cmds;
-}					t_word;
-
 typedef struct s_eplist
 {
 	char			*str;
@@ -48,14 +41,15 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int				signal;
-	char			**paths;
-	int				ac;
-	char			**av;
-	t_eplist		*epl;
-	t_list			*words;
-	t_list			*lst_parse;
-}					t_var;
+	int			status;
+	char		**paths;
+	int			ac;
+	char		**av;
+	char		**cmdargs;
+	t_eplist	*epl;
+	t_list		*words;
+	t_list		*lst_parse;
+}				t_var;
 
 // minishell
 void				free_all(void);
@@ -68,8 +62,9 @@ int					run_export(void);
 int					run_pwd(void);
 int					run_unset(void);
 
-// builtin
+// builtin2
 int					run_cd(void);
+void				ep_change_value(char *key, char *value);
 
 // minishell_exec
 int					builtin(int *status);
