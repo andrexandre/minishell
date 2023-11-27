@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/23 22:24:39 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/27 12:39:27 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	search_and_replace(char *str, char src, char dest)
 	}
 }
 
-bool	cmd(char *str)
+bool	is_builtin(char *str)
 {
 	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
 		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
@@ -39,15 +39,21 @@ bool	cmd(char *str)
 	return (false);
 }
 
-bool	token(char *str)
+bool	is_token(char *str)
 {
-	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str,
-				"<<")) || (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
-	{
-		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, TOKEN));
-		return (true);
-	}
-	return (false);
+	if(ft_strcmpold(str, "|"))
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, PIPE));
+	else if(ft_strcmpold(str, "<"))
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN));
+	else if(ft_strcmpold(str, "<<"))
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN_D));
+	else if(ft_strcmpold(str, ">"))
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT));
+	else if(ft_strcmpold(str, ">>"))
+		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT_D));
+	else
+		return(false);
+	return(true);
 }
 
 void	lexer(char *str)
@@ -63,7 +69,7 @@ void	lexer(char *str)
 	free(trimmed);
 	while (splitted[i])
 	{
-		if (!cmd(splitted[i]) && !token(splitted[i]))
+		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
 			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(splitted[i]),
 					NULL, WORD));
 		i++;
