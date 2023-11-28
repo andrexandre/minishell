@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 22:36:07 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 20:47:51 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:41:39 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,33 @@
 
 void	*ft_memcat(void *v1, void *v2)
 {
-	size_t len;
-	size_t i;
-	size_t len_s1;
-	char *s1;
-	char *s2;
-	char *dest;
+	size_t	len;
+	size_t	i;
+	char	*s2;
+	char	*dest;
 
 	i = 0;
-	s1 = (char *)v1;
 	s2 = (char *)v2;
-	len_s1 = ft_strlen(s1);
-	len = len_s1 + ft_strlen(s2);
-	dest = ft_calloc(len, sizeof(s1));
-	ft_memcpy(dest, s1 , len_s1);
+	len = ft_strlen((char *)v1) + ft_strlen(s2);
+	dest = ft_calloc(len, sizeof(v1));
+	len = ft_strlen((char *)v1);
+	ft_memcpy(dest, (char *)v1, len);
 	while (i <= ft_strlen(s2))
 	{
-		dest[len_s1] = s2[i];
-		len_s1++;
+		dest[len] = s2[i];
 		i++;
+		len++;
 	}
-	free(s1);
+	free((char *)v1);
 	return (dest);
 }
 
 /*int main()
 {
-    char src[] = "Jessica";
-    char dest[30] = "meu nome é ";
-    size_t i = ft_strlcat(dest,src,20);
+	char src[] = "Jessica";
+	char dest[30] = "meu nome é ";
+	size_t i = ft_strlcat(dest,src,20);
 
-    printf("%ld\n", i);
-    printf("%s", dest);
+	printf("%ld\n", i);
+	printf("%s", dest);
 }*/

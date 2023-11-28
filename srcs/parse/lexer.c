@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 22:20:31 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:35:21 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,24 @@ bool	is_builtin(char *str)
 
 bool	is_token(char *str)
 {
-	if(ft_strcmpold(str, "|"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, PIPE));
-	else if(ft_strcmpold(str, "<"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN));
-	else if(ft_strcmpold(str, "<<"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN_D));
-	else if(ft_strcmpold(str, ">"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT));
-	else if(ft_strcmpold(str, ">>"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT_D));
+	if (ft_strcmpold(str, "|"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+				PIPE));
+	else if (ft_strcmpold(str, "<"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+				REDIRECT_IN));
+	else if (ft_strcmpold(str, "<<"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+				REDIRECT_IN_D));
+	else if (ft_strcmpold(str, ">"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+				REDIRECT_OUT));
+	else if (ft_strcmpold(str, ">>"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+				REDIRECT_OUT_D));
 	else
-		return(false);
-	return(true);
+		return (false);
+	return (true);
 }
 
 void	lexer(char *str)
@@ -67,10 +72,10 @@ void	lexer(char *str)
 	trimmed = ft_strtrim(str, " ");
 	splitted = ft_split_without(trimmed, ' ', "'\"");
 	free(trimmed);
-	if(splitted == NULL)
+	if (splitted == NULL)
 	{
 		prt("unclosed quote\n");
-		return;
+		return ;
 	}
 	while (splitted[i])
 	{

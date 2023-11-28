@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 20:48:06 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:35:12 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@ int	ft_strlen_matrix(char **str)
 		i++;
 	return (i);
 }
-int count_to_pipe(t_list *words)
+
+int	count_to_pipe(t_list *words)
 {
-	int i;
-	t_list *cur;
+	int		i;
+	t_list	*cur;
 
 	i = 1;
 	cur = words;
@@ -33,14 +34,15 @@ int count_to_pipe(t_list *words)
 		i++;
 		cur = cur->next;
 	}
-	return i;	
+	return (i);
 }
 
 t_list	*create_word(bool *is_new_cmd, t_list *words)
 {
 	t_list	*word_p;
 
-	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), count_to_pipe(words)), WORD);
+	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), count_to_pipe(words)),
+			WORD);
 	*is_new_cmd = false;
 	return (word_p);
 }
@@ -51,24 +53,24 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 		word_p->str = ft_strdup(word_l->str);
 	else
 	{
-		word_p->str = (char *) ft_memcat(word_p->str, " ");
-		word_p->str = (char *) ft_memcat(word_p->str, word_l->str);
+		word_p->str = (char *)ft_memcat(word_p->str, " ");
+		word_p->str = (char *)ft_memcat(word_p->str, word_l->str);
 	}
 	if (word_p->type == WORD)
 		word_p->type = word_l->type;
-
 	word_p->cmds[cmd_index] = ft_strdup(word_l->str);
 	word_p->cmds[cmd_index + 1] = NULL;
 }
 
 void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 {
-	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str,
-			word_p->cmds, word_p->type));
+	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str, word_p->cmds,
+			word_p->type));
 	free(word_p);
 	*is_new_cmd = true;
 	*cmd_index = 0;
 }
+
 void	print(void)
 {
 	int		i;
