@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:14:36 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:08:42 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 
 void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 {
-	ft_lstadd_back(&var()->lst_parse, ft_lstnew(word_p->str,
+	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str,
 			word_p->cmds, word_p->type));
 	free(word_p);
 	*is_new_cmd = true;
@@ -62,7 +62,7 @@ void	print(void)
 	int		i;
 	t_list	*word;
 
-	word = var()->lst_parse;
+	word = var()->words;
 	while (word)
 	{
 		i = 0;
@@ -85,7 +85,7 @@ void	parse(void)
 
 	is_new_cmd = true;
 	cmd_index = 0;
-	word_l = var()->words;
+	word_l = var()->lst_lexer;
 	while (word_l)
 	{
 		if (is_new_cmd)
@@ -96,6 +96,6 @@ void	parse(void)
 			add_word_lst(word_p, &is_new_cmd, &cmd_index);
 		word_l = word_l->next;
 	}
-	ft_lstclear(&var()->words, free_lst);
+	ft_lstclear(&var()->lst_lexer, free_lst);
 	print();
 }

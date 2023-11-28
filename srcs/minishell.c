@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 18:47:55 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:08:42 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,19 @@ void	cmd_loop(char **ep)
 		if (!buf)
 			break ;
 		add_history(buf);
-		var()->lst_parse = NULL;
 		var()->words = NULL;
+		var()->lst_lexer = NULL;
 		lexer(buf);
 		parse();
 		char	**cmdargs = ft_split(buf, ' ');
 		int	i = -1;
 		while (cmdargs[++i])
-			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i]), NULL,
+			ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(cmdargs[i]), NULL,
 					NONE));
 		if (builtin(&status))
 			cmd_execute(ep);
+		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
-		ft_lstclear(&var()->lst_parse, free_lst);
 		free_strs(cmdargs);
 		free(buf);
 	}
