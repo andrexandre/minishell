@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:17:08 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,34 @@ int	run_echo(void)
 	char	*str;
 
 	i = 2;
-	if (var()->lst_lexer->next && !ft_strncmp(var()->lst_lexer->next->str, "-n", 2))
+	if (var()->words->cmds[1] && !ft_strncmp(var()->words->cmds[1], "-n", 2))
 	{
-		str = var()->lst_lexer->next->str;
+		str = var()->words->cmds[1];
 		while (str[i] && str[i] == 'n')
 			i++;
 		if (!str[i])
-			prt_lst(var()->lst_lexer->next->next, 1);
+			prt_strs(var()->words->cmds + 2, 1);
 		else
-			prt_lst(var()->lst_lexer->next, 0);
+			prt_strs(var()->words->cmds + 1, 0);
 	}
 	else
-		prt_lst(var()->lst_lexer->next, 0);
+		prt_strs(var()->words->cmds + 1, 0);
 	return (0);
 }
 
 int	run_env(void)
 {
-	if (!var()->lst_lexer->next)
-		print_eplst(var()->epl);
+	print_eplst(var()->epl);
 	return (0);
 }
 
 int	run_export(void)
 {
 	t_eplist	*curr;
-	t_list		*new;
+	int			i;
 
 	curr = var()->epl;
-	if (!var()->lst_lexer->next)
+	if (!var()->words->cmds[1])
 	{
 		while (curr)
 		{
@@ -55,12 +54,12 @@ int	run_export(void)
 		}
 		return (0);
 	}
-	new = var()->lst_lexer;
-	while (new)
+	i = 1;
+	while (var()->words->cmds[i])
 	{
-		if (ft_strchr(new->str, '='))
-			ep_export_value(new->str);
-		new = new->next;
+		if (ft_strchr(var()->words->cmds[i], '='))
+			ep_export_value(var()->words->cmds[i]);
+		i++;
 	}
 	return (0);
 }
@@ -83,21 +82,21 @@ int	run_pwd(void)
 int	run_unset(void)
 {
 	t_eplist	*curr;
-	t_list		*new;
+	int			i;
 	int			exit_code;
 
 	exit_code = 0;
-	new = var()->lst_lexer->next;
-	while (new)
+	i = 1;
+	while (var()->words->cmds[i])
 	{
-		if (ft_strchr(new->str, '='))
+		if (ft_strchr(var()->words->cmds[i], '='))
 		{
-			prt("unset: `%s': not a valid identifier\n", new->str);
+			prt("unset: `%s': not a valid identifier\n", var()->words->cmds[i]);
 			exit_code = 1;
-			new = new->next;
+			i++;
 			continue ;
 		}
-		curr = get_env(new->str);
+		curr = get_env(var()->words->cmds[i]);
 		if (curr)
 		{
 			if (!curr->prev)
@@ -111,7 +110,7 @@ int	run_unset(void)
 			}
 			ep_ldelone(curr);
 		}
-		new = new->next;
+		i++;
 	}
 	return (exit_code);
 }

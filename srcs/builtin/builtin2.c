@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:28:23 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	ep_change_value(char *key, char *value)
-{
-	char		*str;
-	char		*temp;
-
-	temp = ft_strjoin(key, "=");
-	str = ft_strjoin(temp, value);
-	free(temp);
-	ep_export_value(str);
-	free(str);
-}
 
 int	exec_cd(char *str)
 {
@@ -30,18 +18,6 @@ int	exec_cd(char *str)
 	char		*cwd;
 
 	cwd = NULL;
-	if (!var()->lst_lexer->next)
-	{
-		if (!get_env("HOME"))
-		{
-			prt("cd: HOME not set\n");
-			return (0);
-		}
-		else
-			str = get_env("HOME")->data;
-	}
-	else
-		str = var()->lst_lexer->next->str;
 	if (!chdir(str))
 	{
 		new = get_env("PWD");
@@ -68,7 +44,7 @@ int	run_cd(void)
 {
 	char		*str;
 
-	if (!var()->lst_lexer->next)
+	if (!var()->words->cmds[1])
 	{
 		if (!get_env("HOME"))
 		{
@@ -78,12 +54,12 @@ int	run_cd(void)
 		else
 			str = get_env("HOME")->data;
 	}
-	else if (var()->lst_lexer->next->next)
+	else if (var()->words->cmds[2])
 	{
 		prt("cd: too many arguments\n");
 		return (1);
 	}
 	else
-		str = var()->lst_lexer->next->str;
+		str = var()->words->cmds[1];
 	return (exec_cd(str));
 }

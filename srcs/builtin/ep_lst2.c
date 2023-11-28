@@ -6,13 +6,14 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 10:35:23 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:25:38 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_eplist	*ep_export_value(char *str)
+// recieves a string of the form "name=data" and adds it to the ep
+void	ep_export_value(char *str)
 {
 	t_eplist	*curr;
 	char		*name;
@@ -28,19 +29,31 @@ t_eplist	*ep_export_value(char *str)
 		curr->str = ft_strdup(str);
 		curr->data = ft_strchr(curr->str, '=') + 1;
 	}
-	curr = get_env(name);
 	free(name);
-	return (curr);
 }
 
-t_eplist	*get_env(char *key)
+// searches for the string name in the ep and changes its value to data
+void	ep_change_value(char *name, char *data)
+{
+	char		*str;
+	char		*temp;
+
+	temp = ft_strjoin(name, "=");
+	str = ft_strjoin(temp, data);
+	free(temp);
+	ep_export_value(str);
+	free(str);
+}
+
+// recieves the name of the env to search ex: "HOME"
+t_eplist	*get_env(char *name)
 {
 	t_eplist	*curr;
 
 	curr = var()->epl;
 	while (curr)
 	{
-		if (!ft_strcmp(curr->name, key))
+		if (!ft_strcmp(curr->name, name))
 			return (curr);
 		curr = curr->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 14:47:30 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:06:09 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_var	*var(void)
 	return (&var);
 }
 
-void	prt_strs(char **strs, char sep)
+void	prt_strs(char **strs, int n)
 {
 	int	i;
 
@@ -28,10 +28,21 @@ void	prt_strs(char **strs, char sep)
 		return ;
 	while (strs[++i])
 	{
-		prt("%s", strs[i]);
+		if (ft_strchr(strs[i], '$'))
+		{
+			strs[i] = ft_strchr(strs[i], '$');
+			if (!ft_strcmp((strs[i] + 1), "?"))
+				prt("%d", var()->status);
+			else if (get_env(strs[i] + 1))
+				prt("%s", get_env(strs[i] + 1)->data);
+		}
+		else
+			prt("%s", strs[i]);
 		if (strs[i + 1])
-			prt("%c", sep);
+			prt(" ");
 	}
+	if (!n)
+		prt("\n");
 }
 
 void	*free_strs(char **strs)
@@ -45,34 +56,6 @@ void	*free_strs(char **strs)
 		free(strs[i++]);
 	free(strs);
 	return (NULL);
-}
-
-void	prt_lst(t_list *lst, int n)
-{
-	char	*str;
-
-	while (lst)
-	{
-		str = lst->str;
-		if (ft_strchr(str, '$'))
-		{
-			str = ft_strchr(str, '$');
-			str++;
-			if (!ft_strcmp(str, "?"))
-				prt("%d", var()->status);
-			else if (get_env(str))
-				prt("%s", get_env(str)->data);
-			if (lst->next)
-				prt(" ");
-			else
-				prt("\n");
-		}
-		else if (!lst->next && n)
-			prt("%s", lst->str);
-		else
-			prt("%s\n", lst->str);
-		lst = lst->next;
-	}
 }
 
 void	free_lst(t_list *word)
