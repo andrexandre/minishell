@@ -26,7 +26,7 @@ t_list	*create_word(bool *is_new_cmd)
 {
 	t_list	*word_p;
 
-	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), 1), NONE);
+	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), 1), WORD);
 	*is_new_cmd = false;
 	return (word_p);
 }
@@ -41,7 +41,7 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 		ft_strlcat(word_p->str, word_l->str, ft_strlen(word_p->str)
 			+ ft_strlen(word_l->str) + 1);
 	}
-	if (word_p->type != BUILT_IN)
+	if (word_p->type == WORD)
 		word_p->type = word_l->type;
 	word_p->cmds = (char **)ft_realloc(word_p->cmds, (cmd_index + 2)
 			* sizeof(char *));
@@ -57,7 +57,6 @@ void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 	*is_new_cmd = true;
 	*cmd_index = 0;
 }
-
 void	print(void)
 {
 	int		i;

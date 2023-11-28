@@ -25,7 +25,7 @@ void	search_and_replace(char *str, char src, char dest)
 	}
 }
 
-bool	cmd(char *str)
+bool	is_builtin(char *str)
 {
 	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
 		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
@@ -39,15 +39,21 @@ bool	cmd(char *str)
 	return (false);
 }
 
-bool	token(char *str)
+bool	is_token(char *str)
 {
-	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str,
-				"<<")) || (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
-	{
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, TOKEN));
-		return (true);
-	}
-	return (false);
+	if(ft_strcmpold(str, "|"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, PIPE));
+	else if(ft_strcmpold(str, "<"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN));
+	else if(ft_strcmpold(str, "<<"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_IN_D));
+	else if(ft_strcmpold(str, ">"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT));
+	else if(ft_strcmpold(str, ">>"))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, REDIRECT_OUT_D));
+	else
+		return(false);
+	return(true);
 }
 
 void	lexer(char *str)
@@ -63,7 +69,7 @@ void	lexer(char *str)
 	free(trimmed);
 	while (splitted[i])
 	{
-		if (!cmd(splitted[i]) && !token(splitted[i]))
+		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
 			ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]),
 					NULL, WORD));
 		i++;
