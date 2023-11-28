@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/23 22:26:43 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 
 void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 {
-	ft_lstadd_back(&var()->lst_parse, ft_lstnew(word_p->str,
+	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str,
 			word_p->cmds, word_p->type));
 	free(word_p);
 	*is_new_cmd = true;
@@ -63,10 +63,11 @@ void	print(void)
 	int		i;
 	t_list	*word;
 
-	word = var()->lst_parse;
+	word = var()->words;
 	while (word)
 	{
 		i = 0;
+		prt("\033[1;34m");
 		prt("Parser : tipo = %d, palavra = %s\n", word->type, word->str);
 		while (word->cmds[i] != NULL)
 		{
@@ -75,6 +76,7 @@ void	print(void)
 		}
 		word = word->next;
 	}
+	prt("\033[0m");
 }
 
 void	parse(void)
@@ -86,7 +88,7 @@ void	parse(void)
 
 	is_new_cmd = true;
 	cmd_index = 0;
-	word_l = var()->words;
+	word_l = var()->lst_lexer;
 	while (word_l)
 	{
 		if (is_new_cmd)
@@ -97,6 +99,5 @@ void	parse(void)
 			add_word_lst(word_p, &is_new_cmd, &cmd_index);
 		word_l = word_l->next;
 	}
-	ft_lstclear(&var()->words, free_lst);
 	print();
 }

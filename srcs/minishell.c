@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 18:47:55 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,19 @@ void	free_all(void)
 	free_strs(var()->paths);
 }
 
+void	handler(int num)
+{
+	if (num == SIGQUIT)
+		prt("Quit (core dumped)\n");
+	if (num == SIGINT)
+	{
+		prt("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
 void	cmd_loop(char **ep)
 {
 	char	*buf;
@@ -26,24 +39,19 @@ void	cmd_loop(char **ep)
 	status = 1;
 	while (status)
 	{
+		signal(SIGINT, handler);
+		signal(SIGQUIT, SIG_IGN);
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
-		add_history(buf);
-		var()->lst_parse = NULL;
-		var()->words = NULL;
+		if (*buf)
+			add_history(buf);
 		lexer(buf);
 		parse();
-		char	**cmdargs = ft_split(buf, ' ');
-		int	i = -1;
-		while (cmdargs[++i])
-			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(cmdargs[i]), NULL,
-					NONE));
 		if (builtin(&status))
 			cmd_execute(ep);
+		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
-		ft_lstclear(&var()->lst_parse, free_lst);
-		free_strs(cmdargs);
 		free(buf);
 	}
 }
@@ -102,25 +110,12 @@ void	create_lstep(char **ep)
 	free(cwd);
 }
 
-void	handler(int num)
-{
-	if (num == SIGINT)
-	{
-		prt("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
 	var()->av = av;
 	if (!ep)
 		return (0);
-	signal(SIGINT, handler);
-	signal(SIGQUIT, SIG_IGN);
 	create_lstep(ep);
 	parsing_paths(ep, -1);
 	cmd_loop(ep);
@@ -130,8 +125,6 @@ int	main(int ac, char **av, char **ep)
 }
 
 /*
-Stop saving newlines
-send SIGSctrl+c-\-d) in a cmd like cat
 make the env path work as intended
 pass envp to execve in char **
 fix SHLVL and _. PATH is impossible

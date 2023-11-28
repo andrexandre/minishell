@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 18:36:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 int	builtin(int *status)
 {
-	if (!var()->words)
+	if (!var()->lst_lexer)
 		return (0);
-	else if (!ft_strcmp(var()->words->str, "cd"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "cd"))
 		var()->status = (*run_cd)();
-	else if (!ft_strcmp(var()->words->str, "echo"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "echo"))
 		var()->status = (*run_echo)();
-	else if (!ft_strcmp(var()->words->str, "env"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "env"))
 		var()->status = (*run_env)();
-	else if (!ft_strcmp(var()->words->str, "export"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "export"))
 		var()->status = (*run_export)();
-	else if (!ft_strcmp(var()->words->str, "pwd"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "pwd"))
 		var()->status = (*run_pwd)();
-	else if (!ft_strcmp(var()->words->str, "unset"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "unset"))
 		var()->status = (*run_unset)();
-	else if (!ft_strcmp(var()->words->str, "exit")
-		|| !ft_strcmp(var()->words->str, "q"))
+	else if (!ft_strcmp(var()->lst_lexer->str, "exit")
+		|| !ft_strcmp(var()->lst_lexer->str, "q"))
 		*status = 0;
 	else
 		return (1);
@@ -63,22 +63,30 @@ char	*search_cmd(char *cmdargs)
 	return (NULL);
 }
 
+void	tmp_handler(int sig)
+{
+	(void)sig;
+	prt("\n");
+}
+
 void	cmd_execute(char **ep)
 {
 	char	*cmd;
 	int		pid;
 
-	cmd = search_cmd(var()->words->str);
+	cmd = search_cmd(var()->lst_lexer->str);
 	if (!cmd)
 		return ;
 	pid = fork();
 	if (pid < 0)
 		perror("fork");
+	signal(SIGINT, tmp_handler);
+	signal(SIGQUIT, handler);
 	if (!pid)
 	{
-		execve(cmd, var()->cmdargs, ep);
+		execve(cmd, var()->words->cmds, ep);
 		perror(cmd);
-		free_strs(var()->cmdargs);
+		free_strs(var()->words->cmds);
 		free_all();
 		exit(126);
 	}

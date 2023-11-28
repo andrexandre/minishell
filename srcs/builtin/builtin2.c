@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 18:36:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	exec_cd(char *str)
 	char		*cwd;
 
 	cwd = NULL;
-	if (!var()->words->next)
+	if (!var()->lst_lexer->next)
 	{
 		if (!get_env("HOME"))
 		{
@@ -41,7 +41,7 @@ int	exec_cd(char *str)
 			str = get_env("HOME")->data;
 	}
 	else
-		str = var()->words->next->str;
+		str = var()->lst_lexer->next->str;
 	if (!chdir(str))
 	{
 		new = get_env("PWD");
@@ -68,7 +68,7 @@ int	run_cd(void)
 {
 	char		*str;
 
-	if (!var()->words->next)
+	if (!var()->lst_lexer->next)
 	{
 		if (!get_env("HOME"))
 		{
@@ -78,12 +78,12 @@ int	run_cd(void)
 		else
 			str = get_env("HOME")->data;
 	}
-	else if (var()->words->next->next)
+	else if (var()->lst_lexer->next->next)
 	{
 		prt("cd: too many arguments\n");
 		return (1);
 	}
 	else
-		str = var()->words->next->str;
+		str = var()->lst_lexer->next->str;
 	return (exec_cd(str));
 }

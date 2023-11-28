@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 18:36:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,24 @@ int	run_echo(void)
 	char	*str;
 
 	i = 2;
-	if (var()->words->next && !ft_strncmp(var()->words->next->str, "-n", 2))
+	if (var()->lst_lexer->next && !ft_strncmp(var()->lst_lexer->next->str, "-n", 2))
 	{
-		str = var()->words->next->str;
+		str = var()->lst_lexer->next->str;
 		while (str[i] && str[i] == 'n')
 			i++;
 		if (!str[i])
-			print_lst(var()->words->next->next, 1);
+			prt_lst(var()->lst_lexer->next->next, 1);
 		else
-			print_lst(var()->words->next, 0);
+			prt_lst(var()->lst_lexer->next, 0);
 	}
 	else
-		print_lst(var()->words->next, 0);
+		prt_lst(var()->lst_lexer->next, 0);
 	return (0);
 }
 
 int	run_env(void)
 {
-	if (!var()->words->next)
+	if (!var()->lst_lexer->next)
 		print_eplst(var()->epl);
 	return (0);
 }
@@ -46,7 +46,7 @@ int	run_export(void)
 	t_list		*new;
 
 	curr = var()->epl;
-	if (!var()->words->next)
+	if (!var()->lst_lexer->next)
 	{
 		while (curr)
 		{
@@ -55,7 +55,7 @@ int	run_export(void)
 		}
 		return (0);
 	}
-	new = var()->words;
+	new = var()->lst_lexer;
 	while (new)
 	{
 		if (ft_strchr(new->str, '='))
@@ -87,7 +87,7 @@ int	run_unset(void)
 	int			exit_code;
 
 	exit_code = 0;
-	new = var()->words->next;
+	new = var()->lst_lexer->next;
 	while (new)
 	{
 		if (ft_strchr(new->str, '='))

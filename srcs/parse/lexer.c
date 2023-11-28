@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/23 22:24:39 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ bool	cmd(char *str)
 		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
 		|| ft_strcmpold(str, "exit"))
 	{
-		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				BUILT_IN));
 		return (true);
 	}
@@ -44,7 +44,7 @@ bool	token(char *str)
 	if (ft_strcmpold(str, "|") || (ft_strcmpold(str, "<")) || (ft_strcmpold(str,
 				"<<")) || (ft_strcmpold(str, ">")) || (ft_strcmpold(str, ">>")))
 	{
-		ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(str), NULL, TOKEN));
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, TOKEN));
 		return (true);
 	}
 	return (false);
@@ -64,7 +64,7 @@ void	lexer(char *str)
 	while (splitted[i])
 	{
 		if (!cmd(splitted[i]) && !token(splitted[i]))
-			ft_lstadd_back(&var()->words, ft_lstnew(ft_strdup(splitted[i]),
+			ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]),
 					NULL, WORD));
 		i++;
 	}
