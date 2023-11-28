@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 20:48:06 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,26 @@ int	ft_strlen_matrix(char **str)
 		i++;
 	return (i);
 }
+int count_to_pipe(t_list *words)
+{
+	int i;
+	t_list *cur;
 
-t_list	*create_word(bool *is_new_cmd)
+	i = 1;
+	cur = words;
+	while (cur && cur->type != PIPE)
+	{
+		i++;
+		cur = cur->next;
+	}
+	return i;	
+}
+
+t_list	*create_word(bool *is_new_cmd, t_list *words)
 {
 	t_list	*word_p;
 
-	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), 1), WORD);
+	word_p = ft_lstnew(NULL, ft_calloc(sizeof(char *), count_to_pipe(words)), WORD);
 	*is_new_cmd = false;
 	return (word_p);
 }
@@ -37,14 +51,12 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 		word_p->str = ft_strdup(word_l->str);
 	else
 	{
-		ft_strlcat(word_p->str, " ", ft_strlen(word_p->str) + 2);
-		ft_strlcat(word_p->str, word_l->str, ft_strlen(word_p->str)
-			+ ft_strlen(word_l->str) + 1);
+		word_p->str = (char *) ft_memcat(word_p->str, " ");
+		word_p->str = (char *) ft_memcat(word_p->str, word_l->str);
 	}
 	if (word_p->type == WORD)
 		word_p->type = word_l->type;
-	word_p->cmds = (char **)ft_realloc(word_p->cmds, (cmd_index + 2)
-			* sizeof(char *));
+
 	word_p->cmds[cmd_index] = ft_strdup(word_l->str);
 	word_p->cmds[cmd_index + 1] = NULL;
 }
@@ -91,7 +103,7 @@ void	parse(void)
 	while (word_l)
 	{
 		if (is_new_cmd)
-			word_p = create_word(&is_new_cmd);
+			word_p = create_word(&is_new_cmd, word_l);
 		if (!ft_strcmpold(word_l->str, "|"))
 			join_str_word(word_p, word_l, cmd_index++);
 		if (ft_strcmpold(word_l->str, "|") || word_l->next == NULL)
