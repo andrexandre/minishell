@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 15:08:42 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ typedef struct s_var
 	char		**paths;
 	int			ac;
 	char		**av;
-	char		**cmdargs;
 	t_eplist	*epl;
 	t_list		*words;
 	t_list		*lst_lexer;
@@ -54,6 +53,7 @@ typedef struct s_var
 // minishell
 void				free_all(void);
 void				free_lst(t_list *word);
+void				handler(int num);
 
 // builtin
 int					run_echo(void);
@@ -71,7 +71,7 @@ int					builtin(int *status);
 void				cmd_execute(char **ep);
 
 // minishell_utils
-void				print_lst(t_list *lst, int n);
+void				prt_lst(t_list *lst, int n);
 void				*free_strs(char **strs);
 void				prt_strs(char **strs, char sep);
 t_var				*var(void);

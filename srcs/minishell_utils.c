@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/27 17:29:14 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:47:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	*free_strs(char **strs)
 	return (NULL);
 }
 
-void	print_lst(t_list *lst, int n)
+void	prt_lst(t_list *lst, int n)
 {
 	char	*str;
 

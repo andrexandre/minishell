@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 15:08:42 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	print(void)
 	while (word)
 	{
 		i = 0;
+		prt("\033[1;34m");
 		prt("Parser : tipo = %d, palavra = %s\n", word->type, word->str);
 		while (word->cmds[i] != NULL)
 		{
@@ -74,6 +75,7 @@ void	print(void)
 		}
 		word = word->next;
 	}
+	prt("\033[0m");
 }
 
 void	parse(void)
@@ -96,6 +98,5 @@ void	parse(void)
 			add_word_lst(word_p, &is_new_cmd, &cmd_index);
 		word_l = word_l->next;
 	}
-	ft_lstclear(&var()->lst_lexer, free_lst);
 	print();
 }

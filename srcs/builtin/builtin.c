@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 15:07:09 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ int	run_echo(void)
 		while (str[i] && str[i] == 'n')
 			i++;
 		if (!str[i])
-			print_lst(var()->lst_lexer->next->next, 1);
+			prt_lst(var()->lst_lexer->next->next, 1);
 		else
-			print_lst(var()->lst_lexer->next, 0);
+			prt_lst(var()->lst_lexer->next, 0);
 	}
 	else
-		print_lst(var()->lst_lexer->next, 0);
+		prt_lst(var()->lst_lexer->next, 0);
 	return (0);
 }
 
