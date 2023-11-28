@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:20:31 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,11 @@ void	lexer(char *str)
 	trimmed = ft_strtrim(str, " ");
 	splitted = ft_split_without(trimmed, ' ', "'\"");
 	free(trimmed);
+	if(splitted == NULL)
+	{
+		prt("unclosed quote\n");
+		return;
+	}
 	while (splitted[i])
 	{
 		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))

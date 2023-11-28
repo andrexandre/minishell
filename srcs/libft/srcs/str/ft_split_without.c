@@ -3,42 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_without.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 16:58:53 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/27 17:28:21 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:32:04 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-bool	ft_ignored_lst(bool *ignored, char *ignored_lst)
-{
-	int	i;
 
-	i = 0;
-	while (ft_strlen(ignored_lst) > (size_t)i)
-	{
-		if (ignored[i])
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
-bool	*init_ignored(char *ignored_lst)
+void check_ignore(char *ignored_lst, char c, char *curr_ign)
 {
 	int		i;
-	bool	*ignored;
 
-	i = 0;
-	ignored = ft_calloc(ft_strlen(ignored_lst), 1);
-	while (ignored_lst[i])
+	i = 0;	
+	if(*curr_ign == c)
 	{
-		ignored[i] = false;
-		i++;
+		*curr_ign = '\0';
 	}
-	return (ignored);
+	else{
+		while (ignored_lst[i])
+		{
+			if(ignored_lst[i] == c && *curr_ign == '\0')
+				*curr_ign = c;
+			i++;
+		}
+	}
 }
 
 static int	count_words_without(const char *str, char c, char *ignored_lst)
@@ -46,55 +37,46 @@ static int	count_words_without(const char *str, char c, char *ignored_lst)
 	int		i;
 	int		j;
 	int		trigger;
-	bool	*ignored;
+	char	curr_ign;
 
 	i = 0;
-	j = 0;
+	j = -1;
 	trigger = 0;
-	ignored = init_ignored(ignored_lst);
-	while (*str)
+	curr_ign = '\0'; 
+	while (str[++j])
 	{
-		if (*str != c && trigger == 0 && !ft_ignored_lst(ignored, ignored_lst))
+		if (str[j] != c && trigger == 0 && curr_ign == '\0')
 		{
 			trigger = 1;
 			i++;
 		}
-		else if (*str == c)
+		else if (str[j] == c)
 			trigger = 0;
-		j = 0;
-		while (ignored_lst[j])
-			if (*str == ignored_lst[j++])
-				ignored[j - 1] = !ignored[j - 1];
-		str++;
+		check_ignore(ignored_lst, str[j], &curr_ign);
 	}
-	free(ignored);
+	if(curr_ign != '\0')
+		i = -1;
 	return (i);
 }
 
 char	**ft_write_words_without(char **split, char const *s, char c,
 		char *ignored_lst)
 {
-	size_t	i;
-	size_t	j;
-	size_t	k;
+	long	i;
+	long	j;
 	int		start;
-	bool	*ignored;
-
-	i = 0;
+	char	curr_ign;
+	i = -1;
 	j = 0;
-	k = 0;
 	start = -1;
-	ignored = init_ignored(ignored_lst);
-	while (i <= ft_strlen(s))
+	curr_ign = '\0';
+	while (++i <= (long)ft_strlen(s))
 	{
-		k = 0;
-		while (ignored_lst[k])
-			if (s[i] == ignored_lst[k++])
-				ignored[k - 1] = !ignored[k - 1];
+		check_ignore(ignored_lst, s[i], &curr_ign);
 		if (s[i] != c && start < 0)
 			start = i;
-		else if ((s[i] == c || i == ft_strlen(s)) && start >= 0
-				&& !ft_ignored_lst(ignored, ignored_lst))
+		else if ((s[i] == c || i == (long)ft_strlen(s)) && start >= 0
+				&& curr_ign == '\0')
 		{
 			split[j] = ft_calloc((i - start + 1), sizeof(char));
 			if (!split[j])
@@ -102,9 +84,7 @@ char	**ft_write_words_without(char **split, char const *s, char c,
 			ft_strlcpy(split[j++], s + start, i - start + 1);
 			start = -1;
 		}
-		i++;
 	}
-	free(ignored);
 	split[j] = 0;
 	return (split);
 }
@@ -112,8 +92,11 @@ char	**ft_write_words_without(char **split, char const *s, char c,
 char	**ft_split_without(char const *s, char c, char *ignored_lst)
 {
 	char	**split;
-
-	split = ft_calloc((count_words_without(s, c, ignored_lst) + 1),
+	int		count_words;
+	count_words = count_words_without(s, c, ignored_lst);
+	if(count_words < 0)
+		return (NULL);
+	split = ft_calloc(( count_words + 1),
 						sizeof(char *));
 	if (!s || !split)
 		return (0);
