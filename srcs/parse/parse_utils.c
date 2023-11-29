@@ -1,33 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/21 23:02:07 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 19:48:13 by jealves-         ###   ########.fr       */
+/*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
+/*   Updated: 2023/11/29 10:16:05 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	*ft_realloc(void *ptr, size_t new_size)
+void	search_and_replace(char *str, char src, char dest)
 {
-	void	*new_ptr;
-	size_t	i;
+	int	i;
 
 	i = 0;
-	new_ptr = malloc(new_size);
-	if (new_ptr == NULL)
+	while (str[i])
 	{
-		return (NULL);
-	}
-	while (ptr && i < new_size)
-	{
-		((char *)new_ptr)[i] = ((char *)ptr)[i];
+		if (str[i] == src)
+			str[i] = dest;
 		i++;
 	}
-	free(ptr);
-	return (new_ptr);
+}
+
+int	ft_strlen_matrix(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str != NULL && str[i] != NULL)
+		i++;
+	return (i);
+}
+
+int	count_to_pipe(t_list *words)
+{
+	int		i;
+	t_list	*cur;
+
+	i = 1;
+	cur = words;
+	while (cur && cur->type != PIPE)
+	{
+		i++;
+		cur = cur->next;
+	}
+	return (i);
 }
