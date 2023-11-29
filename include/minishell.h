@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/29 10:19:09 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int			status;
-	char		**paths;
-	int			ac;
-	char		**av;
-	t_eplist	*epl;
-	t_list		*words;
-	t_list		*lst_lexer;
-}				t_var;
+	int				status;
+	char			**paths;
+	int				ac;
+	char			**av;
+	t_eplist		*epl;
+	t_list			*words;
+	t_list			*lst_lexer;
+}					t_var;
 
 // minishell
 void				free_all(void);
@@ -79,6 +79,8 @@ t_var				*var(void);
 // lexer, parser
 void				lexer(char *str);
 void				parse(void);
+void				search_and_replace(char *str, char src, char dest);
+int					count_to_pipe(t_list *words);
 
 // ep_lst
 t_eplist			*ep_lnew(char *str);

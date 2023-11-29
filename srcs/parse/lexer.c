@@ -6,24 +6,11 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 22:35:21 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/29 10:14:45 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	search_and_replace(char *str, char src, char dest)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == src)
-			str[i] = dest;
-		i++;
-	}
-}
 
 bool	is_builtin(char *str)
 {
