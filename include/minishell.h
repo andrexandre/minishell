@@ -3,10 +3,9 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 10:19:09 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:09:20 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +50,7 @@ typedef struct s_var
 }					t_var;
 
 // minishell
-void				free_all(void);
+void				free_all(int exit_code);
 void				free_lst(t_list *word);
 void				handler(int num);
 
@@ -64,16 +63,14 @@ int					run_unset(void);
 
 // builtin2
 int					run_cd(void);
-void				ep_change_value(char *key, char *value);
 
 // minishell_exec
-int					builtin(int *status);
+void				execution(int *status);
 void				cmd_execute(char **ep);
 
 // minishell_utils
-void				prt_lst(t_list *lst, int n);
 void				*free_strs(char **strs);
-void				prt_strs(char **strs, char sep);
+void				prt_strs(char **strs, int n);
 t_var				*var(void);
 
 // lexer, parser
@@ -90,7 +87,8 @@ void				ep_lclear(t_eplist **lst);
 void				print_eplst(t_eplist *lst);
 
 // ep_lst2
-t_eplist			*get_env(char *key);
-t_eplist			*ep_export_value(char *str);
+void				ep_export_value(char *str);
+void				ep_change_value(char *name, char *data);
+t_eplist			*get_env(char *name);
 
 #endif

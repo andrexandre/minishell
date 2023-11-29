@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 20:07:25 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:04:05 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_all(void)
+void	free_all(int exit_code)
 {
 	ep_lclear(&var()->epl);
 	free_strs(var()->paths);
+	exit(exit_code);
 }
 
 void	handler(int num)
@@ -31,7 +32,7 @@ void	handler(int num)
 	}
 }
 
-void	cmd_loop(char **ep)
+void	cmd_loop(void)
 {
 	char	*buf;
 	int		status;
@@ -48,8 +49,7 @@ void	cmd_loop(char **ep)
 			add_history(buf);
 		lexer(buf);
 		parse();
-		if (builtin(&status))
-			cmd_execute(ep);
+		execution(&status);
 		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
 		free(buf);
@@ -118,15 +118,13 @@ int	main(int ac, char **av, char **ep)
 		return (0);
 	create_lstep(ep);
 	parsing_paths(ep, -1);
-	cmd_loop(ep);
+	cmd_loop();
 	prt("exit\n");
-	free_all();
-	return (var()->status);
+	free_all(var()->status);
 }
 
 /*
 make the env path work as intended
-pass envp to execve in char **
 fix SHLVL and _. PATH is impossible
 gets as input the last </<< from the prompt
 Execution "tree" WIP:
@@ -135,4 +133,6 @@ redirect from the last redirected file
 redirect to the last redirected file
 
 if pipe start all over again
+o expander pode aumentar / diminuir a lst
+e o heredoc é a execão
 */

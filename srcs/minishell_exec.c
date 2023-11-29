@@ -3,52 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 14:59:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:03:09 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin(int *status)
+char	**ep_from_epl(void)
 {
-	if (!var()->lst_lexer)
-		return (0);
-	else if (!ft_strcmp(var()->lst_lexer->str, "cd"))
-		var()->status = (*run_cd)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "echo"))
-		var()->status = (*run_echo)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "env"))
-		var()->status = (*run_env)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "export"))
-		var()->status = (*run_export)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "pwd"))
-		var()->status = (*run_pwd)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "unset"))
-		var()->status = (*run_unset)();
-	else if (!ft_strcmp(var()->lst_lexer->str, "exit")
-		|| !ft_strcmp(var()->lst_lexer->str, "q"))
-		*status = 0;
-	else
-		return (1);
-	return (0);
+	t_eplist	*curr;
+	char		**ep;
+	int			i;
+	
+	curr = var()->epl;
+	i = 0;
+	while (curr)
+	{
+		curr = curr->next;
+		i++;
+	}
+	ep = ft_calloc(i + 1, sizeof(char *));
+	if (!ep)
+		return (NULL);
+	i = 0;
+	curr = var()->epl;
+	while (curr)
+	{
+		ep[i] = ft_strdup(curr->str);
+		curr = curr->next;
+		i++;
+	}
+	ep[i] = NULL;
+	return (ep);
 }
 
-char	*search_cmd(char *cmdargs)
+void	execution(int *status)
+{
+	char	**ep;
+
+	if (!var()->words)
+		return ;
+	else if (!ft_strcmp(var()->words->cmds[0], "cd"))
+		var()->status = (*run_cd)();
+	else if (!ft_strcmp(var()->words->cmds[0], "echo"))
+		var()->status = (*run_echo)();
+	else if (!ft_strcmp(var()->words->cmds[0], "env"))
+		var()->status = (*run_env)();
+	else if (!ft_strcmp(var()->words->cmds[0], "export"))
+		var()->status = (*run_export)();
+	else if (!ft_strcmp(var()->words->cmds[0], "pwd"))
+		var()->status = (*run_pwd)();
+	else if (!ft_strcmp(var()->words->cmds[0], "unset"))
+		var()->status = (*run_unset)();
+	else if (!ft_strcmp(var()->words->cmds[0], "exit")
+		|| !ft_strcmp(var()->words->cmds[0], "q"))
+		*status = 0;
+	else
+	{
+		ep = ep_from_epl();
+		cmd_execute(ep);
+		free_strs(ep);
+	}
+}
+
+char	*search_cmd(char *command)
 {
 	int		i;
 	char	*cmd;
 
 	i = -1;
-	if (!ft_strchr(cmdargs, '/'))
+	if (!ft_strchr(command, '/'))
 	{
 		if (var()->paths)
 		{
 			while (var()->paths[++i])
 			{
-				cmd = ft_strjoin(var()->paths[i], cmdargs);
+				cmd = ft_strjoin(var()->paths[i], command);
 				if (!access(cmd, F_OK | X_OK))
 					return (cmd);
 				free(cmd);
@@ -56,9 +89,9 @@ char	*search_cmd(char *cmdargs)
 		}
 	}
 	else
-		if (!access(cmdargs, F_OK | X_OK))
-			return (ft_strdup(cmdargs));
-	perror(cmdargs);
+		if (!access(command, F_OK | X_OK))
+			return (ft_strdup(command));
+	perror(command);
 	var()->status = 127;
 	return (NULL);
 }
@@ -74,7 +107,7 @@ void	cmd_execute(char **ep)
 	char	*cmd;
 	int		pid;
 
-	cmd = search_cmd(var()->lst_lexer->str);
+	cmd = search_cmd(var()->words->cmds[0]);
 	if (!cmd)
 		return ;
 	pid = fork();
@@ -86,9 +119,9 @@ void	cmd_execute(char **ep)
 	{
 		execve(cmd, var()->words->cmds, ep);
 		perror(cmd);
-		free_strs(var()->words->cmds);
-		free_all();
-		exit(126);
+		ft_lstclear(&var()->words, free_lst);
+		free_strs(ep);
+		free_all(126);
 	}
 	wait(&pid);
 	if (WIFEXITED(pid))
