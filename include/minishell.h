@@ -4,8 +4,9 @@
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Updated: 2023/11/28 19:09:20 by analexan         ###   ########.fr       */
+/*                              
+/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
+/*   Updated: 2023/11/29 19:13:47 by analexan    
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +41,21 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int				status;
-	char			**paths;
-	int				ac;
-	char			**av;
-	t_eplist		*epl;
-	t_list			*words;
-	t_list			*lst_lexer;
-}					t_var;
+	int			status;
+	char		**paths;
+	int			ac;
+	int			fd[2];
+	char		**av;
+	t_eplist	*epl;
+	t_list		*words;
+	t_list		*lst_lexer;
+}				t_var;
 
 // minishell
 void				free_all(int exit_code);
 void				free_lst(t_list *word);
 void				handler(int num);
+void				parsing_paths(char **ep, int i);
 
 // builtin
 int					run_echo(void);
@@ -65,6 +68,7 @@ int					run_unset(void);
 int					run_cd(void);
 
 // minishell_exec
+char				**ep_from_epl(void);
 void				execution(int *status);
 void				cmd_execute(char **ep);
 
@@ -80,15 +84,14 @@ void				search_and_replace(char *str, char src, char dest);
 int					count_to_pipe(t_list *words);
 
 // ep_lst
-t_eplist			*ep_lnew(char *str);
-void				ep_ladd_back(t_eplist **lst, t_eplist *new);
+t_eplist			*get_env(char *name);
+void				ep_lnew_add_back(t_eplist **lst, char *str);
 void				ep_ldelone(t_eplist *lst);
 void				ep_lclear(t_eplist **lst);
-void				print_eplst(t_eplist *lst);
+void				prt_eplst(t_eplist *lst);
 
 // ep_lst2
 void				ep_export_value(char *str);
 void				ep_change_value(char *name, char *data);
-t_eplist			*get_env(char *name);
 
 #endif

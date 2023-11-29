@@ -6,49 +6,52 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/22 15:28:02 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/29 18:58:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_eplist	*ep_lnew(char *str)
+// receives the name of the env to search ex: "HOME"
+t_eplist	*get_env(char *name)
 {
-	t_eplist	*node;
+	t_eplist	*curr;
 
-	node = (t_eplist *)ft_calloc(1, sizeof(t_eplist));
-	if (!node)
+	curr = var()->epl;
+	if (!ft_strcmp(name, "_"))
 		return (NULL);
-	node->str = ft_strdup(str);
-	if (str)
+	while (curr)
 	{
-		node->name = ft_substr(node->str, 0,
-				ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
-		node->data = ft_strchr(node->str, '=') + 1;
+		if (!ft_strcmp(curr->name, name))
+			return (curr);
+		curr = curr->next;
 	}
-	else
-	{
-		node->name = NULL;
-		node->data = NULL;
-	}
-	node->next = NULL;
-	node->prev = NULL;
-	return (node);
+	return (NULL);
 }
 
-void	ep_ladd_back(t_eplist **lst, t_eplist *new)
+void	ep_lnew_add_back(t_eplist **lst, char *str)
 {
+	t_eplist	*node;
 	t_eplist	*last;
 
+	node = ft_calloc(1, sizeof(t_eplist));
+	if (!node || !str)
+		return ;
+	node->str = ft_strdup(str);
+	node->name = ft_substr(node->str, 0,
+			ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
+	node->data = ft_strchr(node->str, '=') + 1;
+	node->next = NULL;
+	node->prev = NULL;
 	if (!*lst)
-		*lst = new;
+		*lst = node;
 	else
 	{
 		last = *lst;
 		while (last->next)
 			last = last->next;
-		last->next = new;
-		new->prev = last;
+		last->next = node;
+		node->prev = last;
 	}
 }
 
@@ -59,6 +62,7 @@ void	ep_ldelone(t_eplist *lst)
 	free(lst->str);
 	free(lst->name);
 	free(lst);
+	lst = NULL;
 }
 
 void	ep_lclear(t_eplist **lst)
@@ -71,10 +75,9 @@ void	ep_lclear(t_eplist **lst)
 		ep_ldelone(*lst);
 		*lst = curr;
 	}
-	*lst = NULL;
 }
 
-void	print_eplst(t_eplist *lst)
+void	prt_eplst(t_eplist *lst)
 {
 	while (lst)
 	{
@@ -91,7 +94,7 @@ int	main(int ac, char **av, char **ep)
 
 	i = -1;
 	while (ep[++i])
-		ep_ladd_back(&var()->epl, ep_lnew(ep[i]));
+		ep_lnew_add_back(&var()->epl, ep[i]);
 	lst = var()->epl;
 		
 	ep_export_value("ASD=ASD");
