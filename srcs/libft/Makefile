@@ -46,6 +46,7 @@ SRCS = \
    mem/ft_memcat.c\
    mem/ft_memset.c\
    mem/ft_swap_mem.c\
+   mem/ft_memcat.c\
    \
    nbr/ft_atoi.c\
    nbr/ft_atol.c\
