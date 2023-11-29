@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 19:04:05 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/29 19:12:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	parsing_paths(char **ep, int i)
 		if (path_from_ep)
 			break ;
 	}
-	if (!path_from_ep)
+	if (!path_from_ep || !ep[i])
 		return ;
 	path_from_ep += 5;
 	var()->paths = ft_split(path_from_ep, ':');
@@ -85,14 +85,37 @@ void	parsing_paths(char **ep, int i)
 	}
 }
 
-void	create_lstep(char **ep)
+void	var_init(char *cwd)
+{
+	int		num;
+	char	*str;
+
+	if (get_env("SHLVL"))
+		num = ft_atoi(get_env("SHLVL")->data) + 1;
+	else
+		num = 1;
+	str = ft_itoa(num);
+	ep_change_value("SHLVL", str);
+	free(str);
+	ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
+/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+	ep_lnew_add_back(&var()->epl, cwd);
+	free(cwd);
+}
+
+void	minishell_init(char **ep)
 {
 	int		i;
 	char	*cwd;
+	char	*str;
 
 	i = -1;
 	while (ep[++i])
-		ep_ladd_back(&var()->epl, ep_lnew(ep[i]));
+	{
+		if (!ft_strcmp(ep[i], "_="))
+			continue ;
+		ep_lnew_add_back(&var()->epl, ep[i]);
+	}
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
@@ -100,14 +123,11 @@ void	create_lstep(char **ep)
 		return ;
 	}
 	ep_change_value("PWD", cwd);
+	str = ft_strjoin(cwd, "/minishell");
 	free(cwd);
-	if (get_env("SHLVL"))
-		i = ft_atoi(get_env("SHLVL")->data) + 1;
-	else
-		i = 1;
-	cwd = ft_itoa(i);
-	ep_change_value("SHLVL", cwd);
-	free(cwd);
+	cwd = ft_strjoin("_=", str);
+	free(str);
+	var_init(cwd);
 }
 
 int	main(int ac, char **av, char **ep)
@@ -116,7 +136,7 @@ int	main(int ac, char **av, char **ep)
 	var()->av = av;
 	if (!ep)
 		return (0);
-	create_lstep(ep);
+	minishell_init(ep);
 	parsing_paths(ep, -1);
 	cmd_loop();
 	prt("exit\n");
@@ -124,8 +144,6 @@ int	main(int ac, char **av, char **ep)
 }
 
 /*
-make the env path work as intended
-fix SHLVL and _. PATH is impossible
 gets as input the last </<< from the prompt
 Execution "tree" WIP:
 redirect from the last redirected file

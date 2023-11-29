@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 19:03:09 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/29 18:57:51 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,9 @@ char	**ep_from_epl(void)
 	return (ep);
 }
 
-void	execution(int *status)
+int	run_builtin(void)
 {
-	char	**ep;
-
-	if (!var()->words)
-		return ;
-	else if (!ft_strcmp(var()->words->cmds[0], "cd"))
+	if (!ft_strcmp(var()->words->cmds[0], "cd"))
 		var()->status = (*run_cd)();
 	else if (!ft_strcmp(var()->words->cmds[0], "echo"))
 		var()->status = (*run_echo)();
@@ -58,12 +54,30 @@ void	execution(int *status)
 		var()->status = (*run_pwd)();
 	else if (!ft_strcmp(var()->words->cmds[0], "unset"))
 		var()->status = (*run_unset)();
+	else
+		return (0);
+	return (1);
+}
+
+void	execution(int *status)
+{
+	char	**ep;
+
+	if (!var()->words)
+		return ;
+	else if (run_builtin())
+		return ;
 	else if (!ft_strcmp(var()->words->cmds[0], "exit")
 		|| !ft_strcmp(var()->words->cmds[0], "q"))
 		*status = 0;
 	else
 	{
 		ep = ep_from_epl();
+		if (get_env("PATH"))
+		{
+			free_strs(var()->paths);
+			parsing_paths(ep, -1);
+		}
 		cmd_execute(ep);
 		free_strs(ep);
 	}
@@ -77,7 +91,7 @@ char	*search_cmd(char *command)
 	i = -1;
 	if (!ft_strchr(command, '/'))
 	{
-		if (var()->paths)
+		if (var()->paths && get_env("PATH"))
 		{
 			while (var()->paths[++i])
 			{
@@ -91,7 +105,7 @@ char	*search_cmd(char *command)
 	else
 		if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
-	perror(command);
+	ft_putstr_fd("minishell: command not found\n", 2);
 	var()->status = 127;
 	return (NULL);
 }

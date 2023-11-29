@@ -43,6 +43,7 @@ SRCS = \
    mem/ft_memcmp.c\
    mem/ft_memmove.c\
    mem/ft_memcpy.c\
+   mem/ft_memcat.c\
    mem/ft_memset.c\
    mem/ft_swap_mem.c\
    \
