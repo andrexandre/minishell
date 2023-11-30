@@ -63,10 +63,11 @@ re:	fclean all
 run: ${NAME}
 	@./${NAME}
 
-VALG	= valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all# --trace-children=yes --track-fds=yes
+VALG	= valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes# --trace-children=yes
 
 v:
-	@make && ${VALG} ./${NAME}
+	@make
+	@${VALG} ./${NAME}
 
 val: ${NAME}
 	@make

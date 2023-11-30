@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 18:57:51 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:33:45 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,58 @@ int	run_builtin(void)
 	return (1);
 }
 
+void	reindirects_pipes(void)
+{
+	char	**cmds;
+	int		i;
+
+	/*
+	gets as input the last </<<
+	gives output to the last >/>>
+	Execution "tree" WIP:
+	redirect from the last redirected file
+
+	redirect to the last redirected file
+	*/
+	cmds = var()->words->cmds;
+	i = -1;
+	while (cmds[++i])
+	{
+		if (!ft_strcmp(cmds[i], "<"))
+			var()->fd[0] = open(cmds[i + 1], O_RDONLY);
+		// else if (!ft_strcmp(curr->cmds[i], "<<"))
+		// 	var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
+		else if (!ft_strcmp(cmds[i], ">"))
+			var()->fd[1] = open(cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		else if (!ft_strcmp(cmds[i], ">>"))
+			var()->fd[1] = open(cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			continue ;
+		if (cmds[i][0] == '<')
+		{
+			if (var()->fd[0] < 0)
+				perror("open");
+			else if (dup2(var()->fd[0], STDIN_FILENO) < 0)
+				perror("dup2");
+		}
+		if (cmds[i][0] == '>')
+		{
+			if (var()->fd[1] < 0)
+				perror("open");
+			else if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
+				perror("dup2");
+		}
+	}
+}
+
 void	execution(int *status)
 {
 	char	**ep;
 
 	if (!var()->words)
 		return ;
-	else if (run_builtin())
+	reindirects_pipes();
+	if (run_builtin())
 		return ;
 	else if (!ft_strcmp(var()->words->cmds[0], "exit")
 		|| !ft_strcmp(var()->words->cmds[0], "q"))
@@ -89,17 +134,14 @@ char	*search_cmd(char *command)
 	char	*cmd;
 
 	i = -1;
-	if (!ft_strchr(command, '/'))
+	if (!ft_strchr(command, '/') && var()->paths && get_env("PATH"))
 	{
-		if (var()->paths && get_env("PATH"))
+		while (var()->paths[++i])
 		{
-			while (var()->paths[++i])
-			{
-				cmd = ft_strjoin(var()->paths[i], command);
-				if (!access(cmd, F_OK | X_OK))
-					return (cmd);
-				free(cmd);
-			}
+			cmd = ft_strjoin(var()->paths[i], command);
+			if (!access(cmd, F_OK | X_OK))
+				return (cmd);
+			free(cmd);
 		}
 	}
 	else
@@ -131,6 +173,8 @@ void	cmd_execute(char **ep)
 	signal(SIGQUIT, handler);
 	if (!pid)
 	{
+		close(var()->saved_fd[0]);
+		close(var()->saved_fd[1]);
 		execve(cmd, var()->words->cmds, ep);
 		perror(cmd);
 		ft_lstclear(&var()->words, free_lst);

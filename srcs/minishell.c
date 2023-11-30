@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 19:12:06 by analexan         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:29:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	cmd_loop(void)
 	int		status;
 
 	status = 1;
+	var()->saved_fd[0] = dup(STDIN_FILENO);
+	var()->saved_fd[1] = dup(STDOUT_FILENO);
 	while (status)
 	{
 		signal(SIGINT, handler);
@@ -53,7 +55,21 @@ void	cmd_loop(void)
 		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
 		free(buf);
+		if (var()->fd[0])
+		{
+			close(var()->fd[0]);
+			dup2(var()->saved_fd[0], STDIN_FILENO);
+		}
+		if (var()->fd[1])
+		{
+			close(var()->fd[1]);
+			dup2(var()->saved_fd[1], STDOUT_FILENO);
+		}
 	}
+	close(var()->saved_fd[0]);
+	close(var()->saved_fd[1]);
+	close(0);
+	close(1);
 }
 
 void	parsing_paths(char **ep, int i)
@@ -90,10 +106,7 @@ void	var_init(char *cwd)
 	int		num;
 	char	*str;
 
-	if (get_env("SHLVL"))
-		num = ft_atoi(get_env("SHLVL")->data) + 1;
-	else
-		num = 1;
+	num = ft_atoi(getenv("SHLVL")) + 1;
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
@@ -130,27 +143,29 @@ void	minishell_init(char **ep)
 	var_init(cwd);
 }
 
+#define HISTORY_FILE ".minishell_history" // yes
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
 	var()->av = av;
 	if (!ep)
 		return (0);
+	read_history(HISTORY_FILE); // illegal
 	minishell_init(ep);
 	parsing_paths(ep, -1);
 	cmd_loop();
 	prt("exit\n");
+	write_history(HISTORY_FILE); // illegal
 	free_all(var()->status);
 }
 
 /*
-gets as input the last </<< from the prompt
-Execution "tree" WIP:
-redirect from the last redirected file
+Esta a ficar bonito...:
+echo hi > out ho > ou
+cria o out sem nada
+cria o ou com:
+hi ho
 
-redirect to the last redirected file
-
-if pipe start all over again
 o expander pode aumentar / diminuir a lst
 e o heredoc é a execão
 */

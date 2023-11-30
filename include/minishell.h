@@ -4,9 +4,9 @@
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
-/*                              
-/*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 19:13:47 by analexan    
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
+/*   Updated: 2023/11/30 18:43:43 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ typedef struct s_var
 	char		**paths;
 	int			ac;
 	int			fd[2];
+	int			saved_fd[2];
+	int 		needs_closing[2];
 	char		**av;
 	t_eplist	*epl;
 	t_list		*words;
