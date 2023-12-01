@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/30 18:43:43 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/01 18:54:52 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct s_var
 	int			ac;
 	int			fd[2];
 	int			saved_fd[2];
-	int 		needs_closing[2];
+	int 		is_opened[2];
 	char		**av;
 	t_eplist	*epl;
 	t_list		*words;
@@ -84,6 +84,7 @@ void				lexer(char *str);
 void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 int					count_to_pipe(t_list *words);
+int					ft_strlen_matrix(char **str);
 
 // ep_lst
 t_eplist			*get_env(char *name);

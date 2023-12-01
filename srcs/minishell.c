@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/30 19:29:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/01 18:28:38 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,13 @@ void	cmd_loop(void)
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 			break ;
-		if (*buf)
+		if (*buf && ft_strcmp(buf, "q"))
 			add_history(buf);
+		else if (ft_strcmp(buf, "q"))
+		{
+			free(buf);
+			continue ;
+		}
 		lexer(buf);
 		parse();
 		execution(&status);
@@ -110,7 +115,8 @@ void	var_init(char *cwd)
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
-	ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
+	if (!get_env("PATH"))
+		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
 /usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
 	ep_lnew_add_back(&var()->epl, cwd);
 	free(cwd);
@@ -143,28 +149,37 @@ void	minishell_init(char **ep)
 	var_init(cwd);
 }
 
-#define HISTORY_FILE ".minishell_history" // yes
 int	main(int ac, char **av, char **ep)
 {
+	// int fd;
+	// fd = open("asd", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	// close(fd);
+	// fd = open("out", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	// if (dup2(fd, STDOUT_FILENO) < 0)
+	// 	perror("dup2");
+	// close(fd);
+	// return (0);
 	var()->ac = ac;
 	var()->av = av;
 	if (!ep)
 		return (0);
-	read_history(HISTORY_FILE); // illegal
 	minishell_init(ep);
 	parsing_paths(ep, -1);
+	char *asd = ft_strjoin(get_env("HOME")->data, "/minishell/.minishell_history");
+	char history_file[100];
+	strcpy(history_file, asd);
+	free(asd);
+	read_history(history_file); // illegal
 	cmd_loop();
 	prt("exit\n");
-	write_history(HISTORY_FILE); // illegal
+	write_history(history_file); // illegal
+	rl_clear_history();
 	free_all(var()->status);
 }
 
 /*
-Esta a ficar bonito...:
-echo hi > out ho > ou
-cria o out sem nada
-cria o ou com:
-hi ho
+cat < out < asd: fix
+if i use pipe, the next command, builtin or not will make a child
 
 o expander pode aumentar / diminuir a lst
 e o heredoc é a execão
