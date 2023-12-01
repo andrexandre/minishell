@@ -21,6 +21,7 @@ SRC		= minishell_utils.c\
 		  minishell.c \
 		  parse/lexer.c \
 		  parse/parse.c \
+		  parse/expander.c \
 		  parse/parse_utils.c \
 		  minishell_exec.c \
 		  builtin/builtin.c \

@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/29 10:15:58 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/01 21:02:04 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	print(void)
 	{
 		i = 0;
 		prt("\033[1;34m");
-		prt("Parser : tipo = %d, palavra = %s\n", word->type, word->str);
+		prt("Parser: tipo = %d, palavra = %s\n", word->type, word->str);
 		while (word->cmds[i] != NULL)
 		{
 			prt("Lexer: palavra = %s\n", word->cmds[i]);

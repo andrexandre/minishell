@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 19:31:58 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/01 19:06:13 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,15 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int			status;
-	char		**paths;
-	int			ac;
-	int			fd[2];
-	char		**av;
-	t_eplist	*epl;
-	t_list		*words;
-	t_list		*lst_lexer;
-}				t_var;
+	int				status;
+	char			**paths;
+	int				ac;
+	int				fd[2];
+	char			**av;
+	t_eplist		*epl;
+	t_list			*words;
+	t_list			*lst_lexer;
+}					t_var;
 
 // minishell
 void				free_all(int exit_code);
@@ -82,6 +82,8 @@ void				lexer(char *str);
 void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 int					count_to_pipe(t_list *words);
+bool				need_expande(char *str);
+char				*expander(char *str);
 
 // ep_lst
 t_eplist			*get_env(char *name);
