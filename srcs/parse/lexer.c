@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/29 10:14:45 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/01 20:49:14 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,16 @@ bool	is_token(char *str)
 	return (true);
 }
 
+void word(char *str)
+{
+	if(need_expande(str))
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(expander(ft_strdup(str)),
+					NULL, WORD));
+	else
+		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str),
+					NULL, WORD));
+}
+
 void	lexer(char *str)
 {
 	int		i;
@@ -67,8 +77,7 @@ void	lexer(char *str)
 	while (splitted[i])
 	{
 		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
-			ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]),
-					NULL, WORD));
+			word(splitted[i]);
 		i++;
 	}
 	free_strs(splitted);

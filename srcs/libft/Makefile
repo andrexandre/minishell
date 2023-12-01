@@ -71,6 +71,7 @@ SRCS = \
    str/ft_substr.c\
    str/ft_tolower.c\
    str/ft_toupper.c\
+   str/ft_strrep.c\
    \
    utils/ft_isalnum.c\
    utils/ft_isalpha.c\
