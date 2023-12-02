@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/01 18:54:52 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/02 18:14:05 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ typedef struct s_var
 	char		**paths;
 	int			ac;
 	int			fd[2];
+	int			pipe[2];
 	int			saved_fd[2];
-	int 		is_opened[2];
 	char		**av;
 	t_eplist	*epl;
 	t_list		*words;
@@ -57,7 +57,7 @@ typedef struct s_var
 void				free_all(int exit_code);
 void				free_lst(t_list *word);
 void				handler(int num);
-void				parsing_paths(char **ep, int i);
+void				parsing_paths(void);
 
 // builtin
 int					run_echo(void);

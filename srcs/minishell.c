@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/01 18:28:38 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/02 19:08:33 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 
 void	free_all(int exit_code)
 {
+	close(var()->saved_fd[0]);
+	close(var()->saved_fd[1]);
+	close(0);
+	close(1);
 	ep_lclear(&var()->epl);
 	free_strs(var()->paths);
 	exit(exit_code);
@@ -38,8 +42,6 @@ void	cmd_loop(void)
 	int		status;
 
 	status = 1;
-	var()->saved_fd[0] = dup(STDIN_FILENO);
-	var()->saved_fd[1] = dup(STDOUT_FILENO);
 	while (status)
 	{
 		signal(SIGINT, handler);
@@ -56,10 +58,10 @@ void	cmd_loop(void)
 		}
 		lexer(buf);
 		parse();
+		free(buf);
 		execution(&status);
 		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
-		free(buf);
 		if (var()->fd[0])
 		{
 			close(var()->fd[0]);
@@ -71,30 +73,19 @@ void	cmd_loop(void)
 			dup2(var()->saved_fd[1], STDOUT_FILENO);
 		}
 	}
-	close(var()->saved_fd[0]);
-	close(var()->saved_fd[1]);
-	close(0);
-	close(1);
 }
 
-void	parsing_paths(char **ep, int i)
+void	parsing_paths(void)
 {
-	char	*path_from_ep;
 	char	*temp;
+	int		i;
 
-	path_from_ep = NULL;
-	while (ep[++i])
-	{
-		path_from_ep = ft_strnstr(ep[i], "PATH=", 5);
-		if (path_from_ep)
-			break ;
-	}
-	if (!path_from_ep || !ep[i])
+	if (!get_env("PATH"))
 		return ;
-	path_from_ep += 5;
-	var()->paths = ft_split(path_from_ep, ':');
+	free_strs(var()->paths);
+	var()->paths = ft_split(get_env("PATH")->data, ':');
 	if (!var()->paths)
-		exit(EXIT_FAILURE);
+		return ;
 	i = -1;
 	while (var()->paths[++i])
 	{
@@ -102,7 +93,7 @@ void	parsing_paths(char **ep, int i)
 		(var()->paths[i]) = ft_strjoin(temp, "/");
 		free(temp);
 		if (!var()->paths[i])
-			exit(EXIT_FAILURE);
+			return ;
 	}
 }
 
@@ -118,8 +109,16 @@ void	var_init(char *cwd)
 	if (!get_env("PATH"))
 		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
 /usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+	else
+	{
+		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
+		ep_change_value("PATH", str);
+		free(str);
+	}
 	ep_lnew_add_back(&var()->epl, cwd);
 	free(cwd);
+	var()->saved_fd[0] = dup(STDIN_FILENO);
+	var()->saved_fd[1] = dup(STDOUT_FILENO);
 }
 
 void	minishell_init(char **ep)
@@ -129,7 +128,7 @@ void	minishell_init(char **ep)
 	char	*str;
 
 	i = -1;
-	while (ep[++i])
+	while (ep && ep[++i])
 	{
 		if (!ft_strcmp(ep[i], "_="))
 			continue ;
@@ -149,38 +148,42 @@ void	minishell_init(char **ep)
 	var_init(cwd);
 }
 
+// this is a temporary function for debugging that uses unauthorized functions
+void	debug(int n)
+{
+	char	*hist = "/nfs/homes/analexan/minishell/.minishell_history";
+	char	*asd = NULL;
+	char	history_file[100];
+
+	if (!get_env("HOME"))
+		strcpy(history_file, hist);
+	else
+	{
+		asd = ft_strjoin(get_env("HOME")->data, "/minishell/.minishell_history");
+		strcpy(history_file, asd);
+		free(asd);
+	}
+	if (!n)
+		read_history(history_file);
+	else
+		write_history(history_file);
+}
+
 int	main(int ac, char **av, char **ep)
 {
-	// int fd;
-	// fd = open("asd", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	// close(fd);
-	// fd = open("out", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	// if (dup2(fd, STDOUT_FILENO) < 0)
-	// 	perror("dup2");
-	// close(fd);
-	// return (0);
 	var()->ac = ac;
 	var()->av = av;
-	if (!ep)
-		return (0);
 	minishell_init(ep);
-	parsing_paths(ep, -1);
-	char *asd = ft_strjoin(get_env("HOME")->data, "/minishell/.minishell_history");
-	char history_file[100];
-	strcpy(history_file, asd);
-	free(asd);
-	read_history(history_file); // illegal
+	parsing_paths();
+	debug(0);
 	cmd_loop();
 	prt("exit\n");
-	write_history(history_file); // illegal
+	debug(1);
 	rl_clear_history();
 	free_all(var()->status);
 }
 
 /*
-cat < out < asd: fix
-if i use pipe, the next command, builtin or not will make a child
-
 o expander pode aumentar / diminuir a lst
 e o heredoc é a execão
 */
