@@ -27,7 +27,10 @@
 		"functional": "c",
 		"ratio": "c",
 		"tuple": "c",
-		"type_traits": "c"
+		"type_traits": "c",
+		"deque": "c",
+		"unordered_map": "c",
+		"vector": "c"
 	},
 	"functionHeaderExtension.headerFilePath": "/nfs/homes/analexan/minishell/include/minishell.h"
 }

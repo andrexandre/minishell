@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/02 22:29:33 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/02 22:50:05 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ char	*expansion(char *str)
 
 char	*expander(char *str)
 {
-	int	i;
-	int	j;
-	char *ex_str;
+	int		i;
+	int		j;
+	char	*ex_str;
 
 	i = -1;
 	while (str[++i])
