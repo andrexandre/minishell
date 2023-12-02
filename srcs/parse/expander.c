@@ -6,25 +6,11 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/01 21:15:56 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/02 22:29:33 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	need_expande(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' || str[i] == '~')
-			return (true);
-		i++;
-	}
-	return (false);
-}
 
 char	*expansion(char *str)
 {
@@ -63,8 +49,9 @@ char	*expander(char *str)
 				if (!ft_isalnum(str[j]))
 					break ;
 			ex_str = expansion(ft_substr(str, i + 1, j - i - 1));
-			ft_strrep(&str, i, ft_strlen(ex_str), ex_str);
+			ft_strrep(&str, i, j, ex_str);
 			free(ex_str);
+			i = 0;
 		}
 	}
 	return (str);

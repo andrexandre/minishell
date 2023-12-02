@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/01 20:49:14 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/02 22:38:29 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,8 @@ bool	is_token(char *str)
 
 void word(char *str)
 {
-	if(need_expande(str))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(expander(ft_strdup(str)),
-					NULL, WORD));
-	else
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str),
-					NULL, WORD));
+	ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str),
+				NULL, WORD));
 }
 
 void	lexer(char *str)
@@ -63,11 +59,14 @@ void	lexer(char *str)
 	int		i;
 	char	**splitted;
 	char	*trimmed;
+	char	*ex;
 
 	i = 0;
 	search_and_replace(str, '\t', ' ');
 	trimmed = ft_strtrim(str, " ");
-	splitted = ft_split_without(trimmed, ' ', "'\"");
+	ex = expander(ft_strdup(trimmed));
+	splitted = ft_split_without(ex, ' ', "'\"");
+	free(ex);
 	free(trimmed);
 	if (splitted == NULL)
 	{
