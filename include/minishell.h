@@ -85,6 +85,8 @@ void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
+bool				need_expande(char *str);
+char				*expander(char *str);
 
 // ep_lst
 t_eplist			*get_env(char *name);

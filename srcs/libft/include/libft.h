@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/28 20:35:13 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/01 20:55:11 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #  define BUFFER_SIZE 42
 # endif
 
-enum	e_type
+enum				e_type
 {
 	NONE,
 	WORD,
@@ -66,6 +66,7 @@ int					ft_strncmp(const char *s1, const char *s2, size_t n);
 char				*ft_strdup(const char *s);
 char				*ft_strnstr(const char *big, const char *little,
 						size_t len);
+char				*ft_strrep(char **str, size_t from, size_t len, char *rep);
 
 int					ft_atoi(const char *nptr);
 long				ft_atol(const char *nptr);
