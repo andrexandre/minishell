@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 20:53:25 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/05 16:49:18 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/05 16:55:46 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_strrep(char **str, size_t from, size_t end, char *rep)
 	if (!(*str) || !rep)
 		return (NULL);
 	str_len = ft_strlen((*str));
-	if (from >= str_len || end <= str_len || from > end)
+	if (from >= str_len || end < str_len || from > end)
 		return (NULL);
 	new_len = (str_len - (end - from)) + ft_strlen(rep);
 	new = ft_calloc(new_len + 1, sizeof(char));
