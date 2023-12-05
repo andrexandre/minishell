@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/28 18:06:09 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/01 14:08:40 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,13 @@ void	*free_strs(char **strs)
 	if (!strs)
 		return (NULL);
 	while (strs[i])
-		free(strs[i++]);
+	{
+		free(strs[i]);
+		strs[i] = NULL;
+		i++;
+	}
 	free(strs);
+	strs = NULL;
 	return (NULL);
 }
 

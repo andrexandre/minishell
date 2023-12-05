@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
 /*   Updated: 2023/12/02 22:29:47 by jealves-         ###   ########.fr       */
@@ -41,21 +41,23 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int				status;
-	char			**paths;
-	int				ac;
-	int				fd[2];
-	char			**av;
-	t_eplist		*epl;
-	t_list			*words;
-	t_list			*lst_lexer;
-}					t_var;
+	int			status;
+	char		**paths;
+	int			ac;
+	int			fd[2];
+	int			pipe[2];
+	int			saved_fd[2];
+	char		**av;
+	t_eplist	*epl;
+	t_list		*words;
+	t_list		*lst_lexer;
+}				t_var;
 
 // minishell
 void				free_all(int exit_code);
 void				free_lst(t_list *word);
 void				handler(int num);
-void				parsing_paths(char **ep, int i);
+void				parsing_paths(void);
 
 // builtin
 int					run_echo(void);
