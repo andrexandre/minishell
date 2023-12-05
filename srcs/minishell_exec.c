@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 19:11:38 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/05 18:40:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,7 @@ void	execution(int *status)
 	t_list	*curr;
 	int		i;
 	int		j;
+	int		len;
 	int		needs_dup[2];
 
 	/*
@@ -232,102 +233,113 @@ void	execution(int *status)
 	needs_dup[0] = 0;
 	needs_dup[1] = 0;
 	curr = var()->words;
+	len = ft_lstsize(var()->words);
+	if (len > 1)
+	{
+		var()->pipe = ft_calloc(len - 1, sizeof(int *));
+		if (!var()->pipe)
+			perror("Error");
+		j = 0;
+		while (j < len - 1)
+		{
+			var()->pipe[j] = ft_calloc(2, sizeof(int));
+			if (pipe(var()->pipe[j]) < 0)
+				perror("pipe");
+			j++;
+		}
+	}
 	// if (redirections())
 	// 	return ;
 	j = 0;
-	// int is_piped = 0;
 	while (curr)
 	{
+		// i = -1;
+		// while (curr->cmds[++i])
+		// {
+		// 	if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
+		// 		|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
+		// 	{
+		// 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+		// 		var()->status = 2;
+		// 		break ;
+		// 	}
+		// 	if (var()->fd[0] && curr->cmds[i][0] == '<')
+		// 		close(var()->fd[0]);
+		// 	if (var()->fd[1] && curr->cmds[i][0] == '>')
+		// 		close(var()->fd[1]);
+		// 	if (!ft_strcmp(curr->cmds[i], "<"))
+		// 		var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
+		// 	else if (!ft_strcmp(curr->cmds[i], "<<"))
+		// 		var()->fd[0] = get_stdin(curr->cmds[i + 1]);
+		// 	else if (!ft_strcmp(curr->cmds[i], ">"))
+		// 		var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		// 	else if (!ft_strcmp(curr->cmds[i], ">>"))
+		// 		var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+		// 	else
+		// 		continue ;
+		// 	if (curr->cmds[i][0] == '<')
+		// 	{
+		// 		if (var()->fd[0] < 0)
+		// 		{
+		// 			perror(curr->cmds[i + 1]);
+		// 			var()->fd[0] = 0;
+		// 			break ;
+		// 		}
+		// 		if (ft_strlen_matrix(curr->cmds) > 2)
+		// 			needs_dup[0] = 1;
+		// 		else
+		// 		{
+		// 			close(var()->fd[0]);
+		// 			var()->fd[0] = 0;
+		// 			break ;
+		// 		}
+		// 		curr->cmds = remove_items(curr->cmds, i);
+		// 		i--;
+		// 	}
+		// 	else if (curr->cmds[i][0] == '>')
+		// 	{
+		// 		if (var()->fd[1] < 0)
+		// 		{
+		// 			perror(curr->cmds[i + 1]);
+		// 			var()->fd[1] = 0;
+		// 			break ;
+		// 		}
+		// 		if (ft_strlen_matrix(curr->cmds) > 2)
+		// 			needs_dup[1] = 1;
+		// 		else
+		// 		{
+		// 			close(var()->fd[1]);
+		// 			var()->fd[1] = 0;
+		// 			break ;
+		// 		}
+		// 		curr->cmds = remove_items(curr->cmds, i);
+		// 		i--;
+		// 	}
+		// }
+		if (j)
+			dup2(var()->pipe[j - 1][0], STDIN_FILENO);
+		if (j != len - 1)
+			dup2(var()->pipe[j][1], STDOUT_FILENO);
+		// if (needs_dup[0])
+		// {
+		// 	if (dup2(var()->fd[0], STDIN_FILENO) < 0)
+		// 		perror("dup2, fd[0]");
+		// 	needs_dup[0] = 0;
+		// }
+		// if (needs_dup[1])
+		// {
+		// 	if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
+		// 		perror("dup2, fd[1]");
+		// 	needs_dup[1] = 0;
+		// }
 		i = -1;
-		while (curr->cmds[++i])
-		{
-			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
-				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
-			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				var()->status = 2;
-				break ;
-			}
-			if (var()->fd[0] && curr->cmds[i][0] == '<')
-				close(var()->fd[0]);
-			if (var()->fd[1] && curr->cmds[i][0] == '>')
-				close(var()->fd[1]);
-			if (!ft_strcmp(curr->cmds[i], "<"))
-				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
-			else if (!ft_strcmp(curr->cmds[i], "<<"))
-				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
-			else if (!ft_strcmp(curr->cmds[i], ">"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			else if (!ft_strcmp(curr->cmds[i], ">>"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-			else
-				continue ;
-			if (curr->cmds[i][0] == '<')
-			{
-				if (var()->fd[0] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[0] = 0;
-					break ;
-				}
-				if (ft_strlen_matrix(curr->cmds) > 2)
-					needs_dup[0] = 1;
-				else
-				{
-					close(var()->fd[0]);
-					var()->fd[0] = 0;
-					break ;
-				}
-				curr->cmds = remove_items(curr->cmds, i);
-				i--;
-			}
-			else if (curr->cmds[i][0] == '>')
-			{
-				if (var()->fd[1] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[1] = 0;
-					break ;
-				}
-				if (ft_strlen_matrix(curr->cmds) > 2)
-					needs_dup[1] = 1;
-				else
-				{
-					close(var()->fd[1]);
-					var()->fd[1] = 0;
-					break ;
-				}
-				curr->cmds = remove_items(curr->cmds, i);
-				i--;
-			}
-		}
-		// if (curr->next)
+		// while (++i < len - 1)
 		// {
-		// 	if (pipe(var()->pipe) < 0)
-		// 		perror("pipe");
-		// 	is_piped = 1;
+		// 	close(var()->pipe[i][0]);
+		// 	close(var()->pipe[i][1]);
 		// }
-		// if (is_piped)
-		// {
-		// 	close(var()->pipe[j]);
-		// 	if (dup2(var()->pipe[!j], !j) < 0)
-		// 		perror("dup2, pipe");
-		// 	close(var()->pipe[!j]);
-		// }
-		if (needs_dup[0])
-		{
-			if (dup2(var()->fd[0], STDIN_FILENO) < 0)
-				perror("dup2, fd[0]");
-			needs_dup[0] = 0;
-		}
-		if (needs_dup[1])
-		{
-			if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
-				perror("dup2, fd[1]");
-			needs_dup[1] = 0;
-		}
 		if (run_builtin())
-			return ;
+			(void)var;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
 			|| !ft_strcmp(curr->cmds[0], "q"))
 			*status = 0;
@@ -338,8 +350,32 @@ void	execution(int *status)
 			cmd_execute(ep);
 			free_strs(ep);
 		}
+		if (len > 1 && j && var()->pipe[j - 1][0])
+		{
+			close(var()->pipe[j - 1][0]);
+			var()->pipe[j - 1][0] = 0;
+			dup2(var()->saved_fd[0], STDIN_FILENO);
+		}
+		if (len > 1 && j != len - 1 && var()->pipe[j][1])
+		{
+			close(var()->pipe[j][1]);
+			var()->pipe[j][1] = 0;
+			dup2(var()->saved_fd[1], STDOUT_FILENO);
+		}
 		curr = curr->next;
 		j++;
+	}
+	if (len > 1)
+	{
+		j = 0;
+		while (j < len - 1)
+		{
+			close(var()->pipe[j][0]);
+			close(var()->pipe[j][1]);
+			free(var()->pipe[j]);
+			j++;
+		}
+		free(var()->pipe);
 	}
 }
 

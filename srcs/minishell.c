@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 19:08:33 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:49:32 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ void	cmd_loop(void)
 			dup2(var()->saved_fd[1], STDOUT_FILENO);
 		}
 	}
+	close(var()->fd[0]);
+	close(var()->fd[1]);
 }
 
 void	parsing_paths(void)
@@ -168,7 +170,7 @@ void	debug(int n)
 	else
 		write_history(history_file);
 }
-
+#include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;

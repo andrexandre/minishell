@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 18:14:05 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/05 16:38:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_var
 	char		**paths;
 	int			ac;
 	int			fd[2];
-	int			pipe[2];
+	int			**pipe;
 	int			saved_fd[2];
 	char		**av;
 	t_eplist	*epl;
