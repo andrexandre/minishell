@@ -21,7 +21,7 @@ char	*ft_strrep(char **str, size_t from, size_t end, char *rep)
 	if (!(*str) || !rep)
 		return (NULL);
 	str_len = ft_strlen((*str));
-	if (from >= str_len || end < str_len || from > end)
+	if (from >= str_len || from > end)
 		return (NULL);
 	new_len = (str_len - (end - from)) + ft_strlen(rep);
 	new = ft_calloc(new_len + 1, sizeof(char));
