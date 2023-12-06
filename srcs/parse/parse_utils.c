@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/29 10:16:05 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/06 22:02:55 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,23 @@ void	search_and_replace(char *str, char src, char dest)
 			str[i] = dest;
 		i++;
 	}
+}
+
+void	search_and_remove(char *str, char target)
+{
+	char	*dest;
+
+	dest = str;
+	while (*str != '\0')
+	{
+		if (*str != target)
+		{
+			*dest = *str;
+			dest++;
+		}
+		str++;
+	}
+	*dest = '\0';
 }
 
 int	ft_strlen_matrix(char **str)
