@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/05 16:38:57 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/06 14:23:25 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,13 @@ void				parsing_paths(void);
 
 // builtin
 int					run_echo(void);
-int					run_env(void);
+int					prt_eplst(void);
 int					run_export(void);
 int					run_pwd(void);
 int					run_unset(void);
 
 // builtin2
+t_eplist			*get_env(char *name);
 int					run_cd(void);
 
 // minishell_exec
@@ -89,13 +90,9 @@ bool				need_expande(char *str);
 char				*expander(char *str);
 
 // ep_lst
-t_eplist			*get_env(char *name);
 void				ep_lnew_add_back(t_eplist **lst, char *str);
 void				ep_ldelone(t_eplist *lst);
 void				ep_lclear(t_eplist **lst);
-void				prt_eplst(t_eplist *lst);
-
-// ep_lst2
 void				ep_export_value(char *str);
 void				ep_change_value(char *name, char *data);
 

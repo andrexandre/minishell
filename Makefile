@@ -26,8 +26,7 @@ SRC		= minishell_utils.c\
 		  minishell_exec.c \
 		  builtin/builtin.c \
 		  builtin/builtin2.c \
-		  builtin/ep_lst.c \
-		  builtin/ep_lst2.c
+		  builtin/ep_lst.c 
 
 SRC		:= $(addprefix srcs/,$(SRC))
 

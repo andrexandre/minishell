@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/05 18:40:30 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/06 19:02:50 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	run_builtin(void)
 	else if (!ft_strcmp(var()->words->cmds[0], "echo"))
 		var()->status = (*run_echo)();
 	else if (!ft_strcmp(var()->words->cmds[0], "env"))
-		var()->status = (*run_env)();
+		var()->status = (*prt_eplst)();
 	else if (!ft_strcmp(var()->words->cmds[0], "export"))
 		var()->status = (*run_export)();
 	else if (!ft_strcmp(var()->words->cmds[0], "pwd"))
@@ -215,6 +215,7 @@ int	redirections(void)
 	return (0);
 }
 
+// attetion to close (will kill the process without saying nothing)
 void	execution(int *status)
 {
 	char	**ep;
@@ -237,8 +238,6 @@ void	execution(int *status)
 	if (len > 1)
 	{
 		var()->pipe = ft_calloc(len - 1, sizeof(int *));
-		if (!var()->pipe)
-			perror("Error");
 		j = 0;
 		while (j < len - 1)
 		{
@@ -316,10 +315,15 @@ void	execution(int *status)
 		// 		i--;
 		// 	}
 		// }
-		if (j)
-			dup2(var()->pipe[j - 1][0], STDIN_FILENO);
-		if (j != len - 1)
-			dup2(var()->pipe[j][1], STDOUT_FILENO);
+
+		// if (j)
+		// 	close(var()->pipe[j - 1][1]);
+		if (j && dup2(var()->pipe[j - 1][0], STDIN_FILENO) < 0)
+			perror("dup2, p0\n");
+		// if (j != len - 1)
+		// 	close(var()->pipe[j][0]);
+		if (j != len - 1 && dup2(var()->pipe[j][1], STDOUT_FILENO) < 0)
+			perror("dup2, p1\n");
 		// if (needs_dup[0])
 		// {
 		// 	if (dup2(var()->fd[0], STDIN_FILENO) < 0)
@@ -370,8 +374,8 @@ void	execution(int *status)
 		j = 0;
 		while (j < len - 1)
 		{
-			close(var()->pipe[j][0]);
-			close(var()->pipe[j][1]);
+			// close(var()->pipe[j][0]);
+			// close(var()->pipe[j][1]);
 			free(var()->pipe[j]);
 			j++;
 		}

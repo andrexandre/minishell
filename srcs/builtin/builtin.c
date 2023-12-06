@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 18:45:39 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/06 13:30:12 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,16 @@ int	run_echo(void)
 	return (0);
 }
 
-int	run_env(void)
+int	prt_eplst(void)
 {
-	prt_eplst(var()->epl);
+	t_eplist *lst;
+
+	lst = var()->epl;
+	while (lst)
+	{
+		prt("%s\n", lst->str);
+		lst = lst->next;
+	}
 	return (0);
 }
 
