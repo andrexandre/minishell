@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 19:02:50 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/07 19:29:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,29 +116,6 @@ int	get_stdin(char *arg)
 	return (fd);
 }
 
-// void	process_hd(char **cmdargs, char **av, char **ep, int mode)
-// {
-// 	char	*cmd;
-// 	int		fd;
-// 	int		fd2;
-// 	fd = var()->pipe[mode][0];
-// 	if (mode)
-// 		fd2 = open(av[var()->ac - 1], O_CREAT | O_WRONLY | O_APPEND, 0644);
-// 	else
-// 		fd2 = var()->pipe[1][1];
-// 	if (mode && fd2 < 0)
-// 		error_b(3);
-// 	cmd = search_cmd(cmdargs, fd, fd2);
-// 	if (dup2(fd, STDIN_FILENO) < 0 || dup2(fd2, STDOUT_FILENO) < 0)
-// 		error_b(2);
-// 	close_all(fd, fd2);
-// 	execve(cmd, cmdargs, ep);
-// 	free(cmd);
-// 	perror(cmdargs[0]);
-// 	free_all(0);
-// 	exit(127);
-// }
-
 int	redirections(void)
 {
 	char	**cmds;
@@ -214,25 +191,33 @@ int	redirections(void)
 	}
 	return (0);
 }
+char	*search_cmd(char *command);
 
-// attetion to close (will kill the process without saying nothing)
+void	tmp_handler(int sig)
+{
+	if (sig == SIGQUIT)
+		prt("Quit (core dumped)\n");
+	if (sig == SIGINT)
+		prt("\n");
+}
+
 void	execution(int *status)
 {
-	char	**ep;
 	t_list	*curr;
-	int		i;
+	// int		i;
 	int		j;
 	int		len;
-	int		needs_dup[2];
+	// int		needs_dup[2];
 
 	/*
 	to-do:
 	fazer pipes sozinhos (sem redirecionamento)
 	fazer pipe e depois uma child
 	(bultin ou nao)(prob will fix heredoc w ctl+c/d)
+	if theres pipe, builtins are run in child
 	*/
-	needs_dup[0] = 0;
-	needs_dup[1] = 0;
+	// needs_dup[0] = 0;
+	// needs_dup[1] = 0;
 	curr = var()->words;
 	len = ft_lstsize(var()->words);
 	if (len > 1)
@@ -247,6 +232,7 @@ void	execution(int *status)
 			j++;
 		}
 	}
+	var()->pid = ft_calloc(len, sizeof(int));
 	// if (redirections())
 	// 	return ;
 	j = 0;
@@ -315,15 +301,6 @@ void	execution(int *status)
 		// 		i--;
 		// 	}
 		// }
-
-		// if (j)
-		// 	close(var()->pipe[j - 1][1]);
-		if (j && dup2(var()->pipe[j - 1][0], STDIN_FILENO) < 0)
-			perror("dup2, p0\n");
-		// if (j != len - 1)
-		// 	close(var()->pipe[j][0]);
-		if (j != len - 1 && dup2(var()->pipe[j][1], STDOUT_FILENO) < 0)
-			perror("dup2, p1\n");
 		// if (needs_dup[0])
 		// {
 		// 	if (dup2(var()->fd[0], STDIN_FILENO) < 0)
@@ -336,12 +313,12 @@ void	execution(int *status)
 		// 		perror("dup2, fd[1]");
 		// 	needs_dup[1] = 0;
 		// }
-		i = -1;
-		// while (++i < len - 1)
-		// {
-		// 	close(var()->pipe[i][0]);
-		// 	close(var()->pipe[i][1]);
-		// }
+		var()->fd[0] = 0;
+		var()->fd[1] = 0;
+		if (len > 1 && j)
+			var()->fd[0] = var()->pipe[j - 1][0];
+		if (len > 1 && j != len - 1)
+			var()->fd[1] = var()->pipe[j][1];
 		if (run_builtin())
 			(void)var;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
@@ -349,40 +326,58 @@ void	execution(int *status)
 			*status = 0;
 		else
 		{
-			ep = ep_from_epl();
-			parsing_paths();
-			cmd_execute(ep);
-			free_strs(ep);
+			char *cmd = search_cmd(curr->cmds[0]);
+			if (cmd)
+			{
+				signal(SIGINT, tmp_handler);
+				signal(SIGQUIT, tmp_handler);
+				var()->pid[j] = fork();
+				if (var()->pid[j] < 0)
+					perror("fork");
+				if (!var()->pid[j])
+					cmd_execute(cmd, ep_from_epl(), curr, len);
+				free(cmd);
+			}
 		}
-		if (len > 1 && j && var()->pipe[j - 1][0])
-		{
+		if (len > 1 && j)
 			close(var()->pipe[j - 1][0]);
-			var()->pipe[j - 1][0] = 0;
-			dup2(var()->saved_fd[0], STDIN_FILENO);
-		}
-		if (len > 1 && j != len - 1 && var()->pipe[j][1])
-		{
+		if (len > 1 && j != len - 1)
 			close(var()->pipe[j][1]);
-			var()->pipe[j][1] = 0;
-			dup2(var()->saved_fd[1], STDOUT_FILENO);
-		}
 		curr = curr->next;
 		j++;
 	}
+	int stat = 0;
+	j = -1;
+	while (++j < len)
+	{
+		waitpid(var()->pid[j], &stat, 0);
+		if (WIFEXITED(stat))
+			var()->status = WEXITSTATUS(stat);
+		else
+			var()->status = 130;
+	}
 	if (len > 1)
 	{
-		j = 0;
-		while (j < len - 1)
-		{
-			// close(var()->pipe[j][0]);
-			// close(var()->pipe[j][1]);
+		j = -1;
+		while (++j < len - 1)
 			free(var()->pipe[j]);
-			j++;
-		}
 		free(var()->pipe);
 	}
+	free(var()->pid);
 }
+/*
+	int stat;
+	j = -1;
+	while (++j < len - 1)
+	{
+		waitpid(var()->pid[j], &stat, 0);
+		if (WIFEXITED(stat))
+			var()->status = WEXITSTATUS(stat);
+		else
+			var()->status = 130;
+	}
 
+*/
 /*
 ls | cat < zxc
 nao executa nada pcausa que n existe zxc
@@ -420,39 +415,27 @@ char	*search_cmd(char *command)
 	return (NULL);
 }
 
-void	tmp_handler(int sig)
+void	cmd_execute(char *cmd, char **ep, t_list *curr, int len)
 {
-	(void)sig;
-	prt("\n");
-}
+	int	i;
 
-void	cmd_execute(char **ep)
-{
-	char	*cmd;
-	int		pid;
-
-	cmd = search_cmd(var()->words->cmds[0]);
-	if (!cmd)
-		return ;
-	pid = fork();
-	if (pid < 0)
-		perror("fork");
-	signal(SIGINT, tmp_handler);
-	signal(SIGQUIT, handler);
-	if (!pid)
+	parsing_paths();
+	if (var()->fd[0] && dup2(var()->fd[0], STDIN_FILENO) < 0)
+		perror("dup2, fd[0]");
+	if (var()->fd[1] && dup2(var()->fd[1], STDOUT_FILENO) < 0)
+		perror("dup2, fd[1]");
+	i = -1;
+	while (++i < len - 1)
 	{
-		close(var()->saved_fd[0]);
-		close(var()->saved_fd[1]);
-		execve(cmd, var()->words->cmds, ep);
-		perror(cmd);
-		ft_lstclear(&var()->words, free_lst);
-		free_strs(ep);
-		free_all(126);
+		close(var()->pipe[i][0]);
+		close(var()->pipe[i][1]);
 	}
-	wait(&pid);
-	if (WIFEXITED(pid))
-		var()->status = WEXITSTATUS(pid);
-	else
-		var()->status = 130;
+	close(var()->saved_fd[0]);
+	close(var()->saved_fd[1]);
+	execve(cmd, curr->cmds, ep);
 	free(cmd);
+	perror(cmd);
+	ft_lstclear(&var()->words, free_lst);
+	free_strs(ep);
+	free_all(126);
 }

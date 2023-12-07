@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/05 17:49:32 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/07 19:26:00 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,9 @@ void	free_all(int exit_code)
 	exit(exit_code);
 }
 
-void	handler(int num)
+void	handler(int sig)
 {
-	if (num == SIGQUIT)
-		prt("Quit (core dumped)\n");
-	if (num == SIGINT)
+	if (sig == SIGINT)
 	{
 		prt("\n");
 		rl_on_new_line();
@@ -62,16 +60,6 @@ void	cmd_loop(void)
 		execution(&status);
 		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
-		if (var()->fd[0])
-		{
-			close(var()->fd[0]);
-			dup2(var()->saved_fd[0], STDIN_FILENO);
-		}
-		if (var()->fd[1])
-		{
-			close(var()->fd[1]);
-			dup2(var()->saved_fd[1], STDOUT_FILENO);
-		}
 	}
 	close(var()->fd[0]);
 	close(var()->fd[1]);

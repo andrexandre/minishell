@@ -6,14 +6,14 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 14:23:25 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/07 19:00:40 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft.h"
+# include "../srcs/libft/include/libft.h"
 # include <curses.h>
 # include <dirent.h>
 # include <fcntl.h>
@@ -44,6 +44,7 @@ typedef struct s_var
 	int			status;
 	char		**paths;
 	int			ac;
+	int			*pid;
 	int			fd[2];
 	int			**pipe;
 	int			saved_fd[2];
@@ -73,7 +74,7 @@ int					run_cd(void);
 // minishell_exec
 char				**ep_from_epl(void);
 void				execution(int *status);
-void				cmd_execute(char **ep);
+void				cmd_execute(char *cmd, char **ep, t_list *curr, int len);
 
 // minishell_utils
 void				*free_strs(char **strs);
