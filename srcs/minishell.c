@@ -6,11 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/07 19:26:00 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/08 17:20:39 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_sig = 0;
 
 void	free_all(int exit_code)
 {
@@ -25,6 +27,7 @@ void	free_all(int exit_code)
 
 void	handler(int sig)
 {
+	g_sig = sig;
 	if (sig == SIGINT)
 	{
 		prt("\n");
@@ -32,6 +35,7 @@ void	handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	var()->status = 128 + sig;
 }
 
 void	cmd_loop(void)

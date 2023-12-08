@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/07 19:00:40 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/08 16:19:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # include <term.h>
 # include <termios.h>
 # include <unistd.h>
+
+extern int			g_sig;
 
 typedef struct s_eplist
 {
@@ -74,7 +76,7 @@ int					run_cd(void);
 // minishell_exec
 char				**ep_from_epl(void);
 void				execution(int *status);
-void				cmd_execute(char *cmd, char **ep, t_list *curr, int len);
+void				cmd_execute(char *cmd, char **ep, t_list *curr);
 
 // minishell_utils
 void				*free_strs(char **strs);

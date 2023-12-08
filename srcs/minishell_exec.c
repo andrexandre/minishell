@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/07 19:29:27 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/08 19:13:00 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,30 +85,42 @@ char	**remove_items(char **strs, int n)
 	free_strs(strs);
 	return (new);
 }
+// fix hd ctrl+c
+void	hd_sig(int sig)
+{
+	g_sig = sig;
+	prt("%i\n", sig);
+	var()->status = 128 + sig;
+}
 
 // receive input from the stdin and save in in the file
 int	get_stdin(char *arg)
 {
 	char	*buf;
-	char	*str;
 	int		fd;
 
+	signal(SIGINT, hd_sig);
 	fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
 	if (fd < 0)
 		return (-1);
-	prt("> ");
-	buf = get_next_line(STDIN_FILENO);
-	str = ft_strjoin(arg, "\n");
-	while (ft_strcmp(buf, str))
+	g_sig = 0;
+	buf = readline("> ");
+	while (!g_sig && buf && ft_strcmp(buf, arg))
 	{
 		write(fd, buf, ft_strlen(buf));
 		free(buf);
-		prt("> ");
-		buf = get_next_line(STDIN_FILENO);
+		buf = readline("> ");
 	}
-	free(str);
-	free(buf);
 	close(fd);
+	signal(SIGINT, handler);
+	if (!buf)
+	{
+		prt("'exit'\n");
+		return (-2);
+	}
+	free(buf);
+	if (g_sig)
+		return (-1);
 	fd = open("/tmp/msh-hd", O_RDONLY);
 	if (fd < 0)
 		return (-1);
@@ -195,131 +207,164 @@ char	*search_cmd(char *command);
 
 void	tmp_handler(int sig)
 {
+	g_sig = sig;
 	if (sig == SIGQUIT)
 		prt("Quit (core dumped)\n");
 	if (sig == SIGINT)
 		prt("\n");
+	var()->status = 128 + sig;
 }
 
+void	free_pipes(void)
+{
+	int	i;
+	int	len;
+
+	i = -1;
+	len = ft_lstsize(var()->words);
+	while (++i < len - 1)
+		free(var()->pipe[i]);
+	if (len > 1)
+		free(var()->pipe);
+	free(var()->pid);
+}
+
+/*
+ls | cat < zxc
+nao executa nada pcausa que n existe zxc
+
+cat > out | cat > outt
+so o primeiro comando
+
+cat < out | cat < outt
+so o segundo comando
+
+ls > out | ls > outt
+faz os dois
+*/
+int		needs_dup[2];
 void	execution(int *status)
 {
 	t_list	*curr;
-	// int		i;
+	int		i;
 	int		j;
 	int		len;
-	// int		needs_dup[2];
 
 	/*
 	to-do:
-	fazer pipes sozinhos (sem redirecionamento)
 	fazer pipe e depois uma child
 	(bultin ou nao)(prob will fix heredoc w ctl+c/d)
 	if theres pipe, builtins are run in child
 	*/
-	// needs_dup[0] = 0;
-	// needs_dup[1] = 0;
 	curr = var()->words;
 	len = ft_lstsize(var()->words);
-	if (len > 1)
-	{
-		var()->pipe = ft_calloc(len - 1, sizeof(int *));
-		j = 0;
-		while (j < len - 1)
-		{
-			var()->pipe[j] = ft_calloc(2, sizeof(int));
-			if (pipe(var()->pipe[j]) < 0)
-				perror("pipe");
-			j++;
-		}
-	}
+	// if (len > 1)
+	// 	var()->pipe = ft_calloc(len - 1, sizeof(int *));
+	// j = 0;
+	// while (j < len - 1)
+	// {
+	// 	var()->pipe[j] = ft_calloc(2, sizeof(int));
+	// 	if (pipe(var()->pipe[j]) < 0)
+	// 		perror("pipe");
+	// 	j++;
+	// }
 	var()->pid = ft_calloc(len, sizeof(int));
 	// if (redirections())
 	// 	return ;
 	j = 0;
 	while (curr)
 	{
-		// i = -1;
-		// while (curr->cmds[++i])
-		// {
-		// 	if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
-		// 		|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
-		// 	{
-		// 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-		// 		var()->status = 2;
-		// 		break ;
-		// 	}
-		// 	if (var()->fd[0] && curr->cmds[i][0] == '<')
-		// 		close(var()->fd[0]);
-		// 	if (var()->fd[1] && curr->cmds[i][0] == '>')
-		// 		close(var()->fd[1]);
-		// 	if (!ft_strcmp(curr->cmds[i], "<"))
-		// 		var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
-		// 	else if (!ft_strcmp(curr->cmds[i], "<<"))
-		// 		var()->fd[0] = get_stdin(curr->cmds[i + 1]);
-		// 	else if (!ft_strcmp(curr->cmds[i], ">"))
-		// 		var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		// 	else if (!ft_strcmp(curr->cmds[i], ">>"))
-		// 		var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-		// 	else
-		// 		continue ;
-		// 	if (curr->cmds[i][0] == '<')
-		// 	{
-		// 		if (var()->fd[0] < 0)
-		// 		{
-		// 			perror(curr->cmds[i + 1]);
-		// 			var()->fd[0] = 0;
-		// 			break ;
-		// 		}
-		// 		if (ft_strlen_matrix(curr->cmds) > 2)
-		// 			needs_dup[0] = 1;
-		// 		else
-		// 		{
-		// 			close(var()->fd[0]);
-		// 			var()->fd[0] = 0;
-		// 			break ;
-		// 		}
-		// 		curr->cmds = remove_items(curr->cmds, i);
-		// 		i--;
-		// 	}
-		// 	else if (curr->cmds[i][0] == '>')
-		// 	{
-		// 		if (var()->fd[1] < 0)
-		// 		{
-		// 			perror(curr->cmds[i + 1]);
-		// 			var()->fd[1] = 0;
-		// 			break ;
-		// 		}
-		// 		if (ft_strlen_matrix(curr->cmds) > 2)
-		// 			needs_dup[1] = 1;
-		// 		else
-		// 		{
-		// 			close(var()->fd[1]);
-		// 			var()->fd[1] = 0;
-		// 			break ;
-		// 		}
-		// 		curr->cmds = remove_items(curr->cmds, i);
-		// 		i--;
-		// 	}
-		// }
-		// if (needs_dup[0])
-		// {
-		// 	if (dup2(var()->fd[0], STDIN_FILENO) < 0)
-		// 		perror("dup2, fd[0]");
-		// 	needs_dup[0] = 0;
-		// }
-		// if (needs_dup[1])
-		// {
-		// 	if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
-		// 		perror("dup2, fd[1]");
-		// 	needs_dup[1] = 0;
-		// }
-		var()->fd[0] = 0;
-		var()->fd[1] = 0;
-		if (len > 1 && j)
-			var()->fd[0] = var()->pipe[j - 1][0];
-		if (len > 1 && j != len - 1)
-			var()->fd[1] = var()->pipe[j][1];
-		if (run_builtin())
+		i = -1;
+		needs_dup[0] = 0;
+		needs_dup[1] = 0;
+		while (curr->cmds[++i])
+		{
+			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
+				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+				var()->status = 2;
+				return ;
+				// break ;
+			}
+			if (var()->fd[0] && curr->cmds[i][0] == '<')
+				close(var()->fd[0]);
+			if (var()->fd[1] && curr->cmds[i][0] == '>')
+				close(var()->fd[1]);
+			if (!ft_strcmp(curr->cmds[i], "<"))
+				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
+			else if (!ft_strcmp(curr->cmds[i], "<<"))
+				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
+			else if (!ft_strcmp(curr->cmds[i], ">"))
+				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			else if (!ft_strcmp(curr->cmds[i], ">>"))
+				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+			else
+				continue ;
+			if (curr->cmds[i][0] == '<')
+			{
+				if (var()->fd[0] < 0)
+				{
+					if (!g_sig && var()->fd[0] != -2)
+						perror(curr->cmds[i + 1]);
+					var()->fd[0] = 0;
+					return ;
+					// break ;
+				}
+				if (ft_strlen_matrix(curr->cmds) > 2)
+					needs_dup[0] = 1;
+				else
+				{
+					close(var()->fd[0]);
+					var()->fd[0] = 0;
+					return ;
+					// break ;
+				}
+				curr->cmds = remove_items(curr->cmds, i);
+				i--;
+			}
+			else if (curr->cmds[i][0] == '>')
+			{
+				if (var()->fd[1] < 0)
+				{
+					if (!g_sig)
+						perror(curr->cmds[i + 1]);
+					var()->fd[1] = 0;
+					return ;
+					// break ;
+				}
+				if (ft_strlen_matrix(curr->cmds) > 2)
+					needs_dup[1] = 1;
+				else
+				{
+					close(var()->fd[1]);
+					var()->fd[1] = 0;
+					return ;
+					// break ;
+				}
+				curr->cmds = remove_items(curr->cmds, i);
+				i--;
+			}
+		}
+		if (needs_dup[0] && !var()->words->next)
+		{
+			if (dup2(var()->fd[0], STDIN_FILENO) < 0)
+				perror("dup2, fd[0]");
+			needs_dup[0] = 0;
+		}
+		if (needs_dup[1] && !var()->words->next)
+		{
+			if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
+				perror("dup2, fd[1]");
+			needs_dup[1] = 0;
+		}
+		// var()->fd[0] = 0;
+		// var()->fd[1] = 0;
+		// if (j)
+		// 	var()->fd[0] = var()->pipe[j - 1][0];
+		// if (j != len - 1)
+		// 	var()->fd[1] = var()->pipe[j][1];
+		if (!var()->words->next && run_builtin())
 			(void)var;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
 			|| !ft_strcmp(curr->cmds[0], "q"))
@@ -335,14 +380,30 @@ void	execution(int *status)
 				if (var()->pid[j] < 0)
 					perror("fork");
 				if (!var()->pid[j])
-					cmd_execute(cmd, ep_from_epl(), curr, len);
+					cmd_execute(cmd, ep_from_epl(), curr);
 				free(cmd);
 			}
 		}
-		if (len > 1 && j)
-			close(var()->pipe[j - 1][0]);
-		if (len > 1 && j != len - 1)
-			close(var()->pipe[j][1]);
+		if (var()->fd[0])
+			close(var()->fd[0]);
+		if (var()->fd[1])
+			close(var()->fd[1]);
+		if (var()->fd[0] && !var()->words->next)
+		{
+			if (dup2(var()->saved_fd[0], STDIN_FILENO) < 0)
+				perror("dup2, saved_fd[0]");
+			var()->fd[0] = 0;
+		}
+		if (var()->fd[1] && !var()->words->next)
+		{
+			if (dup2(var()->saved_fd[1], STDOUT_FILENO) < 0)
+				perror("dup2, saved_fd[1]");
+			var()->fd[1] = 0;
+		}
+		// if (j)
+		// 	close(var()->pipe[j - 1][0]);
+		// if (j != len - 1)
+		// 	close(var()->pipe[j][1]);
 		curr = curr->next;
 		j++;
 	}
@@ -356,41 +417,10 @@ void	execution(int *status)
 		else
 			var()->status = 130;
 	}
-	if (len > 1)
-	{
-		j = -1;
-		while (++j < len - 1)
-			free(var()->pipe[j]);
-		free(var()->pipe);
-	}
+	// free_pipes();
 	free(var()->pid);
 }
-/*
-	int stat;
-	j = -1;
-	while (++j < len - 1)
-	{
-		waitpid(var()->pid[j], &stat, 0);
-		if (WIFEXITED(stat))
-			var()->status = WEXITSTATUS(stat);
-		else
-			var()->status = 130;
-	}
 
-*/
-/*
-ls | cat < zxc
-nao executa nada pcausa que n existe zxc
-
-cat > out | cat > outt
-so o primeiro comando
-
-cat < out | cat < outt
-so o segundo comando
-
-ls > out | ls > outt
-faz os dois
-*/
 char	*search_cmd(char *command)
 {
 	int		i;
@@ -410,32 +440,35 @@ char	*search_cmd(char *command)
 	else
 		if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
-	ft_putstr_fd("minishell: command not found\n", 2);
+	ft_putstr_fd(command, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	var()->status = 127;
 	return (NULL);
 }
 
-void	cmd_execute(char *cmd, char **ep, t_list *curr, int len)
+void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
-	int	i;
+	// int	i;
 
 	parsing_paths();
-	if (var()->fd[0] && dup2(var()->fd[0], STDIN_FILENO) < 0)
+	if (needs_dup[0] && var()->fd[0] && dup2(var()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
-	if (var()->fd[1] && dup2(var()->fd[1], STDOUT_FILENO) < 0)
+	if (needs_dup[1] && var()->fd[1] && dup2(var()->fd[1], STDOUT_FILENO) < 0)
 		perror("dup2, fd[1]");
-	i = -1;
-	while (++i < len - 1)
-	{
-		close(var()->pipe[i][0]);
-		close(var()->pipe[i][1]);
-	}
-	close(var()->saved_fd[0]);
-	close(var()->saved_fd[1]);
+	// i = -1;
+	// while (++i < ft_lstsize(var()->words) - 1)
+	// {
+	// 	close(var()->pipe[i][0]);
+	// 	close(var()->pipe[i][1]);
+	// }
 	execve(cmd, curr->cmds, ep);
+	ft_putstr_fd(curr->cmds[0], 2);
+	ft_putstr_fd(": command not found💀\n", 2);
 	free(cmd);
-	perror(cmd);
+	// free_pipes();
+	free(var()->pid);
 	ft_lstclear(&var()->words, free_lst);
+	ft_lstclear(&var()->lst_lexer, free_lst);
 	free_strs(ep);
 	free_all(126);
 }
