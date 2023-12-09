@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/08 19:13:00 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/09 15:45:45 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,20 +86,14 @@ char	**remove_items(char **strs, int n)
 	return (new);
 }
 // fix hd ctrl+c
-void	hd_sig(int sig)
-{
-	g_sig = sig;
-	prt("%i\n", sig);
-	var()->status = 128 + sig;
-}
-
+void	tmp_handler(int sig);
 // receive input from the stdin and save in in the file
 int	get_stdin(char *arg)
 {
 	char	*buf;
 	int		fd;
 
-	signal(SIGINT, hd_sig);
+	signal(SIGINT, tmp_handler);
 	fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
 	if (fd < 0)
 		return (-1);
@@ -108,6 +102,7 @@ int	get_stdin(char *arg)
 	while (!g_sig && buf && ft_strcmp(buf, arg))
 	{
 		write(fd, buf, ft_strlen(buf));
+		write(fd, "\n", 1);
 		free(buf);
 		buf = readline("> ");
 	}
@@ -128,81 +123,6 @@ int	get_stdin(char *arg)
 	return (fd);
 }
 
-int	redirections(void)
-{
-	char	**cmds;
-	t_list	*curr;
-	int		i;
-
-	curr = var()->words;
-	while (curr)
-	{
-		cmds = var()->words->cmds;
-		i = -1;
-		while (curr->cmds[++i])
-		{
-			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
-				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
-			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				var()->status = 2;
-				return (1);
-			}
-			if (var()->fd[0] && curr->cmds[i][0] == '<')
-				close(var()->fd[0]);
-			if (var()->fd[1] && curr->cmds[i][0] == '>')
-				close(var()->fd[1]);
-			if (!ft_strcmp(curr->cmds[i], "<"))
-				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
-			else if (!ft_strcmp(curr->cmds[i], "<<"))
-				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
-			else if (!ft_strcmp(curr->cmds[i], ">"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			else if (!ft_strcmp(curr->cmds[i], ">>"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-			else
-				continue ;
-			if (curr->cmds[i][0] == '<')
-			{
-				if (var()->fd[0] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[0] = 0;
-					return (1);
-				}
-				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(var()->fd[0]);
-					var()->fd[0] = 0;
-					break ;
-				}
-				var()->words->cmds = remove_items(cmds, i);
-				cmds = var()->words->cmds;
-				i--;
-			}
-			else if (curr->cmds[i][0] == '>')
-			{
-				if (var()->fd[1] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[1] = 0;
-					return (1);
-				}
-				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(var()->fd[1]);
-					var()->fd[1] = 0;
-					break ;
-				}
-				var()->words->cmds = remove_items(cmds, i);
-				cmds = var()->words->cmds;
-				i--;
-			}
-		}
-		curr = curr->next;
-	}
-	return (0);
-}
 char	*search_cmd(char *command);
 
 void	tmp_handler(int sig)
@@ -230,8 +150,8 @@ void	free_pipes(void)
 }
 
 /*
-ls | cat < zxc
-nao executa nada pcausa que n existe zxc
+cat < out > asd | cat < zxc
+executa o pipe em que existe tudo (zxc n existe)
 
 cat > out | cat > outt
 so o primeiro comando
@@ -269,12 +189,16 @@ void	execution(int *status)
 	// 	j++;
 	// }
 	var()->pid = ft_calloc(len, sizeof(int));
-	// if (redirections())
-	// 	return ;
 	j = 0;
 	while (curr)
 	{
 		i = -1;
+		// var()->fd[0] = 0;
+		// var()->fd[1] = 0;
+		// if (j)
+		// 	var()->fd[0] = var()->pipe[j - 1][0];
+		// if (j != len - 1)
+		// 	var()->fd[1] = var()->pipe[j][1];
 		needs_dup[0] = 0;
 		needs_dup[1] = 0;
 		while (curr->cmds[++i])
@@ -285,7 +209,6 @@ void	execution(int *status)
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
 				var()->status = 2;
 				return ;
-				// break ;
 			}
 			if (var()->fd[0] && curr->cmds[i][0] == '<')
 				close(var()->fd[0]);
@@ -308,8 +231,7 @@ void	execution(int *status)
 					if (!g_sig && var()->fd[0] != -2)
 						perror(curr->cmds[i + 1]);
 					var()->fd[0] = 0;
-					return ;
-					// break ;
+					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) > 2)
 					needs_dup[0] = 1;
@@ -317,8 +239,7 @@ void	execution(int *status)
 				{
 					close(var()->fd[0]);
 					var()->fd[0] = 0;
-					return ;
-					// break ;
+					break ;
 				}
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
@@ -330,8 +251,7 @@ void	execution(int *status)
 					if (!g_sig)
 						perror(curr->cmds[i + 1]);
 					var()->fd[1] = 0;
-					return ;
-					// break ;
+					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) > 2)
 					needs_dup[1] = 1;
@@ -339,8 +259,7 @@ void	execution(int *status)
 				{
 					close(var()->fd[1]);
 					var()->fd[1] = 0;
-					return ;
-					// break ;
+					break ;
 				}
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
@@ -358,12 +277,6 @@ void	execution(int *status)
 				perror("dup2, fd[1]");
 			needs_dup[1] = 0;
 		}
-		// var()->fd[0] = 0;
-		// var()->fd[1] = 0;
-		// if (j)
-		// 	var()->fd[0] = var()->pipe[j - 1][0];
-		// if (j != len - 1)
-		// 	var()->fd[1] = var()->pipe[j][1];
 		if (!var()->words->next && run_builtin())
 			(void)var;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
