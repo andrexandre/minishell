@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/08 17:20:39 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/15 20:58:43 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	free_all(int exit_code)
 	close(var()->saved_fd[1]);
 	close(0);
 	close(1);
+	close(2);
 	ep_lclear(&var()->epl);
 	free_strs(var()->paths);
 	exit(exit_code);
