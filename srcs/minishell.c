@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 19:08:33 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/15 20:58:43 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_sig = 0;
 
 void	free_all(int exit_code)
 {
@@ -18,22 +20,23 @@ void	free_all(int exit_code)
 	close(var()->saved_fd[1]);
 	close(0);
 	close(1);
+	close(2);
 	ep_lclear(&var()->epl);
 	free_strs(var()->paths);
 	exit(exit_code);
 }
 
-void	handler(int num)
+void	handler(int sig)
 {
-	if (num == SIGQUIT)
-		prt("Quit (core dumped)\n");
-	if (num == SIGINT)
+	g_sig = sig;
+	if (sig == SIGINT)
 	{
 		prt("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	var()->status = 128 + sig;
 }
 
 void	cmd_loop(void)
@@ -62,17 +65,9 @@ void	cmd_loop(void)
 		execution(&status);
 		ft_lstclear(&var()->lst_lexer, free_lst);
 		ft_lstclear(&var()->words, free_lst);
-		if (var()->fd[0])
-		{
-			close(var()->fd[0]);
-			dup2(var()->saved_fd[0], STDIN_FILENO);
-		}
-		if (var()->fd[1])
-		{
-			close(var()->fd[1]);
-			dup2(var()->saved_fd[1], STDOUT_FILENO);
-		}
 	}
+	close(var()->fd[0]);
+	close(var()->fd[1]);
 }
 
 void	parsing_paths(void)
@@ -168,7 +163,7 @@ void	debug(int n)
 	else
 		write_history(history_file);
 }
-
+#include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
 	var()->ac = ac;
