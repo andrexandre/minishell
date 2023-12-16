@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/01 14:08:40 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/06 21:41:32 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,7 @@ void	prt_strs(char **strs, int n)
 		return ;
 	while (strs[++i])
 	{
-		if (ft_strchr(strs[i], '$'))
-		{
-			strs[i] = ft_strchr(strs[i], '$');
-			if (!ft_strcmp((strs[i] + 1), "?"))
-				prt("%d", var()->status);
-			else if (get_env(strs[i] + 1))
-				prt("%s", get_env(strs[i] + 1)->data);
-		}
-		else
-			prt("%s", strs[i]);
+		prt("%s", strs[i]);
 		if (strs[i + 1])
 			prt(" ");
 	}

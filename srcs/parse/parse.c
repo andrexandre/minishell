@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/01 21:02:04 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/06 22:03:47 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,17 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 
 void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 {
+	int	i;
+
+	i = 0;
+	search_and_remove(word_p->str, '\'');
+	search_and_remove(word_p->str, '"');
+	while (word_p->cmds[i] != NULL)
+	{
+		search_and_remove(word_p->cmds[i], '"');
+		search_and_remove(word_p->cmds[i], '\'');
+		i++;
+	}
 	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str, word_p->cmds,
 			word_p->type));
 	free(word_p);

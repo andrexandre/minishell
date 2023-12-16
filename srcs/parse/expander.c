@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/05 23:46:33 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/06 22:03:15 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,16 @@
 
 char	*expansion(char *str)
 {
-	t_eplist	*curr;
-	char		*res;
+	char	*res;
 
-	curr = get_env(str);
 	if (str[0] == '$')
-		res = ft_itoa(getpid());
+		res = ft_strdup("\2");
 	else if (str[0] == '?')
 		res = ft_itoa(var()->status);
 	else if (str[0] == '"' || str[0] == '\'')
 		res = ft_strdup(str);
-	else if (curr)
-		res = ft_strdup(curr->data);
+	else if (get_env(str))
+		res = ft_strdup(get_env(str)->data);
 	else
 		res = ft_strdup("");
 	prt("\033[1;34m");
@@ -58,5 +56,6 @@ char	*expander(char *str)
 			i = 0;
 		}
 	}
+	search_and_replace(str, '\2', '$');
 	return (str);
 }
