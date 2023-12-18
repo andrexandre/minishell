@@ -6,7 +6,7 @@
 /*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/18 18:00:07 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,11 @@ void	cmd_loop(void)
 		signal(SIGQUIT, SIG_IGN);
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
+		{
+			if (isatty(STDIN_FILENO))
+				write(2, "exit\n", 6);
 			break ;
+		}
 		if (*buf && ft_strcmp(buf, "q"))
 			add_history(buf);
 		else if (ft_strcmp(buf, "q"))
@@ -101,15 +105,15 @@ void	var_init(char *cwd)
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
-	if (!get_env("PATH"))
-		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
-/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-	else
-	{
-		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
-		ep_change_value("PATH", str);
-		free(str);
-	}
+// 	if (!get_env("PATH"))
+// 		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:///
+// /usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+// 	else
+// 	{
+// 		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
+// 		ep_change_value("PATH", str);
+// 		free(str);
+// 	}
 	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
 	ms()->saved_fd[0] = dup(STDIN_FILENO);
@@ -166,13 +170,14 @@ void	debug(int n)
 #include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
+	ms()->debug = 0;
 	ms()->ac = ac;
 	ms()->av = av;
 	minishell_init(ep);
 	parsing_paths();
 	debug(0);
 	cmd_loop();
-	prt("exit\n");
+	// prt("exit\n");
 	debug(1);
 	rl_clear_history();
 	free_all(ms()->status);
