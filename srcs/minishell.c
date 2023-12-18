@@ -6,7 +6,7 @@
 /*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/15 20:58:43 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ int	g_sig = 0;
 
 void	free_all(int exit_code)
 {
-	close(var()->saved_fd[0]);
-	close(var()->saved_fd[1]);
+	close(ms()->saved_fd[0]);
+	close(ms()->saved_fd[1]);
 	close(0);
 	close(1);
 	close(2);
-	ep_lclear(&var()->epl);
-	free_strs(var()->paths);
+	ep_lclear(&ms()->epl);
+	free_strs(ms()->paths);
 	exit(exit_code);
 }
 
@@ -36,7 +36,7 @@ void	handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	var()->status = 128 + sig;
+	ms()->status = 128 + sig;
 }
 
 void	cmd_loop(void)
@@ -63,11 +63,11 @@ void	cmd_loop(void)
 		parse();
 		free(buf);
 		execution(&status);
-		ft_lstclear(&var()->lst_lexer, free_lst);
-		ft_lstclear(&var()->words, free_lst);
+		ft_lstclear(&ms()->lst_lexer, free_lst);
+		ft_lstclear(&ms()->words, free_lst);
 	}
-	close(var()->fd[0]);
-	close(var()->fd[1]);
+	close(ms()->fd[0]);
+	close(ms()->fd[1]);
 }
 
 void	parsing_paths(void)
@@ -77,17 +77,17 @@ void	parsing_paths(void)
 
 	if (!get_env("PATH"))
 		return ;
-	free_strs(var()->paths);
-	var()->paths = ft_split(get_env("PATH")->data, ':');
-	if (!var()->paths)
+	free_strs(ms()->paths);
+	ms()->paths = ft_split(get_env("PATH")->data, ':');
+	if (!ms()->paths)
 		return ;
 	i = -1;
-	while (var()->paths[++i])
+	while (ms()->paths[++i])
 	{
-		temp = var()->paths[i];
-		(var()->paths[i]) = ft_strjoin(temp, "/");
+		temp = ms()->paths[i];
+		(ms()->paths[i]) = ft_strjoin(temp, "/");
 		free(temp);
-		if (!var()->paths[i])
+		if (!ms()->paths[i])
 			return ;
 	}
 }
@@ -110,10 +110,10 @@ void	var_init(char *cwd)
 		ep_change_value("PATH", str);
 		free(str);
 	}
-	ep_lnew_add_back(&var()->epl, cwd);
+	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
-	var()->saved_fd[0] = dup(STDIN_FILENO);
-	var()->saved_fd[1] = dup(STDOUT_FILENO);
+	ms()->saved_fd[0] = dup(STDIN_FILENO);
+	ms()->saved_fd[1] = dup(STDOUT_FILENO);
 }
 
 void	minishell_init(char **ep)
@@ -127,7 +127,7 @@ void	minishell_init(char **ep)
 	{
 		if (!ft_strcmp(ep[i], "_="))
 			continue ;
-		ep_lnew_add_back(&var()->epl, ep[i]);
+		ep_lnew_add_back(&ms()->epl, ep[i]);
 	}
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
@@ -166,8 +166,8 @@ void	debug(int n)
 #include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
-	var()->ac = ac;
-	var()->av = av;
+	ms()->ac = ac;
+	ms()->av = av;
 	minishell_init(ep);
 	parsing_paths();
 	debug(0);
@@ -175,7 +175,7 @@ int	main(int ac, char **av, char **ep)
 	prt("exit\n");
 	debug(1);
 	rl_clear_history();
-	free_all(var()->status);
+	free_all(ms()->status);
 }
 
 /*

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 13:30:12 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ int	run_echo(void)
 	char	*str;
 
 	i = 2;
-	if (var()->words->cmds[1] && !ft_strncmp(var()->words->cmds[1], "-n", 2))
+	if (ms()->words->cmds[1] && !ft_strncmp(ms()->words->cmds[1], "-n", 2))
 	{
-		str = var()->words->cmds[1];
+		str = ms()->words->cmds[1];
 		while (str[i] && str[i] == 'n')
 			i++;
 		if (!str[i])
-			prt_strs(var()->words->cmds + 2, 1);
+			prt_strs(ms()->words->cmds + 2, 1);
 		else
-			prt_strs(var()->words->cmds + 1, 0);
+			prt_strs(ms()->words->cmds + 1, 0);
 	}
 	else
-		prt_strs(var()->words->cmds + 1, 0);
+		prt_strs(ms()->words->cmds + 1, 0);
 	return (0);
 }
 
@@ -37,7 +37,7 @@ int	prt_eplst(void)
 {
 	t_eplist *lst;
 
-	lst = var()->epl;
+	lst = ms()->epl;
 	while (lst)
 	{
 		prt("%s\n", lst->str);
@@ -51,8 +51,8 @@ int	run_export(void)
 	t_eplist	*curr;
 	int			i;
 
-	curr = var()->epl;
-	if (!var()->words->cmds[1])
+	curr = ms()->epl;
+	if (!ms()->words->cmds[1])
 	{
 		while (curr)
 		{
@@ -61,10 +61,10 @@ int	run_export(void)
 		}
 	}
 	i = 1;
-	while (var()->words->cmds[i])
+	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(var()->words->cmds[i], '='))
-			ep_export_value(var()->words->cmds[i]);
+		if (ft_strchr(ms()->words->cmds[i], '='))
+			ep_export_value(ms()->words->cmds[i]);
 		i++;
 	}
 	return (0);
@@ -93,20 +93,20 @@ int	run_unset(void)
 
 	exit_code = 0;
 	i = 1;
-	while (var()->words->cmds[i])
+	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(var()->words->cmds[i], '='))
+		if (ft_strchr(ms()->words->cmds[i], '='))
 		{
-			prt("unset: `%s': not a valid identifier\n", var()->words->cmds[i]);
+			prt("unset: `%s': not a valid identifier\n", ms()->words->cmds[i]);
 			exit_code = 1;
 			i++;
 			continue ;
 		}
-		curr = get_env(var()->words->cmds[i]);
+		curr = get_env(ms()->words->cmds[i]);
 		if (curr)
 		{
 			if (!curr->prev)
-				var()->epl = curr->next;
+				ms()->epl = curr->next;
 			else if (!curr->next)
 				curr->prev->next = NULL;
 			else

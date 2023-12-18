@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ep_lst.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 13:32:45 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	ep_export_value(char *str)
 	}
 	curr = get_env(name);
 	if (!curr)
-		ep_lnew_add_back(&var()->epl, str);
+		ep_lnew_add_back(&ms()->epl, str);
 	else
 	{
 		free(curr->str);
@@ -106,14 +106,14 @@ int	main(int ac, char **av, char **ep)
 
 	i = -1;
 	while (ep[++i])
-		ep_lnew_add_back(&var()->epl, ep[i]);
-	lst = var()->epl;
+		ep_lnew_add_back(&ms()->epl, ep[i]);
+	lst = ms()->epl;
 		
 	ep_export_value("ASD=ASD");
 	
 	if (ac == 2 && get_env(av[1]))
 		prt("[%s]\n", get_env(av[1])->str);
-	ep_lclear(&var()->epl);
+	ep_lclear(&ms()->epl);
 	return (0);
 }
 */

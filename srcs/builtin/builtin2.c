@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 13:32:57 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_eplist	*get_env(char *name)
 {
 	t_eplist	*curr;
 
-	curr = var()->epl;
+	curr = ms()->epl;
 	if (!ft_strcmp(name, "_"))
 		return (NULL);
 	while (curr)
@@ -61,7 +61,7 @@ int	run_cd(void)
 {
 	char		*str;
 
-	if (!var()->words->cmds[1])
+	if (!ms()->words->cmds[1])
 	{
 		if (!get_env("HOME"))
 		{
@@ -71,12 +71,12 @@ int	run_cd(void)
 		else
 			str = get_env("HOME")->data;
 	}
-	else if (var()->words->cmds[2])
+	else if (ms()->words->cmds[2])
 	{
 		prt("cd: too many arguments\n");
 		return (1);
 	}
 	else
-		str = var()->words->cmds[1];
+		str = ms()->words->cmds[1];
 	return (exec_cd(str));
 }

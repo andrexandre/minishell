@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/06 22:03:15 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*expansion(char *str)
 	if (str[0] == '$')
 		res = ft_strdup("\2");
 	else if (str[0] == '?')
-		res = ft_itoa(var()->status);
+		res = ft_itoa(ms()->status);
 	else if (str[0] == '"' || str[0] == '\'')
 		res = ft_strdup(str);
 	else if (get_env(str))

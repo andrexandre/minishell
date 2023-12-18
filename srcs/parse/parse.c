@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/06 22:03:47 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 		search_and_remove(word_p->cmds[i], '\'');
 		i++;
 	}
-	ft_lstadd_back(&var()->words, ft_lstnew(word_p->str, word_p->cmds,
+	ft_lstadd_back(&ms()->words, ft_lstnew(word_p->str, word_p->cmds,
 			word_p->type));
 	free(word_p);
 	*is_new_cmd = true;
@@ -62,7 +62,7 @@ void	print(void)
 	int		i;
 	t_list	*word;
 
-	word = var()->words;
+	word = ms()->words;
 	while (word)
 	{
 		i = 0;
@@ -87,7 +87,7 @@ void	parse(void)
 
 	is_new_cmd = true;
 	cmd_index = 0;
-	word_l = var()->lst_lexer;
+	word_l = ms()->lst_lexer;
 	while (word_l)
 	{
 		if (is_new_cmd)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/02 22:51:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	is_builtin(char *str)
 		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
 		|| ft_strcmpold(str, "exit"))
 	{
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				BUILT_IN));
 		return (true);
 	}
@@ -29,19 +29,19 @@ bool	is_builtin(char *str)
 bool	is_token(char *str)
 {
 	if (ft_strcmpold(str, "|"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				PIPE));
 	else if (ft_strcmpold(str, "<"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				REDIRECT_IN));
 	else if (ft_strcmpold(str, "<<"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				REDIRECT_IN_D));
 	else if (ft_strcmpold(str, ">"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				REDIRECT_OUT));
 	else if (ft_strcmpold(str, ">>"))
-		ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				REDIRECT_OUT_D));
 	else
 		return (false);
@@ -50,7 +50,7 @@ bool	is_token(char *str)
 
 void	word(char *str)
 {
-	ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
+	ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
 }
 
 void	lexer(char *str)

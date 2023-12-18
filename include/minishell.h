@@ -6,7 +6,7 @@
 /*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/16 00:39:49 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void				cmd_execute(char *cmd, char **ep, t_list *curr);
 // minishell_utils
 void				*free_strs(char **strs);
 void				prt_strs(char **strs, int n);
-t_var				*var(void);
+t_var				*ms(void);
 
 // lexer, parser
 void				lexer(char *str);

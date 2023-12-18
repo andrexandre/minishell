@@ -6,7 +6,7 @@
 /*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/16 00:18:08 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	**ep_from_epl(void)
 	char		**ep;
 	int			i;
 	
-	curr = var()->epl;
+	curr = ms()->epl;
 	i = 0;
 	while (curr)
 	{
@@ -29,7 +29,7 @@ char	**ep_from_epl(void)
 	if (!ep)
 		return (NULL);
 	i = 0;
-	curr = var()->epl;
+	curr = ms()->epl;
 	while (curr)
 	{
 		ep[i] = ft_strdup(curr->str);
@@ -42,18 +42,18 @@ char	**ep_from_epl(void)
 
 int	run_builtin(void)
 {
-	if (!ft_strcmp(var()->words->cmds[0], "cd"))
-		var()->status = (*run_cd)();
-	else if (!ft_strcmp(var()->words->cmds[0], "echo"))
-		var()->status = (*run_echo)();
-	else if (!ft_strcmp(var()->words->cmds[0], "env"))
-		var()->status = (*prt_eplst)();
-	else if (!ft_strcmp(var()->words->cmds[0], "export"))
-		var()->status = (*run_export)();
-	else if (!ft_strcmp(var()->words->cmds[0], "pwd"))
-		var()->status = (*run_pwd)();
-	else if (!ft_strcmp(var()->words->cmds[0], "unset"))
-		var()->status = (*run_unset)();
+	if (!ft_strcmp(ms()->words->cmds[0], "cd"))
+		ms()->status = (*run_cd)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "echo"))
+		ms()->status = (*run_echo)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "env"))
+		ms()->status = (*prt_eplst)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "export"))
+		ms()->status = (*run_export)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "pwd"))
+		ms()->status = (*run_pwd)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "unset"))
+		ms()->status = (*run_unset)();
 	else
 		return (0);
 	return (1);
@@ -132,7 +132,7 @@ void	tmp_handler(int sig)
 		prt("Quit (core dumped)\n");
 	if (sig == SIGINT)
 		prt("\n");
-	var()->status = 128 + sig;
+	ms()->status = 128 + sig;
 }
 
 void	free_pipes(void)
@@ -141,12 +141,12 @@ void	free_pipes(void)
 	int	len;
 
 	i = -1;
-	len = ft_lstsize(var()->words);
+	len = ft_lstsize(ms()->words);
 	while (++i < len - 1)
-		free(var()->pipe[i]);
+		free(ms()->pipe[i]);
 	if (len > 1)
-		free(var()->pipe);
-	free(var()->pid);
+		free(ms()->pipe);
+	free(ms()->pid);
 }
 
 /*
@@ -171,66 +171,66 @@ void	execution(int *status)
 	int		needs_exec;
 
 	needs_exec = 1;
-	curr = var()->words;
-	len = ft_lstsize(var()->words);
+	curr = ms()->words;
+	len = ft_lstsize(ms()->words);
 	if (len > 1)
-		var()->pipe = ft_calloc(len - 1, sizeof(int *));
+		ms()->pipe = ft_calloc(len - 1, sizeof(int *));
 	j = 0;
 	while (j < len - 1)
 	{
-		var()->pipe[j] = ft_calloc(2, sizeof(int));
-		if (pipe(var()->pipe[j]) < 0)
+		ms()->pipe[j] = ft_calloc(2, sizeof(int));
+		if (pipe(ms()->pipe[j]) < 0)
 			perror("pipe");
 		j++;
 	}
-	var()->pid = ft_calloc(len, sizeof(int));
+	ms()->pid = ft_calloc(len, sizeof(int));
 	j = 0;
 	while (curr)
 	{
 		i = -1;
-		var()->fd[0] = 0;
-		var()->fd[1] = 0;
+		ms()->fd[0] = 0;
+		ms()->fd[1] = 0;
 		if (j)
-			var()->fd[0] = var()->pipe[j - 1][0];
+			ms()->fd[0] = ms()->pipe[j - 1][0];
 		if (j != len - 1)
-			var()->fd[1] = var()->pipe[j][1];
+			ms()->fd[1] = ms()->pipe[j][1];
 		while (curr->cmds[++i])
 		{
 			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
 				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				var()->status = 2;
+				ms()->status = 2;
 				return ;
 			}
-			if (var()->fd[0] && curr->cmds[i][0] == '<')
-				close(var()->fd[0]);
-			if (var()->fd[1] && curr->cmds[i][0] == '>')
-				close(var()->fd[1]);
+			if (ms()->fd[0] && curr->cmds[i][0] == '<')
+				close(ms()->fd[0]);
+			if (ms()->fd[1] && curr->cmds[i][0] == '>')
+				close(ms()->fd[1]);
 			if (!ft_strcmp(curr->cmds[i], "<"))
-				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
+				ms()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
 			else if (!ft_strcmp(curr->cmds[i], "<<"))
-				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
+				ms()->fd[0] = get_stdin(curr->cmds[i + 1]);
 			else if (!ft_strcmp(curr->cmds[i], ">"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				ms()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			else if (!ft_strcmp(curr->cmds[i], ">>"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+				ms()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
 				continue ;
 			if (curr->cmds[i][0] == '<')
 			{
-				if (var()->fd[0] < 0)
+				if (ms()->fd[0] < 0)
 				{
-					if (!g_sig && var()->fd[0] != -2)
+					if (!g_sig && ms()->fd[0] != -2)
 						perror(curr->cmds[i + 1]);
-					var()->fd[0] = 0;
+					ms()->fd[0] = 0;
 					needs_exec = 0;
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
 				{
-					close(var()->fd[0]);
-					var()->fd[0] = 0;
+					close(ms()->fd[0]);
+					ms()->fd[0] = 0;
 					needs_exec = 0;
 					break ;
 				}
@@ -239,18 +239,18 @@ void	execution(int *status)
 			}
 			else if (curr->cmds[i][0] == '>')
 			{
-				if (var()->fd[1] < 0)
+				if (ms()->fd[1] < 0)
 				{
 					if (!g_sig)
 						perror(curr->cmds[i + 1]);
-					var()->fd[1] = 0;
+					ms()->fd[1] = 0;
 					needs_exec = 0;
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
 				{
-					close(var()->fd[1]);
-					var()->fd[1] = 0;
+					close(ms()->fd[1]);
+					ms()->fd[1] = 0;
 					needs_exec = 0;
 					break ;
 				}
@@ -258,15 +258,15 @@ void	execution(int *status)
 				i--;
 			}
 		}
-		if (!var()->words->next && curr->type == BUILT_IN)
+		if (!ms()->words->next && curr->type == BUILT_IN)
 		{
-			if (var()->fd[0] && dup2(var()->fd[0], STDIN_FILENO) < 0)
+			if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 				perror("dup2, fd[0]");
-			if (var()->fd[1] && dup2(var()->fd[1], STDOUT_FILENO) < 0)
+			if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 				perror("dup2, fd[1]");
 		}
-		if (!needs_exec || (!var()->words->next && run_builtin()))
-			(void)var;
+		if (!needs_exec || (!ms()->words->next && run_builtin()))
+			(void)ms;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
 			|| !ft_strcmp(curr->cmds[0], "q"))
 			*status = 0;
@@ -277,19 +277,19 @@ void	execution(int *status)
 			{
 				signal(SIGINT, tmp_handler);
 				signal(SIGQUIT, tmp_handler);
-				var()->pid[j] = fork();
-				if (var()->pid[j] < 0)
+				ms()->pid[j] = fork();
+				if (ms()->pid[j] < 0)
 					perror("fork");
-				if (!var()->pid[j])
+				if (!ms()->pid[j])
 					cmd_execute(cmd, ep_from_epl(), curr);
 				free(cmd);
 			}
 		}
-		if (var()->fd[0] && !close(var()->fd[0]))
-			if (!var()->words->next && dup2(var()->saved_fd[0], STDIN_FILENO) < 0)
+		if (ms()->fd[0] && !close(ms()->fd[0]))
+			if (!ms()->words->next && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
 				perror("dup2, saved_fd[0]");
-		if (var()->fd[1] && !close(var()->fd[1]))
-			if (!var()->words->next && dup2(var()->saved_fd[1], STDOUT_FILENO) < 0)
+		if (ms()->fd[1] && !close(ms()->fd[1]))
+			if (!ms()->words->next && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
 				perror("dup2, saved_fd[1]");
 		curr = curr->next;
 		j++;
@@ -298,11 +298,11 @@ void	execution(int *status)
 	j = -1;
 	while (++j < len)
 	{
-		waitpid(var()->pid[j], &stat, 0);
+		waitpid(ms()->pid[j], &stat, 0);
 		if (WIFEXITED(stat))
-			var()->status = WEXITSTATUS(stat);
+			ms()->status = WEXITSTATUS(stat);
 		else
-			var()->status = 130;
+			ms()->status = 130;
 	}
 	free_pipes();
 }
@@ -313,11 +313,11 @@ char	*search_cmd(char *command)
 	char	*cmd;
 
 	i = -1;
-	if (!ft_strchr(command, '/') && var()->paths && get_env("PATH"))
+	if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
 	{
-		while (var()->paths[++i])
+		while (ms()->paths[++i])
 		{
-			cmd = ft_strjoin(var()->paths[i], command);
+			cmd = ft_strjoin(ms()->paths[i], command);
 			if (!access(cmd, F_OK | X_OK))
 				return (cmd);
 			free(cmd);
@@ -328,7 +328,7 @@ char	*search_cmd(char *command)
 			return (ft_strdup(command));
 	ft_putstr_fd(command, 2);
 	ft_putstr_fd(": command not found\n", 2);
-	var()->status = 127;
+	ms()->status = 127;
 	return (NULL);
 }
 
@@ -337,23 +337,23 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 	int	i;
 
 	parsing_paths();
-	if (var()->fd[0] && dup2(var()->fd[0], STDIN_FILENO) < 0)
+	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
-	if (var()->fd[1] && dup2(var()->fd[1], STDOUT_FILENO) < 0)
+	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 		perror("dup2, fd[1]");
 	i = -1;
-	while (++i < ft_lstsize(var()->words) - 1)
+	while (++i < ft_lstsize(ms()->words) - 1)
 	{
-		close(var()->pipe[i][0]);
-		close(var()->pipe[i][1]);
+		close(ms()->pipe[i][0]);
+		close(ms()->pipe[i][1]);
 	}
 	execve(cmd, curr->cmds, ep);
 	ft_putstr_fd(curr->cmds[0], 2);
 	ft_putstr_fd(": command not found💀\n", 2);
 	free(cmd);
 	free_pipes();
-	ft_lstclear(&var()->words, free_lst);
-	ft_lstclear(&var()->lst_lexer, free_lst);
+	ft_lstclear(&ms()->words, free_lst);
+	ft_lstclear(&ms()->lst_lexer, free_lst);
 	free_strs(ep);
 	free_all(126);
 }
