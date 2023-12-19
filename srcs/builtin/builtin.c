@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/19 18:16:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ int	run_export(void)
 {
 	t_eplist	*curr;
 	int			i;
+	int			status;
 
+	status = 0;
 	curr = ms()->epl;
 	if (!ms()->words->cmds[1])
 	{
@@ -64,10 +66,11 @@ int	run_export(void)
 	while (ms()->words->cmds[i])
 	{
 		if (ft_strchr(ms()->words->cmds[i], '='))
-			ep_export_value(ms()->words->cmds[i]);
+			if (ep_export_value(ms()->words->cmds[i]))
+				status = 1;
 		i++;
 	}
-	return (0);
+	return (status);
 }
 
 int	run_pwd(void)

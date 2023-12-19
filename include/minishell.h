@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 17:42:26 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/19 16:11:24 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char				*expander(char *str);
 void				ep_lnew_add_back(t_eplist **lst, char *str);
 void				ep_ldelone(t_eplist *lst);
 void				ep_lclear(t_eplist **lst);
-void				ep_export_value(char *str);
-void				ep_change_value(char *name, char *data);
+int					ep_export_value(char *str);
+int					ep_change_value(char *name, char *data);
 
 #endif

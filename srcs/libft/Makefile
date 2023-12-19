@@ -84,6 +84,9 @@ SRCS = \
    ft_printf/ft_printf.c\
    ft_printf/ft_printf_utils.c\
    \
+   ft_dprintf/ft_dprintf.c\
+   ft_dprintf/ft_dprintf_utils.c\
+   \
    get_next_line/get_next_line_bonus.c\
 
 INCLUDES = include

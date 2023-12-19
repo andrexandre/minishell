@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/19 18:33:08 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,12 @@ char	**ep_from_epl(void)
 	return (ep);
 }
 
-int	run_builtin(void)
+int	run_builtin(t_list *curr)
 {
+	t_list	*tmp;
+
+	tmp = ms()->words;
+	ms()->words = curr;
 	if (!ft_strcmp(ms()->words->cmds[0], "cd"))
 		ms()->status = (*run_cd)();
 	else if (!ft_strcmp(ms()->words->cmds[0], "echo"))
@@ -55,7 +59,11 @@ int	run_builtin(void)
 	else if (!ft_strcmp(ms()->words->cmds[0], "unset"))
 		ms()->status = (*run_unset)();
 	else
+	{
+		ms()->words = tmp;
 		return (0);
+	}
+	ms()->words = tmp;
 	return (1);
 }
 
@@ -265,15 +273,19 @@ void	execution(int *status)
 			if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 				perror("dup2, fd[1]");
 		}
-		if (!needs_exec || (!ms()->words->next && run_builtin()))
+		if (!needs_exec || (!ms()->words->next && run_builtin(curr)))
 			(void)ms;
 		else if (!ft_strcmp(curr->cmds[0], "exit")
 			|| !ft_strcmp(curr->cmds[0], "q"))
 			*status = 0;
 		else
 		{
-			char *cmd = search_cmd(curr->cmds[0]);
-			if (cmd)
+			char *cmd;
+			if (curr->type == BUILT_IN)
+				cmd = NULL;
+			else
+				cmd = search_cmd(curr->cmds[0]);
+			if (cmd || curr->type == BUILT_IN)
 			{
 				signal(SIGINT, tmp_handler);
 				signal(SIGQUIT, tmp_handler);
@@ -296,7 +308,7 @@ void	execution(int *status)
 	}
 	int stat = 0;
 	j = -1;
-	while (++j < len)
+	while (!(ms()->words->type == BUILT_IN && !ms()->words->next) && ++j < len)
 	{
 		waitpid(ms()->pid[j], &stat, 0);
 		if (WIFEXITED(stat))
@@ -346,6 +358,15 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 	{
 		close(ms()->pipe[i][0]);
 		close(ms()->pipe[i][1]);
+	}
+	if (run_builtin(curr))
+	{
+		free(cmd);
+		free_pipes();
+		ft_lstclear(&ms()->words, free_lst);
+		ft_lstclear(&ms()->lst_lexer, free_lst);
+		free_strs(ep);
+		exit(ms()->status);
 	}
 	execve(cmd, curr->cmds, ep);
 	ft_putstr_fd(curr->cmds[0], 2);

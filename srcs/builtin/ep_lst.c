@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ep_lst.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/19 16:11:12 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,18 +60,34 @@ void	ep_lclear(t_eplist **lst)
 	}
 }
 
+int		export_error(char *str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if (!ft_isalpha(str[i]) && str[i] != '_')
+			break ;
+	}
+	if (!str[i])
+		return (0);
+	return (1);
+}
 // receives a string of the form "name=data" and adds it to the ep
-void	ep_export_value(char *str)
+int	ep_export_value(char *str)
 {
 	t_eplist	*curr;
 	char		*name;
 
 	name = ft_substr(str, 0,
 			ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
-	if (!ft_strcmp(name, "_"))
+	if (!ft_strcmp(name, "_") || export_error(name))
 	{
+		if (export_error(name))
+			dprt(2, "export: `%s': not a valid identifier\n", str);
 		free(name);
-		return ;
+		return (1);
 	}
 	curr = get_env(name);
 	if (!curr)
@@ -83,10 +99,11 @@ void	ep_export_value(char *str)
 		curr->data = ft_strchr(curr->str, '=') + 1;
 	}
 	free(name);
+	return (0);
 }
 
 // searches for the string name in the ep and changes its value to data
-void	ep_change_value(char *name, char *data)
+int	ep_change_value(char *name, char *data)
 {
 	char		*str;
 	char		*temp;
@@ -94,8 +111,10 @@ void	ep_change_value(char *name, char *data)
 	temp = ft_strjoin(name, "=");
 	str = ft_strjoin(temp, data);
 	free(temp);
-	ep_export_value(str);
+	if (ep_export_value(str))
+		return (1);
 	free(str);
+	return (0);
 }
 
 /*

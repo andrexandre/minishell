@@ -1,14 +1,14 @@
 {
-    leak readline
-    Memcheck:Leak
-    ...
-    fun:readline
+	leak readline
+	Memcheck:Leak
+	...
+	fun:readline
 }
 {
-    leak add_history
-    Memcheck:Leak
-    ...
-    fun:add_history
+	leak add_history
+	Memcheck:Leak
+	...
+	fun:add_history
 }
 {
 	leak readline_internal_char
