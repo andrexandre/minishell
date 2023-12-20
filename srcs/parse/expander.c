@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/18 17:59:42 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/20 18:36:41 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*expander(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '$' || str[i] == '~')
+		if (str[i] == '$')
 		{
 			j = i;
 			while (str[++j])

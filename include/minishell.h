@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/19 16:11:24 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:08:54 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_var
 {
 	int			debug;
 	int			status;
+	int			running;
 	char		**paths;
 	int			ac;
 	int			*pid;
@@ -69,6 +70,7 @@ int					prt_eplst(void);
 int					run_export(void);
 int					run_pwd(void);
 int					run_unset(void);
+int					run_exit(void);
 
 // builtin2
 t_eplist			*get_env(char *name);
@@ -76,7 +78,7 @@ int					run_cd(void);
 
 // minishell_exec
 char				**ep_from_epl(void);
-void				execution(int *status);
+void				execution(void);
 void				cmd_execute(char *cmd, char **ep, t_list *curr);
 
 // minishell_utils
@@ -85,7 +87,7 @@ void				prt_strs(char **strs, int n);
 t_var				*ms(void);
 
 // lexer, parser
-void				lexer(char *str);
+int					lexer(char *str);
 void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 void				search_and_remove(char *str, char target);

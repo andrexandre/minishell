@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 18:00:07 by andrealex        ###   ########.fr       */
+/*   Updated: 2023/12/20 19:08:18 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,9 @@ void	handler(int sig)
 void	cmd_loop(void)
 {
 	char	*buf;
-	int		status;
 
-	status = 1;
-	while (status)
+	ms()->running = 1;
+	while (ms()->running)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
@@ -56,17 +55,18 @@ void	cmd_loop(void)
 				write(2, "exit\n", 6);
 			break ;
 		}
-		if (*buf && ft_strcmp(buf, "q"))
+		if (ft_strcmp(buf, "q"))
 			add_history(buf);
-		else if (ft_strcmp(buf, "q"))
+		else if (!*buf)
+			continue ;
+		if (lexer(buf))
 		{
 			free(buf);
-			continue ;
+			continue;
 		}
-		lexer(buf);
 		parse();
 		free(buf);
-		execution(&status);
+		execution();
 		ft_lstclear(&ms()->lst_lexer, free_lst);
 		ft_lstclear(&ms()->words, free_lst);
 	}
@@ -177,12 +177,11 @@ int	main(int ac, char **av, char **ep)
 	parsing_paths();
 	debug(0);
 	cmd_loop();
-	// prt("exit\n");
 	debug(1);
 	rl_clear_history();
 	free_all(ms()->status);
 }
-
+// progress i was in status tests
 /*
 o expander pode aumentar / diminuir a lst
 e o heredoc é a execão

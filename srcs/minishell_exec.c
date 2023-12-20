@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/19 18:33:08 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:09:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,9 @@ int	run_builtin(t_list *curr)
 		ms()->status = (*run_pwd)();
 	else if (!ft_strcmp(ms()->words->cmds[0], "unset"))
 		ms()->status = (*run_unset)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "exit")
+		|| !ft_strcmp(ms()->words->cmds[0], "q"))
+		ms()->status = (*run_exit)();
 	else
 	{
 		ms()->words = tmp;
@@ -157,20 +160,7 @@ void	free_pipes(void)
 	free(ms()->pid);
 }
 
-/*
-cat < out > asd | cat < zxc
-executa o pipe em que existe tudo (zxc n existe)
-
-cat > out | cat > outt
-so o primeiro comando
-
-cat < out | cat < outt
-so o segundo comando
-
-ls > out | ls > outt
-faz os dois
-*/
-void	execution(int *status)
+void	execution(void)
 {
 	t_list	*curr;
 	int		i;
@@ -178,7 +168,6 @@ void	execution(int *status)
 	int		len;
 	int		needs_exec;
 
-	needs_exec = 1;
 	curr = ms()->words;
 	len = ft_lstsize(ms()->words);
 	if (len > 1)
@@ -195,6 +184,7 @@ void	execution(int *status)
 	j = 0;
 	while (curr)
 	{
+		needs_exec = 1;
 		i = -1;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
@@ -233,6 +223,7 @@ void	execution(int *status)
 						perror(curr->cmds[i + 1]);
 					ms()->fd[0] = 0;
 					needs_exec = 0;
+					ms()->status = 1;
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
@@ -253,6 +244,7 @@ void	execution(int *status)
 						perror(curr->cmds[i + 1]);
 					ms()->fd[1] = 0;
 					needs_exec = 0;
+					ms()->status = 1;
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
@@ -275,9 +267,6 @@ void	execution(int *status)
 		}
 		if (!needs_exec || (!ms()->words->next && run_builtin(curr)))
 			(void)ms;
-		else if (!ft_strcmp(curr->cmds[0], "exit")
-			|| !ft_strcmp(curr->cmds[0], "q"))
-			*status = 0;
 		else
 		{
 			char *cmd;
@@ -296,6 +285,8 @@ void	execution(int *status)
 					cmd_execute(cmd, ep_from_epl(), curr);
 				free(cmd);
 			}
+			else
+				needs_exec = 0;
 		}
 		if (ms()->fd[0] && !close(ms()->fd[0]))
 			if (!ms()->words->next && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
@@ -308,23 +299,32 @@ void	execution(int *status)
 	}
 	int stat = 0;
 	j = -1;
-	while (!(ms()->words->type == BUILT_IN && !ms()->words->next) && ++j < len)
+	if (!needs_exec && ms()->words->next)
+		needs_exec = 1;
+	// needs_exec is here so when a command didnt execute we dont wait for it
+	while (needs_exec && !(ms()->words->type == BUILT_IN && !ms()->words->next) && ++j < len)
 	{
 		waitpid(ms()->pid[j], &stat, 0);
 		if (WIFEXITED(stat))
 			ms()->status = WEXITSTATUS(stat);
-		else
-			ms()->status = 130;
 	}
 	free_pipes();
 }
 
 char	*search_cmd(char *command)
 {
-	int		i;
-	char	*cmd;
+	int			i;
+	char		*cmd;
+	struct stat	statbuf;
 
 	i = -1;
+	if (ft_strchr(command, '/') && (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)))
+	{
+		dprt(2, "%s: is a directory\n", command);
+		ms()->status = 126;
+		// not working exit status
+		return (NULL);
+	}
 	if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
 	{
 		while (ms()->paths[++i])
@@ -338,8 +338,7 @@ char	*search_cmd(char *command)
 	else
 		if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
-	ft_putstr_fd(command, 2);
-	ft_putstr_fd(": command not found\n", 2);
+	dprt(2, "%s: command not found\n", command);
 	ms()->status = 127;
 	return (NULL);
 }
