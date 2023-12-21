@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/20 19:09:26 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/21 17:04:40 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,57 +96,92 @@ char	**remove_items(char **strs, int n)
 	free_strs(strs);
 	return (new);
 }
+char	*buff;
+int		fdd;
 
-void	tmp_handler(int sig);
+void	free_pipes_words(void);
+void	hd_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		free(buff);
+		close(fdd);
+		free_pipes_words();
+		free_all(128 + sig);
+	}
+	// (void)sig;
+	// exit(EXIT_FAILURE);
+}
+
+void	hrd(const char *arg)
+{
+	char	*buff;
+
+	buff = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, hd_handler);
+	// fdd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
+	// if (fdd < 0)
+	// 	exit(EXIT_FAILURE);
+	buff = readline("> ");
+	while (buff && ft_strcmp(buff, arg))
+	{
+		// write(fdd, buff, ft_strlen(buff));
+		// write(fdd, "\n", 1);
+		free(buff);
+		buff = readline("> ");
+	}
+	if (!buff)
+		prt("end-of-file (wanted `%s')\n", arg);
+	// close(fdd);
+	free(buff);
+	exit(EXIT_SUCCESS);
+}
 // receive input from the stdin and save in in the file
 int	get_stdin(char *arg)
 {
-	char	*buf;
-	int		fd;
+	// char	*buf;
+	// int		fd;
+	int		pid;
 
-	signal(SIGINT, tmp_handler);
-	fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
-	if (fd < 0)
-		return (-1);
-	g_sig = 0;
-	buf = readline("> ");
-	while (!g_sig && buf && ft_strcmp(buf, arg))
+	buff = NULL;
+	pid = fork();
+	if (pid < 0)
+		perror("fork");
+	else if (!pid)
 	{
-		write(fd, buf, ft_strlen(buf));
-		write(fd, "\n", 1);
-		free(buf);
-		buf = readline("> ");
+		hrd(arg);
+		// signal(SIGQUIT, SIG_IGN);
+		// signal(SIGINT, hd_handler);
+		// fdd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
+		// if (fdd < 0)
+		// 	return (-1);
+		// buff = readline("> ");
+		// while (buff && ft_strcmp(buff, arg))
+		// {
+		// 	write(fdd, buff, ft_strlen(buff));
+		// 	write(fdd, "\n", 1);
+		// 	free(buff);
+		// 	buff = readline("> ");
+		// }
+		// if (!buff)
+		// 	prt("end-of-file (wanted `%s')\n", arg);
+		// close(fdd);
+		// free(buff);
+		// exit(0);
 	}
-	close(fd);
-	signal(SIGINT, handler);
-	if (!buf)
-	{
-		prt("end-of-file (wanted `%s')\n", arg);
-		return (-2);
-	}
-	free(buf);
-	if (g_sig)
-		return (-1);
-	fd = open("/tmp/msh-hd", O_RDONLY);
-	if (fd < 0)
-		return (-1);
-	unlink("/tmp/msh-hd");
-	return (fd);
+	int stat;
+	waitpid(pid, &stat, 0);
+	if (WIFEXITED(stat))
+		ms()->status = WEXITSTATUS(stat);
+	// fdd = open("/tmp/msh-hd", O_RDONLY);
+	// if (fdd < 0)
+	// 	return (-1);
+	// unlink("/tmp/msh-hd");
+	return (-2);
 }
 
-char	*search_cmd(char *command);
-
-void	tmp_handler(int sig)
-{
-	g_sig = sig;
-	if (sig == SIGQUIT)
-		prt("Quit (core dumped)\n");
-	if (sig == SIGINT)
-		prt("\n");
-	ms()->status = 128 + sig;
-}
-
-void	free_pipes(void)
+void	free_pipes_words(void)
 {
 	int	i;
 	int	len;
@@ -158,6 +193,18 @@ void	free_pipes(void)
 	if (len > 1)
 		free(ms()->pipe);
 	free(ms()->pid);
+	ft_lstclear(&ms()->words, free_lst);
+	ft_lstclear(&ms()->lst_lexer, free_lst);
+}
+
+void	tmp_handler(int sig)
+{
+	ms()->status = sig;
+	if (sig == SIGQUIT)
+		prt("Quit (core dumped)\n");
+	if (sig == SIGINT)
+		prt("\n");
+	ms()->status = 128 + sig;
 }
 
 void	execution(void)
@@ -166,7 +213,7 @@ void	execution(void)
 	int		i;
 	int		j;
 	int		len;
-	int		needs_exec;
+	int		error;
 
 	curr = ms()->words;
 	len = ft_lstsize(ms()->words);
@@ -184,14 +231,14 @@ void	execution(void)
 	j = 0;
 	while (curr)
 	{
-		needs_exec = 1;
-		i = -1;
+		error = 0;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
 		if (j)
 			ms()->fd[0] = ms()->pipe[j - 1][0];
 		if (j != len - 1)
 			ms()->fd[1] = ms()->pipe[j][1];
+		i = -1;
 		while (curr->cmds[++i])
 		{
 			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
@@ -219,10 +266,10 @@ void	execution(void)
 			{
 				if (ms()->fd[0] < 0)
 				{
-					if (!g_sig && ms()->fd[0] != -2)
+					if (!ms()->status && ms()->fd[0] != -2)
 						perror(curr->cmds[i + 1]);
 					ms()->fd[0] = 0;
-					needs_exec = 0;
+					error = 1;
 					ms()->status = 1;
 					break ;
 				}
@@ -230,7 +277,7 @@ void	execution(void)
 				{
 					close(ms()->fd[0]);
 					ms()->fd[0] = 0;
-					needs_exec = 0;
+					error = 1;
 					break ;
 				}
 				curr->cmds = remove_items(curr->cmds, i);
@@ -240,10 +287,10 @@ void	execution(void)
 			{
 				if (ms()->fd[1] < 0)
 				{
-					if (!g_sig)
+					if (!ms()->status)
 						perror(curr->cmds[i + 1]);
 					ms()->fd[1] = 0;
-					needs_exec = 0;
+					error = 1;
 					ms()->status = 1;
 					break ;
 				}
@@ -251,7 +298,7 @@ void	execution(void)
 				{
 					close(ms()->fd[1]);
 					ms()->fd[1] = 0;
-					needs_exec = 0;
+					error = 1;
 					break ;
 				}
 				curr->cmds = remove_items(curr->cmds, i);
@@ -265,28 +312,17 @@ void	execution(void)
 			if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 				perror("dup2, fd[1]");
 		}
-		if (!needs_exec || (!ms()->words->next && run_builtin(curr)))
+		if (error || (!ms()->words->next && run_builtin(curr)))
 			(void)ms;
 		else
 		{
-			char *cmd;
-			if (curr->type == BUILT_IN)
-				cmd = NULL;
-			else
-				cmd = search_cmd(curr->cmds[0]);
-			if (cmd || curr->type == BUILT_IN)
-			{
-				signal(SIGINT, tmp_handler);
-				signal(SIGQUIT, tmp_handler);
-				ms()->pid[j] = fork();
-				if (ms()->pid[j] < 0)
-					perror("fork");
-				if (!ms()->pid[j])
-					cmd_execute(cmd, ep_from_epl(), curr);
-				free(cmd);
-			}
-			else
-				needs_exec = 0;
+			signal(SIGINT, tmp_handler);
+			signal(SIGQUIT, tmp_handler);
+			ms()->pid[j] = fork();
+			if (ms()->pid[j] < 0)
+				perror("fork");
+			else if (!ms()->pid[j])
+				cmd_execute(NULL, ep_from_epl(), curr);
 		}
 		if (ms()->fd[0] && !close(ms()->fd[0]))
 			if (!ms()->words->next && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
@@ -299,16 +335,16 @@ void	execution(void)
 	}
 	int stat = 0;
 	j = -1;
-	if (!needs_exec && ms()->words->next)
-		needs_exec = 1;
-	// needs_exec is here so when a command didnt execute we dont wait for it
-	while (needs_exec && !(ms()->words->type == BUILT_IN && !ms()->words->next) && ++j < len)
+	while (++j < len)
 	{
-		waitpid(ms()->pid[j], &stat, 0);
-		if (WIFEXITED(stat))
-			ms()->status = WEXITSTATUS(stat);
+		if (ms()->pid[j])
+		{
+			waitpid(ms()->pid[j], &stat, 0);
+			if (WIFEXITED(stat))
+				ms()->status = WEXITSTATUS(stat);
+		}
 	}
-	free_pipes();
+	free_pipes_words();
 }
 
 char	*search_cmd(char *command)
@@ -318,13 +354,6 @@ char	*search_cmd(char *command)
 	struct stat	statbuf;
 
 	i = -1;
-	if (ft_strchr(command, '/') && (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)))
-	{
-		dprt(2, "%s: is a directory\n", command);
-		ms()->status = 126;
-		// not working exit status
-		return (NULL);
-	}
 	if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
 	{
 		while (ms()->paths[++i])
@@ -336,8 +365,19 @@ char	*search_cmd(char *command)
 		}
 	}
 	else
-		if (!access(command, F_OK | X_OK))
+	{
+		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+			dprt(2, "%s: is a directory\n", command);
+		else if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
+		else
+		{
+			perror(command);
+			ms()->status = 126;
+		}
+		ms()->status = 127;
+		return (NULL);
+	}
 	dprt(2, "%s: command not found\n", command);
 	ms()->status = 127;
 	return (NULL);
@@ -347,6 +387,8 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
 	int	i;
 
+	if (curr->type != BUILT_IN)
+		cmd = search_cmd(curr->cmds[0]);
 	parsing_paths();
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
@@ -358,22 +400,22 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 		close(ms()->pipe[i][0]);
 		close(ms()->pipe[i][1]);
 	}
-	if (run_builtin(curr))
+	if (curr->type != BUILT_IN && !cmd)
 	{
-		free(cmd);
-		free_pipes();
-		ft_lstclear(&ms()->words, free_lst);
-		ft_lstclear(&ms()->lst_lexer, free_lst);
+		free_pipes_words();
 		free_strs(ep);
-		exit(ms()->status);
+		free_all(ms()->status);
 	}
-	execve(cmd, curr->cmds, ep);
-	ft_putstr_fd(curr->cmds[0], 2);
-	ft_putstr_fd(": command not found💀\n", 2);
+	if (run_builtin(curr))
+		(void)ms()->status;
+	else
+	{
+		execve(cmd, curr->cmds, ep);
+		dprt(2, "%s: command not found💀\n", curr->cmds[0]);
+		ms()->status = 126;
+	}
 	free(cmd);
-	free_pipes();
-	ft_lstclear(&ms()->words, free_lst);
-	ft_lstclear(&ms()->lst_lexer, free_lst);
+	free_pipes_words();
 	free_strs(ep);
-	free_all(126);
+	free_all(ms()->status);
 }

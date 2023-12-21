@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/20 18:06:13 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/21 16:41:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,8 @@ int	run_export(void)
 	i = 1;
 	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(ms()->words->cmds[i], '='))
-			if (ep_export_value(ms()->words->cmds[i]))
-				status = 1;
+		if (ep_export_value(ms()->words->cmds[i]))
+			status = 1;
 		i++;
 	}
 	return (status);

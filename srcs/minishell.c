@@ -6,13 +6,12 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/20 19:08:18 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/21 17:01:54 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_sig = 0;
 
 void	free_all(int exit_code)
 {
@@ -28,7 +27,7 @@ void	free_all(int exit_code)
 
 void	handler(int sig)
 {
-	g_sig = sig;
+	ms()->status = sig;
 	if (sig == SIGINT)
 	{
 		prt("\n");
@@ -67,8 +66,6 @@ void	cmd_loop(void)
 		parse();
 		free(buf);
 		execution();
-		ft_lstclear(&ms()->lst_lexer, free_lst);
-		ft_lstclear(&ms()->words, free_lst);
 	}
 	close(ms()->fd[0]);
 	close(ms()->fd[1]);
@@ -105,15 +102,6 @@ void	var_init(char *cwd)
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
-// 	if (!get_env("PATH"))
-// 		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:///
-// /usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-// 	else
-// 	{
-// 		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
-// 		ep_change_value("PATH", str);
-// 		free(str);
-// 	}
 	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
 	ms()->saved_fd[0] = dup(STDIN_FILENO);
@@ -150,7 +138,7 @@ void	minishell_init(char **ep)
 // this is a temporary function for debugging that uses unauthorized functions
 void	debug(int n)
 {
-	char	*hist = "/nfs/homes/analexan/minishell/.minishell_history";
+	char	*hist = "/home/analexan/minishell/.minishell_history";
 	char	*asd = NULL;
 	char	history_file[100];
 

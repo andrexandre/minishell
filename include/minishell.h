@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/20 19:08:54 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:16:50 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-extern int			g_sig;
 
 typedef struct s_eplist
 {
