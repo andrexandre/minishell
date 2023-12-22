@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/21 12:16:50 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:43:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,15 @@ typedef struct s_var
 	int			**pipe;
 	int			saved_fd[2];
 	char		**av;
+	char		*hd_buf;
+	int			hd_fd;
 	t_eplist	*epl;
 	t_list		*words;
 	t_list		*lst_lexer;
 }				t_var;
 
 // minishell
-void				free_all(int exit_code);
+void				free_all(int exit_code, char *err_msg);
 void				free_lst(t_list *word);
 void				handler(int num);
 void				parsing_paths(void);
@@ -79,9 +81,11 @@ int					run_cd(void);
 char				**ep_from_epl(void);
 void				execution(void);
 void				cmd_execute(char *cmd, char **ep, t_list *curr);
+void				free_pipes_words(void);
 
 // minishell_utils
-void				*free_strs(char **strs);
+void				free_strs(char **strs);
+void				free_strs_len(char **strs, int len);
 void				prt_strs(char **strs, int n);
 t_var				*ms(void);
 

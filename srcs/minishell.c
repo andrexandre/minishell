@@ -6,15 +6,16 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/21 17:01:54 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:44:24 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-void	free_all(int exit_code)
+void	free_all(int exit_code, char *err_msg)
 {
+	close(ms()->fd[0]);
+	close(ms()->fd[1]);
 	close(ms()->saved_fd[0]);
 	close(ms()->saved_fd[1]);
 	close(0);
@@ -22,12 +23,14 @@ void	free_all(int exit_code)
 	close(2);
 	ep_lclear(&ms()->epl);
 	free_strs(ms()->paths);
+	free_pipes_words();
+	if (exit_code == 1)
+		perror(err_msg);
 	exit(exit_code);
 }
 
 void	handler(int sig)
 {
-	ms()->status = sig;
 	if (sig == SIGINT)
 	{
 		prt("\n");
@@ -54,7 +57,7 @@ void	cmd_loop(void)
 				write(2, "exit\n", 6);
 			break ;
 		}
-		if (ft_strcmp(buf, "q"))
+		if (ft_strcmp(buf, "q") && *buf)
 			add_history(buf);
 		else if (!*buf)
 			continue ;
@@ -67,8 +70,6 @@ void	cmd_loop(void)
 		free(buf);
 		execution();
 	}
-	close(ms()->fd[0]);
-	close(ms()->fd[1]);
 }
 
 void	parsing_paths(void)
@@ -167,9 +168,9 @@ int	main(int ac, char **av, char **ep)
 	cmd_loop();
 	debug(1);
 	rl_clear_history();
-	free_all(ms()->status);
+	free_all(ms()->status, 0);
 }
-// progress i was in status tests
+
 /*
 o expander pode aumentar / diminuir a lst
 e o heredoc é a execão

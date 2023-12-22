@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/21 16:57:30 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/22 15:41:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	export_error(char *str)
 
 	i = -1;
 	while (str[++i])
-		if (!ft_isalpha(str[i]) && str[i] != '_')
+		if (!ft_isalpha(str[i]) && str[i] != '_' && ft_isdigit(str[0]))
 			break ;
 	if (!str[i])
 		return (0);

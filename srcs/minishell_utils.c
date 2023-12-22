@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/20 17:27:40 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:34:14 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ void	prt_strs(char **strs, int n)
 		prt("\n");
 }
 
-void	*free_strs(char **strs)
+void	free_strs(char **strs)
 {
 	int	i;
 
 	i = 0;
 	if (!strs)
-		return (NULL);
+		return ;
 	while (strs[i])
 	{
 		free(strs[i]);
@@ -51,7 +51,24 @@ void	*free_strs(char **strs)
 	}
 	free(strs);
 	strs = NULL;
-	return (NULL);
+	return ;
+}
+
+void	free_strs_len(char **strs, int len)
+{
+	int	i;
+
+	i = 0;
+	if (!strs)
+		return ;
+	while (i < len)
+	{
+		free(strs[i]);
+		strs[i] = NULL;
+		i++;
+	}
+	free(strs);
+	strs = NULL;
 }
 
 void	free_lst(t_list *word)
