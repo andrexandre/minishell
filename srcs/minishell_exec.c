@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/22 19:05:10 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/23 19:03:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,16 +181,29 @@ void	tmp_handler(int sig)
 void	execute_builtin(t_list *curr)
 {
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
-		perror("dup2, fd[0]");
+		return (perror("dup2, fd[0]"));
 	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
-		perror("dup2, fd[1]");
+		return (perror("dup2, fd[1]"));
 	run_builtin(curr);
-	if (ms()->fd[0] && !close(ms()->fd[0])
-		&& !ms()->words->next && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
-		perror("dup2, saved_fd[0]");
-	if (ms()->fd[1] && !close(ms()->fd[1])
-		&& !ms()->words->next && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
-		perror("dup2, saved_fd[1]");
+	if (ms()->fd[0] && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
+		return (perror("dup2, saved_fd[0]"));
+	if (ms()->fd[1] && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
+		return (perror("dup2, saved_fd[1]"));
+}
+
+// if len < 0 close (length of words) pipes
+void	close_pipes(int len)
+{
+	int	i;
+
+	i = -1;
+	if (len < 0)
+		len = ft_lstsize(ms()->words) - 1;
+	while (ms()->pipe && ++i < len)
+	{
+		close(ms()->pipe[i][0]);
+		close(ms()->pipe[i][1]);
+	}
 }
 
 void	execute_pipe(t_list *curr, int j)
@@ -200,20 +213,11 @@ void	execute_pipe(t_list *curr, int j)
 	ms()->pid[j] = fork();
 	if (ms()->pid[j] < 0)
 	{
-		int i = -1;
-		while (ms()->pipe && ++i < ft_lstsize(ms()->words) - 1)
-		{
-			close(ms()->pipe[i][0]);
-			close(ms()->pipe[i][1]);
-		}
+		close_pipes(-1);
 		free_all(EXIT_FAILURE, "fork");
 	}
 	else if (!ms()->pid[j])
 		cmd_execute(NULL, ep_from_epl(), curr);
-	if (ms()->fd[0])
-		close(ms()->fd[0]);
-	if (ms()->fd[1])
-		close(ms()->fd[1]);
 }
 
 void	execute(t_list *curr, int j)
@@ -224,7 +228,7 @@ void	execute(t_list *curr, int j)
 		execute_pipe(curr, j);
 }
 
-// to-do: check all errors and frees with make v
+// to-do: check all errors and frees with make v and check the evaluation sheet
 void	execution(void)
 {
 	t_list	*curr;
@@ -237,24 +241,31 @@ void	execution(void)
 	len = ft_lstsize(ms()->words);
 	if (len > 1)
 		ms()->pipe = ft_calloc(len - 1, sizeof(int *));
+	if (len > 1 && !ms()->pipe)
+		free_all(EXIT_FAILURE, "calloc");
 	j = 0;
 	while (ms()->pipe && j < len - 1)
 	{
 		ms()->pipe[j] = ft_calloc(2, sizeof(int));
-		if (pipe(ms()->pipe[j]) < 0)
-			free_all(EXIT_FAILURE, "pipe");
+		if (!ms()->pipe[j] || pipe(ms()->pipe[j]) < 0)
+		{
+			close_pipes(j);
+			free_all(EXIT_FAILURE, "calloc/pipe");
+		}
 		j++;
 	}
 	ms()->pid = ft_calloc(len, sizeof(int));
+	if (!ms()->pid)
+		free_all(EXIT_FAILURE, "calloc");
 	j = 0;
-	while (ms()->pid && curr)
+	while (curr)
 	{
 		error = 0;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
-		if (ms()->pipe && j)
+		if (j)
 			ms()->fd[0] = ms()->pipe[j - 1][0];
-		if (ms()->pipe && j != len - 1)
+		if (j != len - 1)
 			ms()->fd[1] = ms()->pipe[j][1];
 		i = -1;
 		while (curr->cmds[++i])
@@ -284,22 +295,18 @@ void	execution(void)
 			{
 				if (ms()->fd[0] < 0)
 				{
+					error = 2;
 					if (ms()->status != 130 && ms()->fd[0] != -2)
 					{
 						perror(curr->cmds[i + 1]);
 						ms()->status = 1;
+						error = 1;
 					}
 					ms()->fd[0] = 0;
-					error = 2;
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(ms()->fd[0]);
-					ms()->fd[0] = 0;
 					error = 1;
-					break ;
-				}
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
 			}
@@ -315,26 +322,25 @@ void	execution(void)
 					break ;
 				}
 				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(ms()->fd[1]);
-					ms()->fd[1] = 0;
 					error = 1;
-					break ;
-				}
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
 			}
 		}
-		if (!error)
-			execute(curr, j);
 		if (error == 2)
 			break ;
+		if (!error)
+			execute(curr, j);
+		if (ms()->fd[0])
+			close(ms()->fd[0]);
+		if (ms()->fd[1])
+			close(ms()->fd[1]);
 		curr = curr->next;
 		j++;
 	}
 	int stat = 0;
 	j = -1;
-	while (ms()->pid && ++j < len)
+	while (++j < len)
 	{
 		if (ms()->pid[j])
 		{
@@ -346,14 +352,16 @@ void	execution(void)
 	free_pipes_words();
 }
 
-char	*search_cmd(char *command)
+char	*search_cmd(char *command, char **ep)
 {
 	int			i;
 	char		*cmd;
 	struct stat	statbuf;
 
 	i = -1;
-	if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
+	if (!*command)
+		(void)ms;
+	else if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
 	{
 		while (ms()->paths[++i])
 		{
@@ -374,42 +382,36 @@ char	*search_cmd(char *command)
 			perror(command);
 			ms()->status = 126;
 		}
-		ms()->status = 127;
-		return (NULL);
+		free_strs(ep);
+		free_all(127, 0);
 	}
 	dprt(2, "%s: command not found\n", command);
-	ms()->status = 127;
+	free_strs(ep);
+	free_all(127, 0);
 	return (NULL);
 }
-
+/*
+	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
+		return (perror("dup2, fd[0]"));
+	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
+		return (perror("dup2, fd[1]"));
+*/
 void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
-	int	i;
-
 	// cat echo (execve failed) bcs it detects cat echo as a built-in
 	if (curr->type != BUILT_IN)
-		cmd = search_cmd(curr->cmds[0]);
+		cmd = search_cmd(curr->cmds[0], ep);
 	parsing_paths();
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
 	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 		perror("dup2, fd[1]");
-	i = -1;
-	while (++i < ft_lstsize(ms()->words) - 1)
-	{
-		close(ms()->pipe[i][0]);
-		close(ms()->pipe[i][1]);
-	}
-	if (curr->type != BUILT_IN && !cmd)
-	{
-		free_strs(ep);
-		free_all(ms()->status, 0);
-	}
+	close_pipes(-1);
 	if (!run_builtin(curr))
 	{
 		execve(cmd, curr->cmds, ep);
 		dprt(2, "%s: command not found💀\n", curr->cmds[0]);
-		ms()->status = 126;
+		ms()->status = 127;
 	}
 	free(cmd);
 	free_strs(ep);

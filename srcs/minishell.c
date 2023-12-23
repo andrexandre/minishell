@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/22 18:44:24 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/23 19:04:46 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ void	free_all(int exit_code, char *err_msg)
 {
 	close(ms()->fd[0]);
 	close(ms()->fd[1]);
-	close(ms()->saved_fd[0]);
-	close(ms()->saved_fd[1]);
+	if (ms()->saved_fd[0] >= 0)
+		close(ms()->saved_fd[0]);
+	if (ms()->saved_fd[1] >= 0)
+		close(ms()->saved_fd[1]);
 	close(0);
 	close(1);
 	close(2);
@@ -106,7 +108,11 @@ void	var_init(char *cwd)
 	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
 	ms()->saved_fd[0] = dup(STDIN_FILENO);
+	if (ms()->saved_fd[0] < 0)
+		free_all(EXIT_FAILURE, "dup");
 	ms()->saved_fd[1] = dup(STDOUT_FILENO);
+	if (ms()->saved_fd[1] < 0)
+		free_all(EXIT_FAILURE, "dup");
 }
 
 void	minishell_init(char **ep)
