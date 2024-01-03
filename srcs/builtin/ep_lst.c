@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/23 19:06:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 14:55:07 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,24 +62,24 @@ void	ep_lclear(t_eplist **lst)
 	}
 }
 
-int	export_error(char *str)
+int	export_error(char *name, char *str)
 {
 	int	i;
 
 	i = -1;
-	if (ft_isdigit(str[0]))
+	if (ft_isdigit(name[0]))
 	{
 		dprt(2, "export: `%s': not a valid identifier\n", str);
-		free(str);
+		free(name);
 		return (1);
 	}
-	while (str[++i])
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+	while (name[++i])
+		if (!ft_isalnum(name[i]) && name[i] != '_')
 			break ;
-	if (!str[i])
+	if (!name[i])
 		return (0);
 	dprt(2, "export: `%s': not a valid identifier\n", str);
-	free(str);
+	free(name);
 	return (1);
 }
 
@@ -92,7 +92,7 @@ int	ep_export_value(char *str)
 	name = ft_substr(str, 0, ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
 	if (!name)
 		return (1);
-	if (export_error(name))
+	if (export_error(name, str))
 		return (1);
 	if (!ft_strcmp(name, "_") || !ft_strchr(str, '='))
 	{

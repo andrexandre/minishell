@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/20 15:32:03 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 13:26:52 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	lexer(char *str)
 	i = 0;
 	search_and_replace(str, '\t', ' ');
 	trimmed = ft_strtrim(str, " ");
-	if (!*trimmed)
+	if (!trimmed || (trimmed && !*trimmed))
 	{
 		free(trimmed);
 		return (1);

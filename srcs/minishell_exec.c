@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/23 19:03:47 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 19:07:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,10 @@ void	get_stdin(const char *arg)
 	ms()->hd_buf = readline("> ");
 	while (ms()->hd_buf && ft_strcmp(ms()->hd_buf, arg))
 	{
+		// char *str = NULL;
+		// str = expander(ms()->hd_buf);
+		// if (!str)
+		// 	str = ms()->hd_buf;
 		write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
 		write(ms()->hd_fd, "\n", 1);
 		free(ms()->hd_buf);
@@ -208,8 +212,6 @@ void	close_pipes(int len)
 
 void	execute_pipe(t_list *curr, int j)
 {
-	signal(SIGINT, tmp_handler);
-	signal(SIGQUIT, tmp_handler);
 	ms()->pid[j] = fork();
 	if (ms()->pid[j] < 0)
 	{
@@ -218,6 +220,8 @@ void	execute_pipe(t_list *curr, int j)
 	}
 	else if (!ms()->pid[j])
 		cmd_execute(NULL, ep_from_epl(), curr);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	execute(t_list *curr, int j)
@@ -390,14 +394,11 @@ char	*search_cmd(char *command, char **ep)
 	free_all(127, 0);
 	return (NULL);
 }
-/*
-	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
-		return (perror("dup2, fd[0]"));
-	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
-		return (perror("dup2, fd[1]"));
-*/
+
 void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
+	signal(SIGINT, tmp_handler);
+	signal(SIGQUIT, tmp_handler);
 	// cat echo (execve failed) bcs it detects cat echo as a built-in
 	if (curr->type != BUILT_IN)
 		cmd = search_cmd(curr->cmds[0], ep);

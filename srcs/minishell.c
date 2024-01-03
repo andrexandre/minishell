@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/23 19:04:46 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 15:03:32 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	minishell_init(char **ep)
 	i = -1;
 	while (ep && ep[++i])
 	{
-		if (!ft_strcmp(ep[i], "_="))
+		if (!ft_strncmp(ep[i], "_=", 2))
 			continue ;
 		ep_lnew_add_back(&ms()->epl, ep[i]);
 	}
