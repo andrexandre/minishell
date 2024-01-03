@@ -3,32 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2024/01/03 15:03:32 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_sig = 0;
-
-void	free_all(int exit_code)
+void	free_all(int exit_code, char *err_msg)
 {
-	close(ms()->saved_fd[0]);
-	close(ms()->saved_fd[1]);
+	close(ms()->fd[0]);
+	close(ms()->fd[1]);
+	if (ms()->saved_fd[0] >= 0)
+		close(ms()->saved_fd[0]);
+	if (ms()->saved_fd[1] >= 0)
+		close(ms()->saved_fd[1]);
 	close(0);
 	close(1);
 	close(2);
 	ep_lclear(&ms()->epl);
 	free_strs(ms()->paths);
+	free_pipes_words();
+	if (exit_code == 1)
+		perror(err_msg);
 	exit(exit_code);
 }
 
 void	handler(int sig)
 {
-	g_sig = sig;
 	if (sig == SIGINT)
 	{
 		prt("\n");
@@ -42,32 +46,32 @@ void	handler(int sig)
 void	cmd_loop(void)
 {
 	char	*buf;
-	int		status;
 
-	status = 1;
-	while (status)
+	ms()->running = 1;
+	while (ms()->running)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
+		{
+			if (isatty(STDIN_FILENO))
+				write(2, "exit\n", 6);
 			break ;
-		if (*buf && ft_strcmp(buf, "q"))
+		}
+		if (ft_strcmp(buf, "q") && *buf)
 			add_history(buf);
-		else if (ft_strcmp(buf, "q"))
+		else if (!*buf)
+			continue ;
+		if (lexer(buf))
 		{
 			free(buf);
-			continue ;
+			continue;
 		}
-		lexer(buf);
 		parse();
 		free(buf);
-		execution(&status);
-		ft_lstclear(&ms()->lst_lexer, free_lst);
-		ft_lstclear(&ms()->words, free_lst);
+		execution();
 	}
-	close(ms()->fd[0]);
-	close(ms()->fd[1]);
 }
 
 void	parsing_paths(void)
@@ -101,19 +105,14 @@ void	var_init(char *cwd)
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
-	if (!get_env("PATH"))
-		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
-/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-	else
-	{
-		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
-		ep_change_value("PATH", str);
-		free(str);
-	}
 	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
 	ms()->saved_fd[0] = dup(STDIN_FILENO);
+	if (ms()->saved_fd[0] < 0)
+		free_all(EXIT_FAILURE, "dup");
 	ms()->saved_fd[1] = dup(STDOUT_FILENO);
+	if (ms()->saved_fd[1] < 0)
+		free_all(EXIT_FAILURE, "dup");
 }
 
 void	minishell_init(char **ep)
@@ -125,7 +124,7 @@ void	minishell_init(char **ep)
 	i = -1;
 	while (ep && ep[++i])
 	{
-		if (!ft_strcmp(ep[i], "_="))
+		if (!ft_strncmp(ep[i], "_=", 2))
 			continue ;
 		ep_lnew_add_back(&ms()->epl, ep[i]);
 	}
@@ -146,7 +145,7 @@ void	minishell_init(char **ep)
 // this is a temporary function for debugging that uses unauthorized functions
 void	debug(int n)
 {
-	char	*hist = "/nfs/homes/analexan/minishell/.minishell_history";
+	char	*hist = "/home/analexan/minishell/.minishell_history";
 	char	*asd = NULL;
 	char	history_file[100];
 
@@ -166,16 +165,16 @@ void	debug(int n)
 #include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
+	ms()->debug = 0;
 	ms()->ac = ac;
 	ms()->av = av;
 	minishell_init(ep);
 	parsing_paths();
 	debug(0);
 	cmd_loop();
-	prt("exit\n");
 	debug(1);
 	rl_clear_history();
-	free_all(ms()->status);
+	free_all(ms()->status, 0);
 }
 
 /*

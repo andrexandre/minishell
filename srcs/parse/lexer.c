@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2024/01/03 13:26:52 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	word(char *str)
 	ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
 }
 
-void	lexer(char *str)
+int	lexer(char *str)
 {
 	int		i;
 	char	**splitted;
@@ -63,6 +63,11 @@ void	lexer(char *str)
 	i = 0;
 	search_and_replace(str, '\t', ' ');
 	trimmed = ft_strtrim(str, " ");
+	if (!trimmed || (trimmed && !*trimmed))
+	{
+		free(trimmed);
+		return (1);
+	}
 	ex = expander(ft_strdup(trimmed));
 	splitted = ft_split_without(ex, ' ', "'\"");
 	free(ex);
@@ -70,7 +75,7 @@ void	lexer(char *str)
 	if (splitted == NULL)
 	{
 		prt("unclosed quote\n");
-		return ;
+		return (1);
 	}
 	while (splitted[i])
 	{
@@ -79,4 +84,5 @@ void	lexer(char *str)
 		i++;
 	}
 	free_strs(splitted);
+	return (0);
 }

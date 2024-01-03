@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/06 22:02:55 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/22 13:39:34 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	search_and_remove(char *str, char target)
 	char	*dest;
 
 	dest = str;
+	if (!str)
+		return ;
 	while (*str != '\0')
 	{
 		if (*str != target)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ep_lst.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2024/01/03 14:55:07 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ void	ep_lnew_add_back(t_eplist **lst, char *str)
 
 	node = ft_calloc(1, sizeof(t_eplist));
 	if (!node || !str)
-		return ;
+		return (free(node));
 	node->str = ft_strdup(str);
+	if (!node->str)
+		return ;
 	node->name = ft_substr(node->str, 0,
 			ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
 	node->data = ft_strchr(node->str, '=') + 1;
@@ -60,21 +62,45 @@ void	ep_lclear(t_eplist **lst)
 	}
 }
 
+int	export_error(char *name, char *str)
+{
+	int	i;
+
+	i = -1;
+	if (ft_isdigit(name[0]))
+	{
+		dprt(2, "export: `%s': not a valid identifier\n", str);
+		free(name);
+		return (1);
+	}
+	while (name[++i])
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			break ;
+	if (!name[i])
+		return (0);
+	dprt(2, "export: `%s': not a valid identifier\n", str);
+	free(name);
+	return (1);
+}
+
 // receives a string of the form "name=data" and adds it to the ep
-void	ep_export_value(char *str)
+int	ep_export_value(char *str)
 {
 	t_eplist	*curr;
 	char		*name;
 
-	name = ft_substr(str, 0,
-			ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
-	if (!ft_strcmp(name, "_"))
+	name = ft_substr(str, 0, ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
+	if (!name)
+		return (1);
+	if (export_error(name, str))
+		return (1);
+	if (!ft_strcmp(name, "_") || !ft_strchr(str, '='))
 	{
 		free(name);
-		return ;
+		return (0);
 	}
 	curr = get_env(name);
-	if (!curr)
+		if (!curr)
 		ep_lnew_add_back(&ms()->epl, str);
 	else
 	{
@@ -83,10 +109,11 @@ void	ep_export_value(char *str)
 		curr->data = ft_strchr(curr->str, '=') + 1;
 	}
 	free(name);
+	return (0);
 }
 
 // searches for the string name in the ep and changes its value to data
-void	ep_change_value(char *name, char *data)
+int	ep_change_value(char *name, char *data)
 {
 	char		*str;
 	char		*temp;
@@ -94,8 +121,10 @@ void	ep_change_value(char *name, char *data)
 	temp = ft_strjoin(name, "=");
 	str = ft_strjoin(temp, data);
 	free(temp);
-	ep_export_value(str);
+	if (ep_export_value(str))
+		return (1);
 	free(str);
+	return (0);
 }
 
 /*

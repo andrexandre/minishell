@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andrealex <andrealex@student.42.fr>        +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/18 16:36:09 by andrealex        ###   ########.fr       */
+/*   Updated: 2024/01/03 14:04:44 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,36 @@ t_eplist	*get_env(char *name)
 		curr = curr->next;
 	}
 	return (NULL);
+}
+
+int	run_exit(void)
+{
+	int	i;
+
+	ms()->running = 0;
+	dprt(2, "exit\n");
+	if (ms()->words->cmds[1])
+	{
+		i = -1;
+		while (ms()->words->cmds[1][++i])
+		{
+			if (!ft_isdigit(ms()->words->cmds[1][i]) &&
+				ms()->words->cmds[1][i] != '-')
+			{
+				dprt(2, "minishell: exit: %s: numeric argument required\n",
+					ms()->words->cmds[1]);
+				return (2);
+			}
+		}
+		if (ms()->words->cmds[2])
+		{
+			dprt(2, "minishell: exit: too many arguments\n");
+			ms()->running = 1;
+			return (1);
+		}
+		return (ft_atoll(ms()->words->cmds[1]));
+	}
+	return (ms()->status);
 }
 
 int	exec_cd(char *str)
@@ -51,6 +81,7 @@ int	exec_cd(char *str)
 	}
 	else
 	{
+		dprt(2, "cd: ");
 		perror(str);
 		return (1);
 	}
@@ -65,7 +96,7 @@ int	run_cd(void)
 	{
 		if (!get_env("HOME"))
 		{
-			prt("cd: HOME not set\n");
+			dprt(2, "cd: HOME not set\n");
 			return (1);
 		}
 		else
@@ -73,7 +104,7 @@ int	run_cd(void)
 	}
 	else if (ms()->words->cmds[2])
 	{
-		prt("cd: too many arguments\n");
+		dprt(2, "cd: too many arguments\n");
 		return (1);
 	}
 	else
