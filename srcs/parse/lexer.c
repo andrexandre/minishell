@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jessica <jessica@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/02 22:51:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/04 22:00:04 by jessica          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool	is_token(char *str)
 
 void	word(char *str)
 {
-	ft_lstadd_back(&var()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
+	ft_lstadd_back(&var()->lst_lexer, ft_lstnew(expander(ft_strdup(str)), NULL, WORD));
 }
 
 void	lexer(char *str)
@@ -58,14 +58,11 @@ void	lexer(char *str)
 	int		i;
 	char	**splitted;
 	char	*trimmed;
-	char	*ex;
 
 	i = 0;
 	search_and_replace(str, '\t', ' ');
 	trimmed = ft_strtrim(str, " ");
-	ex = expander(ft_strdup(trimmed));
-	splitted = ft_split_without(ex, ' ', "'\"");
-	free(ex);
+	splitted = ft_split_without(trimmed, ' ', "'\"");
 	free(trimmed);
 	if (splitted == NULL)
 	{

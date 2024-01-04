@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 # include "libft.h"
-# include <curses.h>
+//# include <curses.h>
 # include <dirent.h>
 # include <fcntl.h>
 # include <readline/history.h>
