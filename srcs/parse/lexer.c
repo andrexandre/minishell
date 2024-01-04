@@ -6,13 +6,13 @@
 /*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/04 22:27:52 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/04 22:39:41 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	is_builtin(char *str)
+bool	builtin(char *str)
 {
 	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
 		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
@@ -26,7 +26,7 @@ bool	is_builtin(char *str)
 	return (false);
 }
 
-bool	is_token(char *str)
+bool	token(char *str)
 {
 	if (ft_strcmpold(str, "|"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
@@ -60,6 +60,7 @@ int	lexer(char *str)
 	char	*trimmed;
 
 	i = 0;
+	space_token(str);
 	search_and_replace(str, '\t', ' ');
 	trimmed = ft_strtrim(str, " ");
 	if (!trimmed || (trimmed && !*trimmed))
@@ -76,7 +77,7 @@ int	lexer(char *str)
 	}
 	while (splitted[i])
 	{
-		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
+		if (!builtin(splitted[i]) && !token(splitted[i]))
 			word(splitted[i]);
 		i++;
 	}

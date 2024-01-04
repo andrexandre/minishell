@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 22:25:45 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/04 23:01:38 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void				search_and_remove(char *str, char target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
+void space_token(char *str);
 
 // ep_lst
 void				ep_lnew_add_back(t_eplist **lst, char *str);
