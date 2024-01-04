@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jessica <jessica@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/04 22:05:06 by jessica          ###   ########.fr       */
+/*   Updated: 2024/01/04 22:26:30 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,19 @@ char	*expansion(char *str)
 	if (str[0] == '$')
 		res = ft_strdup("\2");
 	else if (str[0] == '?')
-		res = ft_itoa(var()->status);
+		res = ft_itoa(ms()->status);
 	else if (str[0] == '"' || str[0] == '\'')
 		res = ft_strdup(str);
 	else if (get_env(str))
 		res = ft_strdup(get_env(str)->data);
 	else
 		res = ft_strdup("");
-	prt("\033[1;34m");
-	prt("Expander: busca = $%s, resultado = %s\n", str, res);
-	prt("\033[0m");
+	if (ms()->debug)
+	{
+		prt("\033[1;34m");
+		prt("Expander: busca = $%s, resultado = %s\n", str, res);
+		prt("\033[0m");
+	}
 	free(str);
 	return (res);
 }
@@ -44,7 +47,7 @@ char	*expander(char *str)
 	{
 		while (str[++i])
 		{
-			if (str[i] == '$' || str[i] == '~')
+			if (str[i] == '$')
 			{
 				j = i;
 				while (str[++j])

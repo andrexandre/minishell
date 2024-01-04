@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/02 22:06:07 by jealves-         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:03:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ int					prt(const char *format, ...);
 void				ft_putchar_c(char c, long *ptr);
 void				ft_putstr_c(char *s, long *ptr);
 void				ft_putnbr_c(long n, long *ptr);
+
+int					dprt(int fd, const char *format, ...);
+void				ft_dputchar_c(char c, long *ptr, int fd);
+void				ft_dputstr_c(char *s, long *ptr, int fd);
+void				ft_dputnbr_c(long n, long *ptr, int fd);
 
 char				*get_next_line(int fd);
 

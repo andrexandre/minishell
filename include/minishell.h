@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/06 22:01:30 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/04 22:25:10 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft.h"
-//# include <curses.h>
+# include "../srcs/libft/include/libft.h"
+# include <curses.h>
 # include <dirent.h>
 # include <fcntl.h>
 # include <readline/history.h>
@@ -30,6 +30,7 @@
 # include <termios.h>
 # include <unistd.h>
 
+
 typedef struct s_eplist
 {
 	char			*str;
@@ -41,46 +42,55 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int				status;
-	char			**paths;
-	int				ac;
-	int				fd[2];
-	int				pipe[2];
-	int				saved_fd[2];
-	char			**av;
-	t_eplist		*epl;
-	t_list			*words;
-	t_list			*lst_lexer;
-}					t_var;
+	int			debug;
+	int			status;
+	int			running;
+	char		**paths;
+	int			ac;
+	int			*pid;
+	int			fd[2];
+	int			**pipe;
+	int			saved_fd[2];
+	char		**av;
+	char		*hd_buf;
+	int			hd_fd;
+	t_eplist	*epl;
+	t_list		*words;
+	t_list		*lst_lexer;
+}				t_var;
 
 // minishell
-void				free_all(int exit_code);
+void				free_all(int exit_code, char *err_msg);
 void				free_lst(t_list *word);
 void				handler(int num);
 void				parsing_paths(void);
 
 // builtin
 int					run_echo(void);
-int					run_env(void);
+int					prt_eplst(void);
 int					run_export(void);
 int					run_pwd(void);
 int					run_unset(void);
+int					run_exit(void);
 
 // builtin2
+t_eplist			*get_env(char *name);
 int					run_cd(void);
 
 // minishell_exec
 char				**ep_from_epl(void);
-void				execution(int *status);
-void				cmd_execute(char **ep);
+void				execution(void);
+void				cmd_execute(char *cmd, char **ep, t_list *curr);
+void				free_pipes_words(void);
 
 // minishell_utils
-void				*free_strs(char **strs);
+void				free_strs(char **strs);
+void				free_strs_len(char **strs, int len);
 void				prt_strs(char **strs, int n);
-t_var				*var(void);
+t_var				*ms(void);
 
 // lexer, parser
-void				lexer(char *str);
+int					lexer(char *str);
 void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 void				search_and_remove(char *str, char target);
@@ -89,14 +99,10 @@ int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
 
 // ep_lst
-t_eplist			*get_env(char *name);
 void				ep_lnew_add_back(t_eplist **lst, char *str);
 void				ep_ldelone(t_eplist *lst);
 void				ep_lclear(t_eplist **lst);
-void				prt_eplst(t_eplist *lst);
-
-// ep_lst2
-void				ep_export_value(char *str);
-void				ep_change_value(char *name, char *data);
+int					ep_export_value(char *str);
+int					ep_change_value(char *name, char *data);
 
 #endif

@@ -1,5 +1,6 @@
-.vscode
+settings.json
 *.o
 *.a
 minishell
 .minishell_history
+mpanic

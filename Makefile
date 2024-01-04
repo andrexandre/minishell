@@ -26,8 +26,7 @@ SRC		= minishell_utils.c\
 		  minishell_exec.c \
 		  builtin/builtin.c \
 		  builtin/builtin2.c \
-		  builtin/ep_lst.c \
-		  builtin/ep_lst2.c
+		  builtin/ep_lst.c 
 
 SRC		:= $(addprefix srcs/,$(SRC))
 
@@ -62,16 +61,15 @@ fclean:	clean
 re:	fclean all
 
 run: ${NAME}
+	@clear
 	@./${NAME}
 
 VALG	= valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes# --trace-children=yes
 
-v:
-	@make
+v: ${NAME}
 	@${VALG} ./${NAME}
 
 val: ${NAME}
-	@make
 	@output=$$(${VALG} ./${NAME} 2>&1); \
 	if echo "$$output" | grep -q 'freed' && echo "$$output" | grep -q '0 errors' ; then\
 		echo -n "$(GREEN)"; echo "$$output" | grep -E 'freed|total|ERROR S|file descriptor' | sed 's/^[^ ]* //';\

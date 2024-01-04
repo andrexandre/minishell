@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/04 22:18:00 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/04 22:28:12 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	search_and_remove(char *str, char target)
 	char	*dest;
 
 	dest = str;
+	if (!str)
+		return ;
 	while (*str != '\0')
 	{
 		if (*str != target)

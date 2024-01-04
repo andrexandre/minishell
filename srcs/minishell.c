@@ -6,72 +6,71 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 19:08:33 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 15:03:32 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_all(int exit_code)
+void	free_all(int exit_code, char *err_msg)
 {
-	close(var()->saved_fd[0]);
-	close(var()->saved_fd[1]);
+	close(ms()->fd[0]);
+	close(ms()->fd[1]);
+	if (ms()->saved_fd[0] >= 0)
+		close(ms()->saved_fd[0]);
+	if (ms()->saved_fd[1] >= 0)
+		close(ms()->saved_fd[1]);
 	close(0);
 	close(1);
-	ep_lclear(&var()->epl);
-	free_strs(var()->paths);
+	close(2);
+	ep_lclear(&ms()->epl);
+	free_strs(ms()->paths);
+	free_pipes_words();
+	if (exit_code == 1)
+		perror(err_msg);
 	exit(exit_code);
 }
 
-void	handler(int num)
+void	handler(int sig)
 {
-	if (num == SIGQUIT)
-		prt("Quit (core dumped)\n");
-	if (num == SIGINT)
+	if (sig == SIGINT)
 	{
 		prt("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	ms()->status = 128 + sig;
 }
 
 void	cmd_loop(void)
 {
 	char	*buf;
-	int		status;
 
-	status = 1;
-	while (status)
+	ms()->running = 1;
+	while (ms()->running)
 	{
 		signal(SIGINT, handler);
 		signal(SIGQUIT, SIG_IGN);
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
+		{
+			if (isatty(STDIN_FILENO))
+				write(2, "exit\n", 6);
 			break ;
-		if (*buf && ft_strcmp(buf, "q"))
+		}
+		if (ft_strcmp(buf, "q") && *buf)
 			add_history(buf);
-		else if (ft_strcmp(buf, "q"))
+		else if (!*buf)
+			continue ;
+		if (lexer(buf))
 		{
 			free(buf);
-			continue ;
+			continue;
 		}
-		lexer(buf);
 		parse();
 		free(buf);
-		execution(&status);
-		ft_lstclear(&var()->lst_lexer, free_lst);
-		ft_lstclear(&var()->words, free_lst);
-		if (var()->fd[0])
-		{
-			close(var()->fd[0]);
-			dup2(var()->saved_fd[0], STDIN_FILENO);
-		}
-		if (var()->fd[1])
-		{
-			close(var()->fd[1]);
-			dup2(var()->saved_fd[1], STDOUT_FILENO);
-		}
+		execution();
 	}
 }
 
@@ -82,17 +81,17 @@ void	parsing_paths(void)
 
 	if (!get_env("PATH"))
 		return ;
-	free_strs(var()->paths);
-	var()->paths = ft_split(get_env("PATH")->data, ':');
-	if (!var()->paths)
+	free_strs(ms()->paths);
+	ms()->paths = ft_split(get_env("PATH")->data, ':');
+	if (!ms()->paths)
 		return ;
 	i = -1;
-	while (var()->paths[++i])
+	while (ms()->paths[++i])
 	{
-		temp = var()->paths[i];
-		(var()->paths[i]) = ft_strjoin(temp, "/");
+		temp = ms()->paths[i];
+		(ms()->paths[i]) = ft_strjoin(temp, "/");
 		free(temp);
-		if (!var()->paths[i])
+		if (!ms()->paths[i])
 			return ;
 	}
 }
@@ -106,19 +105,14 @@ void	var_init(char *cwd)
 	str = ft_itoa(num);
 	ep_change_value("SHLVL", str);
 	free(str);
-	if (!get_env("PATH"))
-		ep_change_value("PATH", "/.local/bin:/usr/local/sbin:\
-/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-	else
-	{
-		str = ft_strjoin("/.local/bin:", get_env("PATH")->data);
-		ep_change_value("PATH", str);
-		free(str);
-	}
-	ep_lnew_add_back(&var()->epl, cwd);
+	ep_lnew_add_back(&ms()->epl, cwd);
 	free(cwd);
-	var()->saved_fd[0] = dup(STDIN_FILENO);
-	var()->saved_fd[1] = dup(STDOUT_FILENO);
+	ms()->saved_fd[0] = dup(STDIN_FILENO);
+	if (ms()->saved_fd[0] < 0)
+		free_all(EXIT_FAILURE, "dup");
+	ms()->saved_fd[1] = dup(STDOUT_FILENO);
+	if (ms()->saved_fd[1] < 0)
+		free_all(EXIT_FAILURE, "dup");
 }
 
 void	minishell_init(char **ep)
@@ -130,9 +124,9 @@ void	minishell_init(char **ep)
 	i = -1;
 	while (ep && ep[++i])
 	{
-		if (!ft_strcmp(ep[i], "_="))
+		if (!ft_strncmp(ep[i], "_=", 2))
 			continue ;
-		ep_lnew_add_back(&var()->epl, ep[i]);
+		ep_lnew_add_back(&ms()->epl, ep[i]);
 	}
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
@@ -151,7 +145,7 @@ void	minishell_init(char **ep)
 // this is a temporary function for debugging that uses unauthorized functions
 void	debug(int n)
 {
-	char	*hist = "/nfs/homes/analexan/minishell/.minishell_history";
+	char	*hist = "/home/analexan/minishell/.minishell_history";
 	char	*asd = NULL;
 	char	history_file[100];
 
@@ -168,19 +162,19 @@ void	debug(int n)
 	else
 		write_history(history_file);
 }
-
+#include <limits.h>
 int	main(int ac, char **av, char **ep)
 {
-	var()->ac = ac;
-	var()->av = av;
+	ms()->debug = 0;
+	ms()->ac = ac;
+	ms()->av = av;
 	minishell_init(ep);
 	parsing_paths();
 	debug(0);
 	cmd_loop();
-	prt("exit\n");
 	debug(1);
 	rl_clear_history();
-	free_all(var()->status);
+	free_all(ms()->status, 0);
 }
 
 /*

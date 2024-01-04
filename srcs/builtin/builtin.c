@@ -6,36 +6,54 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/11/29 18:45:39 by analexan         ###   ########.fr       */
+/*   Updated: 2023/12/21 16:41:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// if bool 0 print newline if 1 dont print
 int	run_echo(void)
 {
 	int		i;
+	int		j;
+	int		nl;
 	char	*str;
 
-	i = 2;
-	if (var()->words->cmds[1] && !ft_strncmp(var()->words->cmds[1], "-n", 2))
+	i = 0;
+	nl = 1;
+	while (ms()->words->cmds[++i])
 	{
-		str = var()->words->cmds[1];
-		while (str[i] && str[i] == 'n')
-			i++;
-		if (!str[i])
-			prt_strs(var()->words->cmds + 2, 1);
-		else
-			prt_strs(var()->words->cmds + 1, 0);
+		str = ms()->words->cmds[i];
+		if (str[0] != '-')
+			break ;
+		if (!str[0])
+			break ;
+		j = 1;
+		while (str[j])
+		{
+			if (str[j] != 'n')
+				break ;
+			j++;
+		}
+		if (str[j] && str[j] != 'n')
+			break ;
+		nl = 0;
 	}
-	else
-		prt_strs(var()->words->cmds + 1, 0);
+	prt_strs(ms()->words->cmds + i, nl);
 	return (0);
 }
 
-int	run_env(void)
+int	prt_eplst(void)
 {
-	prt_eplst(var()->epl);
+	t_eplist *lst;
+
+	lst = ms()->epl;
+	while (lst)
+	{
+		prt("%s\n", lst->str);
+		lst = lst->next;
+	}
 	return (0);
 }
 
@@ -43,9 +61,11 @@ int	run_export(void)
 {
 	t_eplist	*curr;
 	int			i;
+	int			status;
 
-	curr = var()->epl;
-	if (!var()->words->cmds[1])
+	status = 0;
+	curr = ms()->epl;
+	if (!ms()->words->cmds[1])
 	{
 		while (curr)
 		{
@@ -54,13 +74,13 @@ int	run_export(void)
 		}
 	}
 	i = 1;
-	while (var()->words->cmds[i])
+	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(var()->words->cmds[i], '='))
-			ep_export_value(var()->words->cmds[i]);
+		if (ep_export_value(ms()->words->cmds[i]))
+			status = 1;
 		i++;
 	}
-	return (0);
+	return (status);
 }
 
 int	run_pwd(void)
@@ -86,20 +106,20 @@ int	run_unset(void)
 
 	exit_code = 0;
 	i = 1;
-	while (var()->words->cmds[i])
+	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(var()->words->cmds[i], '='))
+		if (ft_strchr(ms()->words->cmds[i], '='))
 		{
-			prt("unset: `%s': not a valid identifier\n", var()->words->cmds[i]);
+			prt("unset: `%s': not a valid identifier\n", ms()->words->cmds[i]);
 			exit_code = 1;
 			i++;
 			continue ;
 		}
-		curr = get_env(var()->words->cmds[i]);
+		curr = get_env(ms()->words->cmds[i]);
 		if (curr)
 		{
 			if (!curr->prev)
-				var()->epl = curr->next;
+				ms()->epl = curr->next;
 			else if (!curr->next)
 				curr->prev->next = NULL;
 			else

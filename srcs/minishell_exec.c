@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/02 19:11:38 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/03 19:07:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	**ep_from_epl(void)
 	char		**ep;
 	int			i;
 	
-	curr = var()->epl;
+	curr = ms()->epl;
 	i = 0;
 	while (curr)
 	{
@@ -29,7 +29,7 @@ char	**ep_from_epl(void)
 	if (!ep)
 		return (NULL);
 	i = 0;
-	curr = var()->epl;
+	curr = ms()->epl;
 	while (curr)
 	{
 		ep[i] = ft_strdup(curr->str);
@@ -40,22 +40,33 @@ char	**ep_from_epl(void)
 	return (ep);
 }
 
-int	run_builtin(void)
+int	run_builtin(t_list *curr)
 {
-	if (!ft_strcmp(var()->words->cmds[0], "cd"))
-		var()->status = (*run_cd)();
-	else if (!ft_strcmp(var()->words->cmds[0], "echo"))
-		var()->status = (*run_echo)();
-	else if (!ft_strcmp(var()->words->cmds[0], "env"))
-		var()->status = (*run_env)();
-	else if (!ft_strcmp(var()->words->cmds[0], "export"))
-		var()->status = (*run_export)();
-	else if (!ft_strcmp(var()->words->cmds[0], "pwd"))
-		var()->status = (*run_pwd)();
-	else if (!ft_strcmp(var()->words->cmds[0], "unset"))
-		var()->status = (*run_unset)();
+	t_list	*tmp;
+
+	tmp = ms()->words;
+	ms()->words = curr;
+	if (!ft_strcmp(ms()->words->cmds[0], "cd"))
+		ms()->status = (*run_cd)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "echo"))
+		ms()->status = (*run_echo)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "env"))
+		ms()->status = (*prt_eplst)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "export"))
+		ms()->status = (*run_export)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "pwd"))
+		ms()->status = (*run_pwd)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "unset"))
+		ms()->status = (*run_unset)();
+	else if (!ft_strcmp(ms()->words->cmds[0], "exit")
+		|| !ft_strcmp(ms()->words->cmds[0], "q"))
+		ms()->status = (*run_exit)();
 	else
+	{
+		ms()->words = tmp;
 		return (0);
+	}
+	ms()->words = tmp;
 	return (1);
 }
 
@@ -86,158 +97,180 @@ char	**remove_items(char **strs, int n)
 	return (new);
 }
 
+void	free_pipes_words(void)
+{
+	int	i;
+	int	len;
+
+	i = -1;
+	len = ft_lstsize(ms()->words);
+	while (ms()->pipe && ++i < len - 1)
+		free(ms()->pipe[i]);
+	if (len > 1)
+		free(ms()->pipe);
+	free(ms()->pid);
+	ms()->pid = NULL;
+	ft_lstclear(&ms()->words, free_lst);
+	ft_lstclear(&ms()->lst_lexer, free_lst);
+}
+
+void	hd_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		free(ms()->hd_buf);
+		close(ms()->hd_fd);
+		free_all(128 + sig, 0);
+	}
+}
+
+void	get_stdin(const char *arg)
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, hd_handler);
+	ms()->hd_fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
+	if (ms()->hd_fd < 0)
+		free_all(EXIT_FAILURE, "open");
+	ms()->hd_buf = readline("> ");
+	while (ms()->hd_buf && ft_strcmp(ms()->hd_buf, arg))
+	{
+		// char *str = NULL;
+		// str = expander(ms()->hd_buf);
+		// if (!str)
+		// 	str = ms()->hd_buf;
+		write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
+		write(ms()->hd_fd, "\n", 1);
+		free(ms()->hd_buf);
+		ms()->hd_buf = readline("> ");
+	}
+	if (!ms()->hd_buf)
+		prt("end-of-file (wanted `%s')\n", arg);
+	close(ms()->hd_fd);
+	free(ms()->hd_buf);
+	free_all(EXIT_SUCCESS, 0);
+}
+
 // receive input from the stdin and save in in the file
-int	get_stdin(char *arg)
+int	heredoc(char *arg)
 {
-	char	*buf;
-	char	*str;
-	int		fd;
+	int		pid;
+	int		stat;
 
-	fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
-	if (fd < 0)
-		return (-1);
-	prt("> ");
-	buf = get_next_line(STDIN_FILENO);
-	str = ft_strjoin(arg, "\n");
-	while (ft_strcmp(buf, str))
-	{
-		write(fd, buf, ft_strlen(buf));
-		free(buf);
-		prt("> ");
-		buf = get_next_line(STDIN_FILENO);
-	}
-	free(str);
-	free(buf);
-	close(fd);
-	fd = open("/tmp/msh-hd", O_RDONLY);
-	if (fd < 0)
-		return (-1);
+	pid = fork();
+	if (pid < 0)
+		free_all(EXIT_FAILURE, "fork");
+	else if (!pid)
+		get_stdin(arg);
+	if (pid > 0 && waitpid(pid, &stat, 0) > 0)
+		if (WIFEXITED(stat))
+			ms()->status = WEXITSTATUS(stat);
+	if (ms()->status == 130)
+		return (-2);
+	ms()->hd_fd = open("/tmp/msh-hd", O_RDONLY);
+	if (ms()->hd_fd < 0)
+		free_all(EXIT_FAILURE, "open");
 	unlink("/tmp/msh-hd");
-	return (fd);
+	return (ms()->hd_fd);
 }
 
-// void	process_hd(char **cmdargs, char **av, char **ep, int mode)
-// {
-// 	char	*cmd;
-// 	int		fd;
-// 	int		fd2;
-// 	fd = var()->pipe[mode][0];
-// 	if (mode)
-// 		fd2 = open(av[var()->ac - 1], O_CREAT | O_WRONLY | O_APPEND, 0644);
-// 	else
-// 		fd2 = var()->pipe[1][1];
-// 	if (mode && fd2 < 0)
-// 		error_b(3);
-// 	cmd = search_cmd(cmdargs, fd, fd2);
-// 	if (dup2(fd, STDIN_FILENO) < 0 || dup2(fd2, STDOUT_FILENO) < 0)
-// 		error_b(2);
-// 	close_all(fd, fd2);
-// 	execve(cmd, cmdargs, ep);
-// 	free(cmd);
-// 	perror(cmdargs[0]);
-// 	free_all(0);
-// 	exit(127);
-// }
-
-int	redirections(void)
+void	tmp_handler(int sig)
 {
-	char	**cmds;
-	t_list	*curr;
-	int		i;
+	if (sig == SIGQUIT)
+		prt("Quit (core dumped)\n");
+	if (sig == SIGINT)
+		prt("\n");
+	ms()->status = 128 + sig;
+}
 
-	curr = var()->words;
-	while (curr)
+void	execute_builtin(t_list *curr)
+{
+	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
+		return (perror("dup2, fd[0]"));
+	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
+		return (perror("dup2, fd[1]"));
+	run_builtin(curr);
+	if (ms()->fd[0] && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
+		return (perror("dup2, saved_fd[0]"));
+	if (ms()->fd[1] && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
+		return (perror("dup2, saved_fd[1]"));
+}
+
+// if len < 0 close (length of words) pipes
+void	close_pipes(int len)
+{
+	int	i;
+
+	i = -1;
+	if (len < 0)
+		len = ft_lstsize(ms()->words) - 1;
+	while (ms()->pipe && ++i < len)
 	{
-		cmds = var()->words->cmds;
-		i = -1;
-		while (curr->cmds[++i])
-		{
-			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
-				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
-			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				var()->status = 2;
-				return (1);
-			}
-			if (var()->fd[0] && curr->cmds[i][0] == '<')
-				close(var()->fd[0]);
-			if (var()->fd[1] && curr->cmds[i][0] == '>')
-				close(var()->fd[1]);
-			if (!ft_strcmp(curr->cmds[i], "<"))
-				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
-			else if (!ft_strcmp(curr->cmds[i], "<<"))
-				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
-			else if (!ft_strcmp(curr->cmds[i], ">"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			else if (!ft_strcmp(curr->cmds[i], ">>"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-			else
-				continue ;
-			if (curr->cmds[i][0] == '<')
-			{
-				if (var()->fd[0] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[0] = 0;
-					return (1);
-				}
-				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(var()->fd[0]);
-					var()->fd[0] = 0;
-					break ;
-				}
-				var()->words->cmds = remove_items(cmds, i);
-				cmds = var()->words->cmds;
-				i--;
-			}
-			else if (curr->cmds[i][0] == '>')
-			{
-				if (var()->fd[1] < 0)
-				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[1] = 0;
-					return (1);
-				}
-				if (ft_strlen_matrix(curr->cmds) < 3)
-				{
-					close(var()->fd[1]);
-					var()->fd[1] = 0;
-					break ;
-				}
-				var()->words->cmds = remove_items(cmds, i);
-				cmds = var()->words->cmds;
-				i--;
-			}
-		}
-		curr = curr->next;
+		close(ms()->pipe[i][0]);
+		close(ms()->pipe[i][1]);
 	}
-	return (0);
 }
 
-void	execution(int *status)
+void	execute_pipe(t_list *curr, int j)
 {
-	char	**ep;
+	ms()->pid[j] = fork();
+	if (ms()->pid[j] < 0)
+	{
+		close_pipes(-1);
+		free_all(EXIT_FAILURE, "fork");
+	}
+	else if (!ms()->pid[j])
+		cmd_execute(NULL, ep_from_epl(), curr);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	execute(t_list *curr, int j)
+{
+	if ((!ms()->words->next && curr->type == BUILT_IN) || !ft_strcmp(ms()->words->cmds[0], "q"))
+		execute_builtin(curr);
+	else
+		execute_pipe(curr, j);
+}
+
+// to-do: check all errors and frees with make v and check the evaluation sheet
+void	execution(void)
+{
 	t_list	*curr;
 	int		i;
 	int		j;
-	int		needs_dup[2];
+	int		len;
+	int		error;
 
-	/*
-	to-do:
-	fazer pipes sozinhos (sem redirecionamento)
-	fazer pipe e depois uma child
-	(bultin ou nao)(prob will fix heredoc w ctl+c/d)
-	*/
-	needs_dup[0] = 0;
-	needs_dup[1] = 0;
-	curr = var()->words;
-	// if (redirections())
-	// 	return ;
+	curr = ms()->words;
+	len = ft_lstsize(ms()->words);
+	if (len > 1)
+		ms()->pipe = ft_calloc(len - 1, sizeof(int *));
+	if (len > 1 && !ms()->pipe)
+		free_all(EXIT_FAILURE, "calloc");
 	j = 0;
-	// int is_piped = 0;
+	while (ms()->pipe && j < len - 1)
+	{
+		ms()->pipe[j] = ft_calloc(2, sizeof(int));
+		if (!ms()->pipe[j] || pipe(ms()->pipe[j]) < 0)
+		{
+			close_pipes(j);
+			free_all(EXIT_FAILURE, "calloc/pipe");
+		}
+		j++;
+	}
+	ms()->pid = ft_calloc(len, sizeof(int));
+	if (!ms()->pid)
+		free_all(EXIT_FAILURE, "calloc");
+	j = 0;
 	while (curr)
 	{
+		error = 0;
+		ms()->fd[0] = 0;
+		ms()->fd[1] = 0;
+		if (j)
+			ms()->fd[0] = ms()->pipe[j - 1][0];
+		if (j != len - 1)
+			ms()->fd[1] = ms()->pipe[j][1];
 		i = -1;
 		while (curr->cmds[++i])
 		{
@@ -245,174 +278,143 @@ void	execution(int *status)
 				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				var()->status = 2;
-				break ;
+				ms()->status = 2;
+				return ;
 			}
-			if (var()->fd[0] && curr->cmds[i][0] == '<')
-				close(var()->fd[0]);
-			if (var()->fd[1] && curr->cmds[i][0] == '>')
-				close(var()->fd[1]);
+			if (ms()->fd[0] && curr->cmds[i][0] == '<')
+				close(ms()->fd[0]);
+			if (ms()->fd[1] && curr->cmds[i][0] == '>')
+				close(ms()->fd[1]);
 			if (!ft_strcmp(curr->cmds[i], "<"))
-				var()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
+				ms()->fd[0] = open(curr->cmds[i + 1], O_RDONLY);
 			else if (!ft_strcmp(curr->cmds[i], "<<"))
-				var()->fd[0] = get_stdin(curr->cmds[i + 1]);
+				ms()->fd[0] = heredoc(curr->cmds[i + 1]);
 			else if (!ft_strcmp(curr->cmds[i], ">"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				ms()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			else if (!ft_strcmp(curr->cmds[i], ">>"))
-				var()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+				ms()->fd[1] = open(curr->cmds[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
 				continue ;
 			if (curr->cmds[i][0] == '<')
 			{
-				if (var()->fd[0] < 0)
+				if (ms()->fd[0] < 0)
 				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[0] = 0;
+					error = 2;
+					if (ms()->status != 130 && ms()->fd[0] != -2)
+					{
+						perror(curr->cmds[i + 1]);
+						ms()->status = 1;
+						error = 1;
+					}
+					ms()->fd[0] = 0;
 					break ;
 				}
-				if (ft_strlen_matrix(curr->cmds) > 2)
-					needs_dup[0] = 1;
-				else
-				{
-					close(var()->fd[0]);
-					var()->fd[0] = 0;
-					break ;
-				}
+				if (ft_strlen_matrix(curr->cmds) < 3)
+					error = 1;
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
 			}
 			else if (curr->cmds[i][0] == '>')
 			{
-				if (var()->fd[1] < 0)
+				if (ms()->fd[1] < 0)
 				{
-					perror(curr->cmds[i + 1]);
-					var()->fd[1] = 0;
+					if (ms()->status != 130)
+						perror(curr->cmds[i + 1]);
+					ms()->fd[1] = 0;
+					error = 1;
+					ms()->status = 1;
 					break ;
 				}
-				if (ft_strlen_matrix(curr->cmds) > 2)
-					needs_dup[1] = 1;
-				else
-				{
-					close(var()->fd[1]);
-					var()->fd[1] = 0;
-					break ;
-				}
+				if (ft_strlen_matrix(curr->cmds) < 3)
+					error = 1;
 				curr->cmds = remove_items(curr->cmds, i);
 				i--;
 			}
 		}
-		// if (curr->next)
-		// {
-		// 	if (pipe(var()->pipe) < 0)
-		// 		perror("pipe");
-		// 	is_piped = 1;
-		// }
-		// if (is_piped)
-		// {
-		// 	close(var()->pipe[j]);
-		// 	if (dup2(var()->pipe[!j], !j) < 0)
-		// 		perror("dup2, pipe");
-		// 	close(var()->pipe[!j]);
-		// }
-		if (needs_dup[0])
-		{
-			if (dup2(var()->fd[0], STDIN_FILENO) < 0)
-				perror("dup2, fd[0]");
-			needs_dup[0] = 0;
-		}
-		if (needs_dup[1])
-		{
-			if (dup2(var()->fd[1], STDOUT_FILENO) < 0)
-				perror("dup2, fd[1]");
-			needs_dup[1] = 0;
-		}
-		if (run_builtin())
-			return ;
-		else if (!ft_strcmp(curr->cmds[0], "exit")
-			|| !ft_strcmp(curr->cmds[0], "q"))
-			*status = 0;
-		else
-		{
-			ep = ep_from_epl();
-			parsing_paths();
-			cmd_execute(ep);
-			free_strs(ep);
-		}
+		if (error == 2)
+			break ;
+		if (!error)
+			execute(curr, j);
+		if (ms()->fd[0])
+			close(ms()->fd[0]);
+		if (ms()->fd[1])
+			close(ms()->fd[1]);
 		curr = curr->next;
 		j++;
 	}
+	int stat = 0;
+	j = -1;
+	while (++j < len)
+	{
+		if (ms()->pid[j])
+		{
+			waitpid(ms()->pid[j], &stat, 0);
+			if (WIFEXITED(stat))
+				ms()->status = WEXITSTATUS(stat);
+		}
+	}
+	free_pipes_words();
 }
 
-/*
-ls | cat < zxc
-nao executa nada pcausa que n existe zxc
-
-cat > out | cat > outt
-so o primeiro comando
-
-cat < out | cat < outt
-so o segundo comando
-
-ls > out | ls > outt
-faz os dois
-*/
-char	*search_cmd(char *command)
+char	*search_cmd(char *command, char **ep)
 {
-	int		i;
-	char	*cmd;
+	int			i;
+	char		*cmd;
+	struct stat	statbuf;
 
 	i = -1;
-	if (!ft_strchr(command, '/') && var()->paths && get_env("PATH"))
+	if (!*command)
+		(void)ms;
+	else if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
 	{
-		while (var()->paths[++i])
+		while (ms()->paths[++i])
 		{
-			cmd = ft_strjoin(var()->paths[i], command);
+			cmd = ft_strjoin(ms()->paths[i], command);
 			if (!access(cmd, F_OK | X_OK))
 				return (cmd);
 			free(cmd);
 		}
 	}
 	else
-		if (!access(command, F_OK | X_OK))
+	{
+		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+			dprt(2, "%s: is a directory\n", command);
+		else if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
-	ft_putstr_fd("minishell: command not found\n", 2);
-	var()->status = 127;
+		else
+		{
+			perror(command);
+			ms()->status = 126;
+		}
+		free_strs(ep);
+		free_all(127, 0);
+	}
+	dprt(2, "%s: command not found\n", command);
+	free_strs(ep);
+	free_all(127, 0);
 	return (NULL);
 }
 
-void	tmp_handler(int sig)
+void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
-	(void)sig;
-	prt("\n");
-}
-
-void	cmd_execute(char **ep)
-{
-	char	*cmd;
-	int		pid;
-
-	cmd = search_cmd(var()->words->cmds[0]);
-	if (!cmd)
-		return ;
-	pid = fork();
-	if (pid < 0)
-		perror("fork");
 	signal(SIGINT, tmp_handler);
-	signal(SIGQUIT, handler);
-	if (!pid)
+	signal(SIGQUIT, tmp_handler);
+	// cat echo (execve failed) bcs it detects cat echo as a built-in
+	if (curr->type != BUILT_IN)
+		cmd = search_cmd(curr->cmds[0], ep);
+	parsing_paths();
+	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
+		perror("dup2, fd[0]");
+	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
+		perror("dup2, fd[1]");
+	close_pipes(-1);
+	if (!run_builtin(curr))
 	{
-		close(var()->saved_fd[0]);
-		close(var()->saved_fd[1]);
-		execve(cmd, var()->words->cmds, ep);
-		perror(cmd);
-		ft_lstclear(&var()->words, free_lst);
-		free_strs(ep);
-		free_all(126);
+		execve(cmd, curr->cmds, ep);
+		dprt(2, "%s: command not found💀\n", curr->cmds[0]);
+		ms()->status = 127;
 	}
-	wait(&pid);
-	if (WIFEXITED(pid))
-		var()->status = WEXITSTATUS(pid);
-	else
-		var()->status = 130;
 	free(cmd);
+	free_strs(ep);
+	free_all(ms()->status, 0);
 }
