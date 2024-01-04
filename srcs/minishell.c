@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 15:03:32 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:38:05 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ int	main(int ac, char **av, char **ep)
 {
 	ms()->debug = 0;
 	ms()->ac = ac;
-	ms()->av = av;
+	(void)av;
 	minishell_init(ep);
 	parsing_paths();
 	debug(0);

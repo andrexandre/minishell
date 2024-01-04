@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 14:04:44 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:46:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ int	run_exit(void)
 {
 	int	i;
 
+	if (isatty(STDIN_FILENO))
+		dprt(2, "exit\n");
 	ms()->running = 0;
-	dprt(2, "exit\n");
 	if (ms()->words->cmds[1])
 	{
 		i = -1;
@@ -81,7 +82,7 @@ int	exec_cd(char *str)
 	}
 	else
 	{
-		dprt(2, "cd: ");
+		dprt(2, "minishell: cd: ");
 		perror(str);
 		return (1);
 	}
@@ -96,7 +97,7 @@ int	run_cd(void)
 	{
 		if (!get_env("HOME"))
 		{
-			dprt(2, "cd: HOME not set\n");
+			dprt(2, "minishell: cd: HOME not set\n");
 			return (1);
 		}
 		else
@@ -104,7 +105,7 @@ int	run_cd(void)
 	}
 	else if (ms()->words->cmds[2])
 	{
-		dprt(2, "cd: too many arguments\n");
+		dprt(2, "minishell: cd: too many arguments\n");
 		return (1);
 	}
 	else

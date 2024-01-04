@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 19:07:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:41:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ char	**ep_from_epl(void)
 	ep = ft_calloc(i + 1, sizeof(char *));
 	if (!ep)
 		return (NULL);
-	i = 0;
+	i = -1;
 	curr = ms()->epl;
 	while (curr)
 	{
-		ep[i] = ft_strdup(curr->str);
+		if (ft_strchr(curr->str, '='))
+			ep[++i] = ft_strdup(curr->str);
 		curr = curr->next;
-		i++;
 	}
 	ep[i] = NULL;
 	return (ep);
@@ -134,17 +134,15 @@ void	get_stdin(const char *arg)
 	ms()->hd_buf = readline("> ");
 	while (ms()->hd_buf && ft_strcmp(ms()->hd_buf, arg))
 	{
-		// char *str = NULL;
-		// str = expander(ms()->hd_buf);
-		// if (!str)
-		// 	str = ms()->hd_buf;
-		write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
-		write(ms()->hd_fd, "\n", 1);
+		ms()->hd_buf = expander(ms()->hd_buf);
+		dprt(ms()->hd_fd, "%s\n", ms()->hd_buf);
+		// write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
+		// write(ms()->hd_fd, "\n", 1);
 		free(ms()->hd_buf);
 		ms()->hd_buf = readline("> ");
 	}
 	if (!ms()->hd_buf)
-		prt("end-of-file (wanted `%s')\n", arg);
+		dprt(2, "minishell: warning: end-of-file (wanted `%s')\n", arg);
 	close(ms()->hd_fd);
 	free(ms()->hd_buf);
 	free_all(EXIT_SUCCESS, 0);
@@ -176,7 +174,7 @@ int	heredoc(char *arg)
 void	tmp_handler(int sig)
 {
 	if (sig == SIGQUIT)
-		prt("Quit (core dumped)\n");
+		dprt(2, "Quit (core dumped)\n");
 	if (sig == SIGINT)
 		prt("\n");
 	ms()->status = 128 + sig;
@@ -224,15 +222,25 @@ void	execute_pipe(t_list *curr, int j)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+int	_is_builtin(char *str)
+{
+	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
+		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
+		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
+		|| ft_strcmpold(str, "exit"))
+		return (1);
+	return (0);
+}
+
 void	execute(t_list *curr, int j)
 {
+	curr->type = _is_builtin(curr->cmds[0]);
 	if ((!ms()->words->next && curr->type == BUILT_IN) || !ft_strcmp(ms()->words->cmds[0], "q"))
 		execute_builtin(curr);
 	else
 		execute_pipe(curr, j);
 }
 
-// to-do: check all errors and frees with make v and check the evaluation sheet
 void	execution(void)
 {
 	t_list	*curr;
@@ -365,7 +373,7 @@ char	*search_cmd(char *command, char **ep)
 	i = -1;
 	if (!*command)
 		(void)ms;
-	else if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
+	else if (!ft_strchr(command, '/') && get_env("PATH") && ms()->paths)
 	{
 		while (ms()->paths[++i])
 		{
@@ -378,11 +386,12 @@ char	*search_cmd(char *command, char **ep)
 	else
 	{
 		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
-			dprt(2, "%s: is a directory\n", command);
+			dprt(2, "minishell: %s: is a directory\n", command);
 		else if (!access(command, F_OK | X_OK))
 			return (ft_strdup(command));
 		else
 		{
+			dprt(2, "minishell: ");
 			perror(command);
 			ms()->status = 126;
 		}
@@ -399,10 +408,9 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
 	signal(SIGINT, tmp_handler);
 	signal(SIGQUIT, tmp_handler);
-	// cat echo (execve failed) bcs it detects cat echo as a built-in
+	parsing_paths();
 	if (curr->type != BUILT_IN)
 		cmd = search_cmd(curr->cmds[0], ep);
-	parsing_paths();
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
 	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)

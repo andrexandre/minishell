@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 14:55:07 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:08:07 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ void	ep_lnew_add_back(t_eplist **lst, char *str)
 		return ;
 	node->name = ft_substr(node->str, 0,
 			ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
-	node->data = ft_strchr(node->str, '=') + 1;
+	if (ft_strchr(node->str, '='))
+		node->data = ft_strchr(node->str, '=') + 1;
+	else
+		node->data = NULL;
 	node->next = NULL;
 	node->prev = NULL;
 	if (!*lst)
@@ -69,7 +72,7 @@ int	export_error(char *name, char *str)
 	i = -1;
 	if (ft_isdigit(name[0]))
 	{
-		dprt(2, "export: `%s': not a valid identifier\n", str);
+		dprt(2, "minishell: export: `%s': not a valid identifier\n", str);
 		free(name);
 		return (1);
 	}
@@ -78,7 +81,7 @@ int	export_error(char *name, char *str)
 			break ;
 	if (!name[i])
 		return (0);
-	dprt(2, "export: `%s': not a valid identifier\n", str);
+	dprt(2, "minishell: export: `%s': not a valid identifier\n", str);
 	free(name);
 	return (1);
 }
@@ -94,15 +97,15 @@ int	ep_export_value(char *str)
 		return (1);
 	if (export_error(name, str))
 		return (1);
-	if (!ft_strcmp(name, "_") || !ft_strchr(str, '='))
+	if (!ft_strcmp(name, "_"))
 	{
 		free(name);
 		return (0);
 	}
 	curr = get_env(name);
-		if (!curr)
+	if (!curr)
 		ep_lnew_add_back(&ms()->epl, str);
-	else
+	else if (ft_strchr(str, '='))
 	{
 		free(curr->str);
 		curr->str = ft_strdup(str);

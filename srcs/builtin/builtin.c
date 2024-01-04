@@ -6,13 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/21 16:41:26 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:57:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// if bool 0 print newline if 1 dont print
+// if bool 0 print newline if 1 don't print
 int	run_echo(void)
 {
 	int		i;
@@ -25,9 +25,7 @@ int	run_echo(void)
 	while (ms()->words->cmds[++i])
 	{
 		str = ms()->words->cmds[i];
-		if (str[0] != '-')
-			break ;
-		if (!str[0])
+		if (str[0] != '-' || !str[0])
 			break ;
 		j = 1;
 		while (str[j])
@@ -51,7 +49,8 @@ int	prt_eplst(void)
 	lst = ms()->epl;
 	while (lst)
 	{
-		prt("%s\n", lst->str);
+		if (ft_strchr(lst->str, '='))
+			prt("%s\n", lst->str);
 		lst = lst->next;
 	}
 	return (0);
@@ -69,7 +68,10 @@ int	run_export(void)
 	{
 		while (curr)
 		{
-			prt("declare -x %s=\"%s\"\n", curr->name, curr->data);
+			if (ft_strchr(curr->str, '='))
+				prt("declare -x %s=\"%s\"\n", curr->name, curr->data);
+			else
+				prt("declare -x %s\n", curr->name);
 			curr = curr->next;
 		}
 	}
@@ -108,13 +110,6 @@ int	run_unset(void)
 	i = 1;
 	while (ms()->words->cmds[i])
 	{
-		if (ft_strchr(ms()->words->cmds[i], '='))
-		{
-			prt("unset: `%s': not a valid identifier\n", ms()->words->cmds[i]);
-			exit_code = 1;
-			i++;
-			continue ;
-		}
 		curr = get_env(ms()->words->cmds[i]);
 		if (curr)
 		{

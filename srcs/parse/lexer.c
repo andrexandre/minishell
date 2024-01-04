@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/03 13:26:52 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 16:15:15 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,6 @@ bool	is_token(char *str)
 	return (true);
 }
 
-void	word(char *str)
-{
-	ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
-}
-
 int	lexer(char *str)
 {
 	int		i;
@@ -80,7 +75,7 @@ int	lexer(char *str)
 	while (splitted[i])
 	{
 		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
-			word(splitted[i]);
+			ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]), NULL, WORD));
 		i++;
 	}
 	free_strs(splitted);

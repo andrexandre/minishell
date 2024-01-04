@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2023/12/22 18:43:47 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 18:01:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ typedef struct s_var
 	int			fd[2];
 	int			**pipe;
 	int			saved_fd[2];
-	char		**av;
 	char		*hd_buf;
 	int			hd_fd;
 	t_eplist	*epl;
@@ -85,7 +84,6 @@ void				free_pipes_words(void);
 
 // minishell_utils
 void				free_strs(char **strs);
-void				free_strs_len(char **strs, int len);
 void				prt_strs(char **strs, int n);
 t_var				*ms(void);
 

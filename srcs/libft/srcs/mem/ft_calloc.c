@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:33:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/23 19:03:18 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/04 16:03:34 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*dest;
 
-	// if (!(rand() % 10))
-	// 	return (NULL);
 	dest = malloc(nmemb * size);
 	if (dest == NULL)
 		return (NULL);
