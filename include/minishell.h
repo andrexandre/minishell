@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 23:01:38 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:50:46 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-
 typedef struct s_eplist
 {
 	char			*str;
@@ -42,22 +41,22 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int			debug;
-	int			status;
-	int			running;
-	char		**paths;
-	int			ac;
-	int			*pid;
-	int			fd[2];
-	int			**pipe;
-	int			saved_fd[2];
-	char		**av;
-	char		*hd_buf;
-	int			hd_fd;
-	t_eplist	*epl;
-	t_list		*words;
-	t_list		*lst_lexer;
-}				t_var;
+	int				debug;
+	int				status;
+	int				running;
+	char			**paths;
+	int				ac;
+	int				*pid;
+	int				fd[2];
+	int				**pipe;
+	int				saved_fd[2];
+	char			**av;
+	char			*hd_buf;
+	int				hd_fd;
+	t_eplist		*epl;
+	t_list			*words;
+	t_list			*lst_lexer;
+}					t_var;
 
 // minishell
 void				free_all(int exit_code, char *err_msg);
@@ -97,7 +96,8 @@ void				search_and_remove(char *str, char target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
-void space_token(char *str);
+char				*space_token(char *str);
+bool				validate_parse(void);
 
 // ep_lst
 void				ep_lnew_add_back(t_eplist **lst, char *str);

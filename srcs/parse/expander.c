@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/04 22:26:30 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:40:09 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,24 +43,23 @@ char	*expander(char *str)
 	char	*ex_str;
 
 	i = -1;
-	if(str[0] != '\'')
+	if (str[0] != '\'')
+		return (str);
+	while (str[++i])
 	{
-		while (str[++i])
+		if (str[i] == '$')
 		{
-			if (str[i] == '$')
-			{
-				j = i;
-				while (str[++j])
-					if (!ft_isalnum(str[j]) && str[j] != '_')
-						break ;
-				if (j == i + 1)
-					j++;
-				ex_str = expansion(ft_substr(str, i + 1, j - i - 1));
-				ft_strrep(&str, i, j, ex_str);
-				free(ex_str);
-				i = 0;
-			}
-		}	
+			j = i;
+			while (str[++j])
+				if (!ft_isalnum(str[j]) && str[j] != '_')
+					break ;
+			if (j == i + 1)
+				j++;
+			ex_str = expansion(ft_substr(str, i + 1, j - i - 1));
+			ft_strrep(&str, i, j, ex_str);
+			free(ex_str);
+			i = 0;
+		}
 	}
 	search_and_replace(str, '\2', '$');
 	return (str);
