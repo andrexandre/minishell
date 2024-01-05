@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/23 13:04:53 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:40:53 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,12 +87,9 @@ void	parse(void)
 
 	is_new_cmd = true;
 	cmd_index = 0;
-	word_l = ms()->lst_lexer;
-	if (ms()->lst_lexer && ms()->lst_lexer->type == PIPE)
-	{
-		perror("syntax error near unexpected token `|'");
+	if (!validate_parse())
 		return ;
-	}
+	word_l = ms()->lst_lexer;
 	while (word_l)
 	{
 		if (is_new_cmd)
