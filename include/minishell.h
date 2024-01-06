@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 18:01:47 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/06 16:39:26 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@
 # include <term.h>
 # include <termios.h>
 # include <unistd.h>
-
 
 typedef struct s_eplist
 {
@@ -64,18 +63,6 @@ void				free_lst(t_list *word);
 void				handler(int num);
 void				parsing_paths(void);
 
-// builtin
-int					run_echo(void);
-int					prt_eplst(void);
-int					run_export(void);
-int					run_pwd(void);
-int					run_unset(void);
-int					run_exit(void);
-
-// builtin2
-t_eplist			*get_env(char *name);
-int					run_cd(void);
-
 // minishell_exec
 char				**ep_from_epl(void);
 void				execution(void);
@@ -95,6 +82,18 @@ void				search_and_remove(char *str, char target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
+
+// builtin
+int					run_echo(void);
+int					prt_eplst(void);
+int					run_export(void);
+int					run_pwd(void);
+int					run_unset(void);
+int					run_exit(void);
+
+// builtin2
+t_eplist			*get_env(char *name);
+int					run_cd(void);
 
 // ep_lst
 void				ep_lnew_add_back(t_eplist **lst, char *str);

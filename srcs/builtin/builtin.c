@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 18:57:26 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/06 17:41:50 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	run_echo(void)
 
 int	prt_eplst(void)
 {
-	t_eplist *lst;
+	t_eplist	*lst;
 
 	lst = ms()->epl;
 	while (lst)

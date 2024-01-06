@@ -12,7 +12,7 @@ INCLUDES = include
 DIR_LIBFT = srcs/libft
 INCLUDE_LIB = $(DIR_LIBFT)/include
 LIB = $(DIR_LIBFT)/libft.a
-CFLAGS = -Wall -Wextra -Werror -I$(INCLUDES) -I $(INCLUDE_LIB) -g #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDES) -I$(INCLUDE_LIB) -g #-fsanitize=address
 
 SRCDIR	= srcs
 OBJDIR	= objs

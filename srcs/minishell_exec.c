@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 18:41:27 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/06 19:02:31 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ void	hd_handler(int sig)
 	{
 		free(ms()->hd_buf);
 		close(ms()->hd_fd);
+		close(ms()->fd[1]);
+		close(ms()->fd[0]);
 		free_all(128 + sig, 0);
 	}
 }
@@ -136,14 +138,15 @@ void	get_stdin(const char *arg)
 	{
 		ms()->hd_buf = expander(ms()->hd_buf);
 		dprt(ms()->hd_fd, "%s\n", ms()->hd_buf);
-		// write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
-		// write(ms()->hd_fd, "\n", 1);
 		free(ms()->hd_buf);
+		ms()->hd_buf = NULL;
 		ms()->hd_buf = readline("> ");
 	}
 	if (!ms()->hd_buf)
 		dprt(2, "minishell: warning: end-of-file (wanted `%s')\n", arg);
 	close(ms()->hd_fd);
+	close(ms()->fd[1]);
+	close(ms()->fd[0]);
 	free(ms()->hd_buf);
 	free_all(EXIT_SUCCESS, 0);
 }
@@ -224,10 +227,10 @@ void	execute_pipe(t_list *curr, int j)
 
 int	_is_builtin(char *str)
 {
-	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
-		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
-		|| ft_strcmpold(str, "pwd") || ft_strcmpold(str, "unset")
-		|| ft_strcmpold(str, "exit"))
+	if (!ft_strcmp(str, "cd") || !ft_strcmp(str, "echo")
+		|| !ft_strcmp(str, "env") || !ft_strcmp(str, "export")
+		|| !ft_strcmp(str, "pwd") || !ft_strcmp(str, "unset")
+		|| !ft_strcmp(str, "exit"))
 		return (1);
 	return (0);
 }
@@ -272,6 +275,12 @@ void	execution(void)
 	j = 0;
 	while (curr)
 	{
+		if (curr->next && !curr->next->str)
+		{
+			close_pipes(-1);
+			dprt(2, "bruhin rn\n");
+			break;
+		}
 		error = 0;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
@@ -285,9 +294,11 @@ void	execution(void)
 			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
 				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
 			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+				dprt(2, "minishell: syntax error near unexpected token `newline'\nchegou ao executor :(\n");
+				error = 2;
 				ms()->status = 2;
-				return ;
+				close_pipes(-1);
+				break ;
 			}
 			if (ms()->fd[0] && curr->cmds[i][0] == '<')
 				close(ms()->fd[0]);
@@ -391,7 +402,7 @@ char	*search_cmd(char *command, char **ep)
 			return (ft_strdup(command));
 		else
 		{
-			dprt(2, "minishell: ");
+			dprt(2, "got here: ");
 			perror(command);
 			ms()->status = 126;
 		}

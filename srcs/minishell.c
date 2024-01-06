@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 18:38:05 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/06 13:37:02 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,8 +176,3 @@ int	main(int ac, char **av, char **ep)
 	rl_clear_history();
 	free_all(ms()->status, 0);
 }
-
-/*
-o expander pode aumentar / diminuir a lst
-e o heredoc é a execão
-*/
