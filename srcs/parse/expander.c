@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 16:13:03 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 18:59:15 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,15 @@ char	*expansion(char *str)
 	return (res);
 }
 
+bool has_quote(char c, char old)
+{
+	static bool quote;
+	
+	if(c == '\'' && (old && old != '"'))
+		quote = !quote;
+	return quote;
+}
+
 char	*expander(char *str)
 {
 	int		i;
@@ -45,7 +54,7 @@ char	*expander(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '$' &&  str[i - 1] != '\'')
+		if (!has_quote(str[i], str[i - 1]) && str[i] == '$')
 		{
 			j = i;
 			while (str[++j])
