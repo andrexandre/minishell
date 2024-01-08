@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 15:59:36 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:05:56 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@
 enum				e_type
 {
 	NONE,
-	WORD,
 	BUILT_IN,
+	WORD,
 	PIPE,
 	REDIRECT_IN,
 	REDIRECT_OUT,
