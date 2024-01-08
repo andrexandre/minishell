@@ -6,27 +6,16 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/06 17:48:46 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:22:16 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// receives the name of the env to search ex: "HOME"
-t_eplist	*get_env(char *name)
+int	exit_error(void)
 {
-	t_eplist	*curr;
-
-	curr = ms()->epl;
-	if (!ft_strcmp(name, "_"))
-		return (NULL);
-	while (curr)
-	{
-		if (!ft_strcmp(curr->name, name))
-			return (curr);
-		curr = curr->next;
-	}
-	return (NULL);
+	dprt(2, "minishell: exit: too many arguments\n");
+	return (1);
 }
 
 int	run_exit(void)
@@ -50,11 +39,7 @@ int	run_exit(void)
 			}
 		}
 		if (ms()->words->cmds[2])
-		{
-			dprt(2, "minishell: exit: too many arguments\n");
-			ms()->running = 1;
-			return (1);
-		}
+			return (exit_error());
 		return (ft_atoll(ms()->words->cmds[1]));
 	}
 	return (ms()->status);
@@ -111,4 +96,19 @@ int	run_cd(void)
 	else
 		str = ms()->words->cmds[1];
 	return (exec_cd(str));
+}
+
+int	run_pwd(void)
+{
+	char	*cwd;
+
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		perror("getcwd");
+		return (1);
+	}
+	prt("%s\n", cwd);
+	free(cwd);
+	return (0);
 }

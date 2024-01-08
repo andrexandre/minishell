@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:30:50 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 15:59:47 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:25:20 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *))
 		current = ft_lstnew(content->str, content->cmds, content->type);
 		if (!current)
 		{
-			del(content);
+			free_strs(lst->cmds);
+			free(lst->str);
 			ft_lstclear(&head);
 			return (NULL);
 		}

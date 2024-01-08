@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 16:05:23 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:27:35 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,15 @@ typedef struct s_var
 	t_list		*lst_lexer;
 }				t_var;
 
+
+// temporario
+void				tmp_handler(int sig);
+void				hd_handler(int sig);
+void				handler(int sig);
+int					heredoc(char *arg);
+
 // minishell
 void				free_all(int exit_code, char *err_msg);
-void				handler(int num);
 void				parsing_paths(void);
 
 // minishell_exec

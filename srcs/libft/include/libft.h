@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 16:05:56 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:24:41 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+void				free_strs(char **strs);
 int					prt(const char *format, ...);
 void				ft_putchar_c(char c, long *ptr);
 void				ft_putstr_c(char *s, long *ptr);

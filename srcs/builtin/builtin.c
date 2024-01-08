@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/06 17:41:50 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:22:13 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,21 +83,6 @@ int	run_export(void)
 		i++;
 	}
 	return (status);
-}
-
-int	run_pwd(void)
-{
-	char	*cwd;
-
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		perror("getcwd");
-		return (1);
-	}
-	prt("%s\n", cwd);
-	free(cwd);
-	return (0);
 }
 
 int	run_unset(void)

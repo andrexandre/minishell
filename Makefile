@@ -28,7 +28,8 @@ SRC		= minishell_utils.c\
 		  minishell_exec.c \
 		  builtin/builtin.c \
 		  builtin/builtin2.c \
-		  builtin/ep_lst.c 
+		  builtin/ep_lst.c \
+		  others/heredoc_n_handlers.c
 
 SRC		:= $(addprefix srcs/,$(SRC))
 

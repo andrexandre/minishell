@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/06 13:37:02 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:28:13 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,6 @@ void	free_all(int exit_code, char *err_msg)
 	if (exit_code == 1)
 		perror(err_msg);
 	exit(exit_code);
-}
-
-void	handler(int sig)
-{
-	if (sig == SIGINT)
-	{
-		prt("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-	ms()->status = 128 + sig;
 }
 
 void	cmd_loop(void)

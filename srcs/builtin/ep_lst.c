@@ -6,11 +6,28 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/04 18:08:07 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:19:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// receives the name of the env to search ex: "HOME"
+t_eplist	*get_env(char *name)
+{
+	t_eplist	*curr;
+
+	curr = ms()->epl;
+	if (!ft_strcmp(name, "_"))
+		return (NULL);
+	while (curr)
+	{
+		if (!ft_strcmp(curr->name, name))
+			return (curr);
+		curr = curr->next;
+	}
+	return (NULL);
+}
 
 void	ep_lnew_add_back(t_eplist **lst, char *str)
 {
