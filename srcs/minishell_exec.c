@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 16:18:41 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 18:52:45 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,23 +97,6 @@ char	**remove_items(char **strs, int n)
 	return (new);
 }
 
-void	free_pipes_words(void)
-{
-	int	i;
-	int	len;
-
-	i = -1;
-	len = ft_lstsize(ms()->words);
-	while (ms()->pipe && ++i < len - 1)
-		free(ms()->pipe[i]);
-	if (len > 1)
-		free(ms()->pipe);
-	free(ms()->pid);
-	ms()->pid = NULL;
-	ft_lstclear(&ms()->words);
-	ft_lstclear(&ms()->lst_lexer);
-}
-
 void	execute_builtin(t_list *curr)
 {
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
@@ -125,21 +108,6 @@ void	execute_builtin(t_list *curr)
 		return (perror("dup2, saved_fd[0]"));
 	if (ms()->fd[1] && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
 		return (perror("dup2, saved_fd[1]"));
-}
-
-// if len < 0 close (length of words) pipes
-void	close_pipes(int len)
-{
-	int	i;
-
-	i = -1;
-	if (len < 0)
-		len = ft_lstsize(ms()->words) - 1;
-	while (ms()->pipe && ++i < len)
-	{
-		close(ms()->pipe[i][0]);
-		close(ms()->pipe[i][1]);
-	}
 }
 
 void	execute_pipe(t_list *curr, int j)
@@ -172,9 +140,30 @@ void	execute(t_list *curr, int j)
 {
 	curr->type = _is_builtin(curr->cmds[0]);
 	if ((!ms()->words->next && curr->type == BUILT_IN) || !ft_strcmp(ms()->words->cmds[0], "q"))
-		execute_builtin(curr);
+	{
+		if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
+			return (perror("dup2, fd[0]"));
+		if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
+			return (perror("dup2, fd[1]"));
+		run_builtin(curr);
+		if (ms()->fd[0] && dup2(ms()->saved_fd[0], STDIN_FILENO) < 0)
+			return (perror("dup2, saved_fd[0]"));
+		if (ms()->fd[1] && dup2(ms()->saved_fd[1], STDOUT_FILENO) < 0)
+			return (perror("dup2, saved_fd[1]"));
+	}
 	else
-		execute_pipe(curr, j);
+	{
+		signal(SIGINT, tmp_handler);
+		signal(SIGQUIT, tmp_handler);
+		ms()->pid[j] = fork();
+		if (ms()->pid[j] < 0)
+		{
+			close_pipes(-1);
+			free_all(EXIT_FAILURE, "fork");
+		}
+		else if (!ms()->pid[j])
+			cmd_execute(NULL, ep_from_epl(), curr);
+	}
 }
 
 void	execution(void)
@@ -211,7 +200,7 @@ void	execution(void)
 		if (curr->next && !curr->next->str)
 		{
 			close_pipes(-1);
-			dprt(2, "bruhin rn\n");
+			dprt(2, "chegou ao executor :(\n");
 			break;
 		}
 		error = 0;
@@ -334,7 +323,10 @@ char	*search_cmd(char *command, char **ep)
 		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
 			dprt(2, "minishell: %s: is a directory\n", command);
 		else if (access(command, F_OK | X_OK | R_OK))
+		{
+			dprt(2, "minishell: ");
 			perror(command);
+		}
 		else
 			return (ft_strdup(command));
 		if (access(command, F_OK))
@@ -349,8 +341,6 @@ char	*search_cmd(char *command, char **ep)
 
 void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
-	signal(SIGINT, tmp_handler);
-	signal(SIGQUIT, tmp_handler);
 	parsing_paths();
 	if (curr->type != BUILT_IN)
 		cmd = search_cmd(curr->cmds[0], ep);

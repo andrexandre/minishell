@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 16:22:13 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:44:55 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,35 +54,6 @@ int	prt_eplst(void)
 		lst = lst->next;
 	}
 	return (0);
-}
-
-int	run_export(void)
-{
-	t_eplist	*curr;
-	int			i;
-	int			status;
-
-	status = 0;
-	curr = ms()->epl;
-	if (!ms()->words->cmds[1])
-	{
-		while (curr)
-		{
-			if (ft_strchr(curr->str, '='))
-				prt("declare -x %s=\"%s\"\n", curr->name, curr->data);
-			else
-				prt("declare -x %s\n", curr->name);
-			curr = curr->next;
-		}
-	}
-	i = 1;
-	while (ms()->words->cmds[i])
-	{
-		if (ep_export_value(ms()->words->cmds[i]))
-			status = 1;
-		i++;
-	}
-	return (status);
 }
 
 int	run_unset(void)
