@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2023/12/20 18:36:41 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:40:09 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ char	*expander(char *str)
 	char	*ex_str;
 
 	i = -1;
+	if (str[0] != '\'')
+		return (str);
 	while (str[++i])
 	{
 		if (str[i] == '$')

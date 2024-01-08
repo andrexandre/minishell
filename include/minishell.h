@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
 /*   Updated: 2024/01/06 16:39:26 by analexan         ###   ########.fr       */
@@ -82,6 +82,8 @@ void				search_and_remove(char *str, char target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
+char				*space_token(char *str);
+bool				validate_parse(void);
 
 // builtin
 int					run_echo(void);

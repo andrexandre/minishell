@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
 /*   Updated: 2024/01/04 16:15:15 by analexan         ###   ########.fr       */
@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-bool	is_builtin(char *str)
+bool	builtin(char *str)
 {
 	if (ft_strcmpold(str, "cd") || ft_strcmpold(str, "echo")
 		|| ft_strcmpold(str, "env") || ft_strcmpold(str, "export")
@@ -26,11 +26,10 @@ bool	is_builtin(char *str)
 	return (false);
 }
 
-bool	is_token(char *str)
+bool	token(char *str)
 {
 	if (ft_strcmpold(str, "|"))
-		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				PIPE));
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, PIPE));
 	else if (ft_strcmpold(str, "<"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
 				REDIRECT_IN));
@@ -48,34 +47,56 @@ bool	is_token(char *str)
 	return (true);
 }
 
-int	lexer(char *str)
+void	word(char *str)
 {
-	int		i;
+	t_list	*last;
+
+	last = ft_lstlast(ms()->lst_lexer);
+	if (last && last->type == REDIRECT_IN_D)
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
+	else
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(expander(ft_strdup(str)),
+				NULL, WORD));
+}
+
+char	**split_lexer(char *str)
+{
 	char	**splitted;
 	char	*trimmed;
-	char	*ex;
+	char	*str_token;
 
-	i = 0;
-	search_and_replace(str, '\t', ' ');
-	trimmed = ft_strtrim(str, " ");
+	str_token = space_token(str);
+	search_and_replace(str_token, '\t', ' ');
+	trimmed = ft_strtrim(str_token, " ");
+	free(str_token);
 	if (!trimmed || (trimmed && !*trimmed))
 	{
 		free(trimmed);
-		return (1);
+		return (NULL);
 	}
-	ex = expander(ft_strdup(trimmed));
-	splitted = ft_split_without(ex, ' ', "'\"");
-	free(ex);
+	splitted = ft_split_without(trimmed, ' ', "'\"");
 	free(trimmed);
 	if (splitted == NULL)
 	{
 		prt("unclosed quote\n");
-		return (1);
+		return (NULL);
 	}
+	return (splitted);
+}
+
+int	lexer(char *str)
+{
+	int		i;
+	char	**splitted;
+
+	i = 0;
+	splitted = split_lexer(str);
+	if (!splitted)
+		return (1);
 	while (splitted[i])
 	{
-		if (!is_builtin(splitted[i]) && !is_token(splitted[i]))
-			ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]), NULL, WORD));
+		if (!builtin(splitted[i]) && !token(splitted[i]))
+			word(splitted[i]);
 		i++;
 	}
 	free_strs(splitted);
