@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 14:31:20 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:49:59 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool	validate_pipe(void)
 		perror("syntax error near unexpected token `|'");
 		return (false);
 	}
-	if (last->type == PIPE)
+	if (last && last->type == PIPE)
 	{
 		if (last->prev->prev && last->prev->prev->prev
 			&& last->prev->type == PIPE && last->prev->prev->type == PIPE
