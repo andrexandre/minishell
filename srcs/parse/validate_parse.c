@@ -6,11 +6,25 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/05 23:14:09 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:31:20 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_list	*ft_get_last_pipe(void)
+{
+	t_list	*last;
+
+	last = ft_lstlast(ms()->lst_lexer);
+	while (last)
+	{
+		if (last->type == PIPE)
+			break ;
+		last = last->prev;
+	}
+	return (last);
+}
 
 bool	validate_curr_pipe(void)
 {
@@ -33,7 +47,7 @@ bool	validate_pipe(void)
 {
 	t_list	*last;
 
-	last = ft_lstlast(ms()->lst_lexer);
+	last = ft_get_last_pipe();
 	if (ms()->lst_lexer && ms()->lst_lexer->type == PIPE)
 	{
 		perror("syntax error near unexpected token `|'");
@@ -41,8 +55,9 @@ bool	validate_pipe(void)
 	}
 	if (last->type == PIPE)
 	{
-		if (last->prev->prev && last->prev->type == PIPE
-			&& last->prev->prev->type == PIPE)
+		if (last->prev->prev && last->prev->prev->prev
+			&& last->prev->type == PIPE && last->prev->prev->type == PIPE
+			&& last->prev->prev->prev->type == PIPE)
 			perror("syntax error near unexpected token `||'");
 		else if (last->prev->type == PIPE || last->type == PIPE)
 			perror("syntax error near unexpected token `|'");
