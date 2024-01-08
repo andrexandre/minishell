@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/05 22:42:33 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 18:23:23 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool	is_scnd_token(char old, char c)
 {
 	if (old == '|')
 		return (false);
-	if (c == '<' || c == '>')
+	if (old == c && (c == '<' || c == '>'))
 		return (true);
 	return (false);
 }
