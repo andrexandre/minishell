@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/06 19:02:31 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:48:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	**ep_from_epl(void)
 			ep[++i] = ft_strdup(curr->str);
 		curr = curr->next;
 	}
-	ep[i] = NULL;
+	ep[i + 1] = NULL;
 	return (ep);
 }
 
@@ -213,6 +213,8 @@ void	close_pipes(int len)
 
 void	execute_pipe(t_list *curr, int j)
 {
+	signal(SIGINT, tmp_handler);
+	signal(SIGQUIT, tmp_handler);
 	ms()->pid[j] = fork();
 	if (ms()->pid[j] < 0)
 	{
@@ -221,8 +223,8 @@ void	execute_pipe(t_list *curr, int j)
 	}
 	else if (!ms()->pid[j])
 		cmd_execute(NULL, ep_from_epl(), curr);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	// signal(SIGINT, SIG_IGN);
+	// signal(SIGQUIT, SIG_IGN);
 }
 
 int	_is_builtin(char *str)
@@ -381,37 +383,36 @@ char	*search_cmd(char *command, char **ep)
 	char		*cmd;
 	struct stat	statbuf;
 
-	i = -1;
+	ms()->status = 127;
 	if (!*command)
-		(void)ms;
+		dprt(2, "'': command not found\n");
 	else if (!ft_strchr(command, '/') && get_env("PATH") && ms()->paths)
 	{
+		i = -1;
 		while (ms()->paths[++i])
 		{
 			cmd = ft_strjoin(ms()->paths[i], command);
-			if (!access(cmd, F_OK | X_OK))
+			if (!access(cmd, F_OK | X_OK) && !(stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)))
 				return (cmd);
 			free(cmd);
 		}
+		dprt(2, "%s: command not found\n", command);
 	}
 	else
 	{
 		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
 			dprt(2, "minishell: %s: is a directory\n", command);
-		else if (!access(command, F_OK | X_OK))
-			return (ft_strdup(command));
-		else
-		{
-			dprt(2, "got here: ");
+		else if (access(command, F_OK | X_OK | R_OK))
 			perror(command);
+		else
+			return (ft_strdup(command));
+		if (access(command, F_OK))
+			ms()->status = 127;
+		else
 			ms()->status = 126;
-		}
-		free_strs(ep);
-		free_all(127, 0);
 	}
-	dprt(2, "%s: command not found\n", command);
 	free_strs(ep);
-	free_all(127, 0);
+	free_all(ms()->status, 0);
 	return (NULL);
 }
 
@@ -428,11 +429,7 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 		perror("dup2, fd[1]");
 	close_pipes(-1);
 	if (!run_builtin(curr))
-	{
 		execve(cmd, curr->cmds, ep);
-		dprt(2, "%s: command not found💀\n", curr->cmds[0]);
-		ms()->status = 127;
-	}
 	free(cmd);
 	free_strs(ep);
 	free_all(ms()->status, 0);
