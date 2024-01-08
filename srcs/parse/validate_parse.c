@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 14:49:59 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:08:07 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ bool	validate_curr_pipe(void)
 	{
 		if (curr->type == PIPE && curr->next->type == PIPE)
 		{
-			perror("syntax error near unexpected token `|'");
+			dprt(2,"%s\n","syntax error near unexpected token `|'");
 			return (false);
 		}
 		curr = curr->next;
@@ -50,7 +50,7 @@ bool	validate_pipe(void)
 	last = ft_get_last_pipe();
 	if (ms()->lst_lexer && ms()->lst_lexer->type == PIPE)
 	{
-		perror("syntax error near unexpected token `|'");
+		dprt(2,"%s\n","syntax error near unexpected token `|'");
 		return (false);
 	}
 	if (last && last->type == PIPE)
@@ -58,9 +58,9 @@ bool	validate_pipe(void)
 		if (last->prev->prev && last->prev->prev->prev
 			&& last->prev->type == PIPE && last->prev->prev->type == PIPE
 			&& last->prev->prev->prev->type == PIPE)
-			perror("syntax error near unexpected token `||'");
+			dprt(2,"%s\n","syntax error near unexpected token `||'");
 		else if (last->prev->type == PIPE || last->type == PIPE)
-			perror("syntax error near unexpected token `|'");
+			dprt(2,"%s\n","syntax error near unexpected token `|'");
 		return (false);
 	}
 	if (!validate_curr_pipe())
@@ -75,12 +75,12 @@ bool	validate_newline(void)
 	last = ft_lstlast(ms()->lst_lexer);
 	if (last->prev && last->type == PIPE && last->prev->type == REDIRECT_OUT)
 	{
-		perror("syntax error near unexpected token `newline'");
+		dprt(2,"%s\n","syntax error near unexpected token `newline'");
 		return (false);
 	}
 	if (last->prev && last->type == REDIRECT_OUT && last->prev->type == PIPE)
 	{
-		perror("syntax error near unexpected token `newline'");
+		dprt(2,"%s\n","syntax error near unexpected token `newline'");
 		return (false);
 	}
 	return (true);
@@ -98,8 +98,7 @@ bool	validate_parse(void)
 	if (last->type == REDIRECT_IN || last->type == REDIRECT_IN_D
 		|| last->type == REDIRECT_OUT || last->type == REDIRECT_OUT_D)
 	{
-		perror("syntax error near unexpected token ");
-		perror(last->str);
+		dprt(2,"%s %s\n","syntax error near unexpected token ",last->str);
 		return (false);
 	}
 	return (true);
