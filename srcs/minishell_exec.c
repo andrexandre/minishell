@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 19:07:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:48:57 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,15 @@ char	**ep_from_epl(void)
 	ep = ft_calloc(i + 1, sizeof(char *));
 	if (!ep)
 		return (NULL);
-	i = 0;
+	i = -1;
 	curr = ms()->epl;
 	while (curr)
 	{
-		ep[i] = ft_strdup(curr->str);
+		if (ft_strchr(curr->str, '='))
+			ep[++i] = ft_strdup(curr->str);
 		curr = curr->next;
-		i++;
 	}
-	ep[i] = NULL;
+	ep[i + 1] = NULL;
 	return (ep);
 }
 
@@ -120,6 +120,8 @@ void	hd_handler(int sig)
 	{
 		free(ms()->hd_buf);
 		close(ms()->hd_fd);
+		close(ms()->fd[1]);
+		close(ms()->fd[0]);
 		free_all(128 + sig, 0);
 	}
 }
@@ -134,18 +136,17 @@ void	get_stdin(const char *arg)
 	ms()->hd_buf = readline("> ");
 	while (ms()->hd_buf && ft_strcmp(ms()->hd_buf, arg))
 	{
-		// char *str = NULL;
-		// str = expander(ms()->hd_buf);
-		// if (!str)
-		// 	str = ms()->hd_buf;
-		write(ms()->hd_fd, ms()->hd_buf, ft_strlen(ms()->hd_buf));
-		write(ms()->hd_fd, "\n", 1);
+		ms()->hd_buf = expander(ms()->hd_buf);
+		dprt(ms()->hd_fd, "%s\n", ms()->hd_buf);
 		free(ms()->hd_buf);
+		ms()->hd_buf = NULL;
 		ms()->hd_buf = readline("> ");
 	}
 	if (!ms()->hd_buf)
-		prt("end-of-file (wanted `%s')\n", arg);
+		dprt(2, "minishell: warning: end-of-file (wanted `%s')\n", arg);
 	close(ms()->hd_fd);
+	close(ms()->fd[1]);
+	close(ms()->fd[0]);
 	free(ms()->hd_buf);
 	free_all(EXIT_SUCCESS, 0);
 }
@@ -176,7 +177,7 @@ int	heredoc(char *arg)
 void	tmp_handler(int sig)
 {
 	if (sig == SIGQUIT)
-		prt("Quit (core dumped)\n");
+		dprt(2, "Quit (core dumped)\n");
 	if (sig == SIGINT)
 		prt("\n");
 	ms()->status = 128 + sig;
@@ -212,6 +213,8 @@ void	close_pipes(int len)
 
 void	execute_pipe(t_list *curr, int j)
 {
+	signal(SIGINT, tmp_handler);
+	signal(SIGQUIT, tmp_handler);
 	ms()->pid[j] = fork();
 	if (ms()->pid[j] < 0)
 	{
@@ -220,19 +223,29 @@ void	execute_pipe(t_list *curr, int j)
 	}
 	else if (!ms()->pid[j])
 		cmd_execute(NULL, ep_from_epl(), curr);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	// signal(SIGINT, SIG_IGN);
+	// signal(SIGQUIT, SIG_IGN);
+}
+
+int	_is_builtin(char *str)
+{
+	if (!ft_strcmp(str, "cd") || !ft_strcmp(str, "echo")
+		|| !ft_strcmp(str, "env") || !ft_strcmp(str, "export")
+		|| !ft_strcmp(str, "pwd") || !ft_strcmp(str, "unset")
+		|| !ft_strcmp(str, "exit"))
+		return (1);
+	return (0);
 }
 
 void	execute(t_list *curr, int j)
 {
+	curr->type = _is_builtin(curr->cmds[0]);
 	if ((!ms()->words->next && curr->type == BUILT_IN) || !ft_strcmp(ms()->words->cmds[0], "q"))
 		execute_builtin(curr);
 	else
 		execute_pipe(curr, j);
 }
 
-// to-do: check all errors and frees with make v and check the evaluation sheet
 void	execution(void)
 {
 	t_list	*curr;
@@ -264,6 +277,12 @@ void	execution(void)
 	j = 0;
 	while (curr)
 	{
+		if (curr->next && !curr->next->str)
+		{
+			close_pipes(-1);
+			dprt(2, "bruhin rn\n");
+			break;
+		}
 		error = 0;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
@@ -277,9 +296,11 @@ void	execution(void)
 			if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
 				|| !ft_strcmp(curr->cmds[i], ">") || !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
 			{
-				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+				dprt(2, "minishell: syntax error near unexpected token `newline'\nchegou ao executor :(\n");
+				error = 2;
 				ms()->status = 2;
-				return ;
+				close_pipes(-1);
+				break ;
 			}
 			if (ms()->fd[0] && curr->cmds[i][0] == '<')
 				close(ms()->fd[0]);
@@ -362,36 +383,36 @@ char	*search_cmd(char *command, char **ep)
 	char		*cmd;
 	struct stat	statbuf;
 
-	i = -1;
+	ms()->status = 127;
 	if (!*command)
-		(void)ms;
-	else if (!ft_strchr(command, '/') && ms()->paths && get_env("PATH"))
+		dprt(2, "'': command not found\n");
+	else if (!ft_strchr(command, '/') && get_env("PATH") && ms()->paths)
 	{
+		i = -1;
 		while (ms()->paths[++i])
 		{
 			cmd = ft_strjoin(ms()->paths[i], command);
-			if (!access(cmd, F_OK | X_OK))
+			if (!access(cmd, F_OK | X_OK) && !(stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)))
 				return (cmd);
 			free(cmd);
 		}
+		dprt(2, "%s: command not found\n", command);
 	}
 	else
 	{
 		if (stat(command, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
-			dprt(2, "%s: is a directory\n", command);
-		else if (!access(command, F_OK | X_OK))
-			return (ft_strdup(command));
-		else
-		{
+			dprt(2, "minishell: %s: is a directory\n", command);
+		else if (access(command, F_OK | X_OK | R_OK))
 			perror(command);
+		else
+			return (ft_strdup(command));
+		if (access(command, F_OK))
+			ms()->status = 127;
+		else
 			ms()->status = 126;
-		}
-		free_strs(ep);
-		free_all(127, 0);
 	}
-	dprt(2, "%s: command not found\n", command);
 	free_strs(ep);
-	free_all(127, 0);
+	free_all(ms()->status, 0);
 	return (NULL);
 }
 
@@ -399,21 +420,16 @@ void	cmd_execute(char *cmd, char **ep, t_list *curr)
 {
 	signal(SIGINT, tmp_handler);
 	signal(SIGQUIT, tmp_handler);
-	// cat echo (execve failed) bcs it detects cat echo as a built-in
+	parsing_paths();
 	if (curr->type != BUILT_IN)
 		cmd = search_cmd(curr->cmds[0], ep);
-	parsing_paths();
 	if (ms()->fd[0] && dup2(ms()->fd[0], STDIN_FILENO) < 0)
 		perror("dup2, fd[0]");
 	if (ms()->fd[1] && dup2(ms()->fd[1], STDOUT_FILENO) < 0)
 		perror("dup2, fd[1]");
 	close_pipes(-1);
 	if (!run_builtin(curr))
-	{
 		execve(cmd, curr->cmds, ep);
-		dprt(2, "%s: command not found💀\n", curr->cmds[0]);
-		ms()->status = 127;
-	}
 	free(cmd);
 	free_strs(ep);
 	free_all(ms()->status, 0);
