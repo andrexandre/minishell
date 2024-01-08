@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/03 19:07:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:58:37 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,8 @@ void	free_pipes_words(void)
 		free(ms()->pipe);
 	free(ms()->pid);
 	ms()->pid = NULL;
-	ft_lstclear(&ms()->words, free_lst);
-	ft_lstclear(&ms()->lst_lexer, free_lst);
+	ft_lstclear(&ms()->words);
+	ft_lstclear(&ms()->lst_lexer);
 }
 
 void	hd_handler(int sig)

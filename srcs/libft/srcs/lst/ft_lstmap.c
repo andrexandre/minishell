@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 22:30:50 by jealves-          #+#    #+#             */
-/*   Updated: 2023/11/23 22:28:11 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:59:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *), void (*del)(t_list *))
+t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *))
 {
 	t_list	*head;
 	t_list	*current;
@@ -28,7 +28,7 @@ t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *), void (*del)(t_list *))
 		if (!current)
 		{
 			del(content);
-			ft_lstclear(&head, del);
+			ft_lstclear(&head);
 			return (NULL);
 		}
 		ft_lstadd_back(&head, current);

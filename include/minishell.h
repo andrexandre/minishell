@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/05 22:50:46 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:58:41 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ typedef struct s_var
 
 // minishell
 void				free_all(int exit_code, char *err_msg);
-void				free_lst(t_list *word);
 void				handler(int num);
 void				parsing_paths(void);
 
