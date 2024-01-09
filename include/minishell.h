@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:19:44 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:07:36 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ t_var				*ms(void);
 int					lexer(char *str);
 void				parse(void);
 void				search_and_replace(char *str, char src, char dest);
-void				search_and_remove(char *str, char target);
+void				search_and_remove(char *str, char *target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
