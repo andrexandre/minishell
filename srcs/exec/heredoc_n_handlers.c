@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_signal.c                                   :+:      :+:    :+:   */
+/*   heredoc_n_handlers.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:18:09 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 16:18:51 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:33:00 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,12 @@ void	hd_handler(int sig)
 	}
 }
 
+// change to a pipe
 void	get_stdin(const char *arg)
 {
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, hd_handler);
-	ms()->hd_fd = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC , 0600);
+	(ms()->hd_fd) = open("/tmp/msh-hd", O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (ms()->hd_fd < 0)
 		free_all(EXIT_FAILURE, "open");
 	ms()->hd_buf = readline("> ");
@@ -70,6 +71,11 @@ void	get_stdin(const char *arg)
 	free_all(EXIT_SUCCESS, 0);
 }
 
+void	tmp_hd_handler(int sig)
+{
+	prt("^C\n");
+	ms()->status = 128 + sig;
+}
 // receive input from the stdin and save in in the file
 int	heredoc(char *arg)
 {
@@ -77,6 +83,8 @@ int	heredoc(char *arg)
 	int		stat;
 
 	pid = fork();
+	if (pid > 0)
+		signal(SIGINT, tmp_hd_handler);
 	if (pid < 0)
 		free_all(EXIT_FAILURE, "fork");
 	else if (!pid)
@@ -85,8 +93,8 @@ int	heredoc(char *arg)
 		if (WIFEXITED(stat))
 			ms()->status = WEXITSTATUS(stat);
 	if (ms()->status == 130)
-		return (-2);
-	ms()->hd_fd = open("/tmp/msh-hd", O_RDONLY);
+		return (-1);
+	(ms()->hd_fd) = open("/tmp/msh-hd", O_RDONLY);
 	if (ms()->hd_fd < 0)
 		free_all(EXIT_FAILURE, "open");
 	unlink("/tmp/msh-hd");

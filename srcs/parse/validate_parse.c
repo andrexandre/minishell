@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate_parse.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 18:42:31 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:01:05 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ bool	validate_parse(void)
 	t_list	*last;
 
 	last = ft_get_last_type(REDIRECT_IN);
-	if (last && last->prev && (last->type == REDIRECT_IN || last->type == REDIRECT_IN_D)
+	if (last && last->prev
+		&& (last->type == REDIRECT_IN || last->type == REDIRECT_IN_D)
 		&& (last->prev->type == REDIRECT_OUT
 			|| last->prev->type == REDIRECT_OUT_D
 			|| last->prev->type == REDIRECT_IN

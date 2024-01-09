@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 18:59:15 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:00:19 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ char	*expansion(char *str)
 	return (res);
 }
 
-bool has_quote(char c, char old)
+bool	has_quote(char c, char old)
 {
-	static bool quote;
-	
-	if(c == '\'' && (old && old != '"'))
+	static bool	quote;
+
+	if (c == '\'' && (old && old != '"'))
 		quote = !quote;
-	return quote;
+	return (quote);
 }
 
 char	*expander(char *str)

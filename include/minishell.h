@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 19:17:09 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:19:44 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,25 +57,26 @@ typedef struct s_var
 	t_list		*lst_lexer;
 }				t_var;
 
-
-// heredoc_n_handlers.5
+// heredoc_n_handlers
 void				tmp_handler(int sig);
 void				handler(int sig);
 int					heredoc(char *arg);
 
-// minishell.3
-void				parsing_paths(void);
+// redirects
+void				redirects(t_list *curr, int *error);
+int					_is_builtin(char *str);
 
-// minishell_exec.!!!
+// minishell_exec
 char				**ep_from_epl(void);
+void				run_child(char **ep, t_list *curr);
+
+// minishell_loop
+int					_is_builtin(char *str);
+void				run_cmd(t_list *curr, int j);
+int					run_builtin(t_list *curr);
 void				execution(void);
-void				cmd_execute(char *cmd, char **ep, t_list *curr);
 
-// minishell_loop.3
-void				minishell_init(char **ep);
-void				cmd_loop(void);
-
-// minishell_utils.5
+// minishell_utils
 void				close_pipes(int len);
 void				free_pipes_words(void);
 void				free_all(int exit_code, char *err_msg);
@@ -93,24 +94,21 @@ char				*expander(char *str);
 char				*space_token(char *str);
 bool				validate_parse(void);
 
-// builtin.3
+// builtin
 int					run_echo(void);
 int					prt_eplst(void);
-int					run_pwd(void);
 int					run_unset(void);
+int					run_pwd(void);
+// builtin2
 int					run_exit(void);
-
-// builtin2.5
-t_eplist			*get_env(char *name);
 int					run_cd(void);
-
-// ep_lst.5
+// export
+int					ep_change_value(char *name, char *data);
+int					run_export(void);
+// ep_lst
+t_eplist			*get_env(char *name);
 void				ep_lnew(t_eplist **lst, char *str);
 void				ep_ldelone(t_eplist *lst);
 void				ep_lclear(t_eplist **lst);
-
-// export.4
-int					ep_change_value(char *name, char *data);
-int					run_export(void);
 
 #endif
