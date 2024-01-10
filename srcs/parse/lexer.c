@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 17:57:27 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:59:32 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool	builtin(char *str)
 		|| ft_strcmpold(str, "exit"))
 	{
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				BUILT_IN));
+				BUILT_IN, false));
 		return (true);
 	}
 	return (false);
@@ -29,34 +29,23 @@ bool	builtin(char *str)
 bool	token(char *str)
 {
 	if (ft_strcmpold(str, "|"))
-		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, PIPE));
+		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, PIPE,
+				true));
 	else if (ft_strcmpold(str, "<"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				REDIRECT_IN));
+				REDIRECT_IN, true));
 	else if (ft_strcmpold(str, "<<"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				REDIRECT_IN_D));
+				REDIRECT_IN_D, true));
 	else if (ft_strcmpold(str, ">"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				REDIRECT_OUT));
+				REDIRECT_OUT, true));
 	else if (ft_strcmpold(str, ">>"))
 		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL,
-				REDIRECT_OUT_D));
+				REDIRECT_OUT_D, true));
 	else
 		return (false);
 	return (true);
-}
-
-void	word(char *str)
-{
-	t_list	*last;
-
-	last = ft_lstlast(ms()->lst_lexer);
-	if (last && last->type == REDIRECT_IN_D)
-		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(str), NULL, WORD));
-	else
-		ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(expander(ft_strdup(str)),
-				NULL, WORD));
 }
 
 char	**split_lexer(char *str)
@@ -96,7 +85,8 @@ int	lexer(char *str)
 	while (splitted[i])
 	{
 		if (!builtin(splitted[i]) && !token(splitted[i]))
-			word(splitted[i]);
+			ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]), NULL,
+					WORD, false));
 		i++;
 	}
 	free_strs(splitted);
