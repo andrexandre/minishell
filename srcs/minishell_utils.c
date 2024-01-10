@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 17:41:52 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:20:58 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,8 @@ void	free_all(int exit_code, char *err_msg)
 {
 	close(ms()->fd[0]);
 	close(ms()->fd[1]);
-	if (ms()->saved_fd[0] >= 0)
-		close(ms()->saved_fd[0]);
-	if (ms()->saved_fd[1] >= 0)
-		close(ms()->saved_fd[1]);
+	close(ms()->saved_fd[0]);
+	close(ms()->saved_fd[1]);
 	close(0);
 	close(1);
 	close(2);

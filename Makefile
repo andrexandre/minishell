@@ -17,21 +17,22 @@ CFLAGS = -Wall -Wextra -Werror -I$(INCLUDES) -I$(INCLUDE_LIB) -g #-fsanitize=add
 SRCDIR	= srcs
 OBJDIR	= objs
 
-SRC		= minishell_utils.c\
-		  minishell.c \
+SRC		= minishell.c \
+		  minishell_utils.c \
+		  exec/minishell_exec.c \
+		  exec/minishell_loop.c \
+		  exec/heredoc_n_handlers.c \
+		  exec/redirects.c \
 		  parse/lexer.c \
 		  parse/parse.c \
 		  parse/expander.c \
 		  parse/parse_utils.c \
 		  parse/lexer_utils.c\
 		  parse/validate_parse.c\
-		  minishell_exec.c \
 		  builtin/builtin.c \
 		  builtin/builtin2.c \
 		  builtin/ep_lst.c \
-		  others/heredoc_n_handlers.c \
-		  builtin/export.c \
-		  minishell_loop.c
+		  builtin/export.c
 
 SRC		:= $(addprefix srcs/,$(SRC))
 

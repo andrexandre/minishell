@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 16:22:16 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:16:35 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	exit_error(void)
 {
+	ms()->running = 1;
 	dprt(2, "minishell: exit: too many arguments\n");
 	return (1);
 }
@@ -31,7 +32,8 @@ int	run_exit(void)
 		while (ms()->words->cmds[1][++i])
 		{
 			if (!ft_isdigit(ms()->words->cmds[1][i])
-				&& (ms()->words->cmds[1][0] != '-' && !ft_isdigit(ms()->words->cmds[1][1])))
+				&& (ms()->words->cmds[1][0] != '-'
+				&& !ft_isdigit(ms()->words->cmds[1][1])))
 			{
 				dprt(2, "minishell: exit: %s: numeric argument required\n",
 					ms()->words->cmds[1]);
@@ -96,19 +98,4 @@ int	run_cd(void)
 	else
 		str = ms()->words->cmds[1];
 	return (exec_cd(str));
-}
-
-int	run_pwd(void)
-{
-	char	*cwd;
-
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		perror("getcwd");
-		return (1);
-	}
-	prt("%s\n", cwd);
-	free(cwd);
-	return (0);
 }
