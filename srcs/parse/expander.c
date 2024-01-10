@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 21:01:16 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:08:35 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ char	*expansion(char *str)
 {
 	char	*res;
 
-	if (str[0] == '$')
+	if (str[0] == '\0')
 		res = ft_strdup("\2");
 	else if (str[0] == '?')
 		res = ft_itoa(ms()->status);
@@ -36,15 +36,16 @@ char	*expansion(char *str)
 	return (res);
 }
 
-bool	has_quote(char c, char prev)
+bool	has_quote(char *str, int i)
 {
 	static bool	quote;
 
-	if (c == '\'' || c == '"')
+	if (i > 0 && (str[i - 1] == '\'' || str[i - 1] == '"'))
 	{
-		if (c == '"')
+		if (str[i - 1] == '\'')
 			quote = true;
-		if (quote && prev && prev != '\0' && prev != '\'')
+		if (i > 1 && (quote && str[i - 2] && str[i - 2] != '\0' && str[i
+				- 2] == '"'))
 			quote = false;
 	}
 	return (quote);
@@ -54,8 +55,6 @@ void	expand_str(char **str, int i, int j)
 {
 	char	*ex_str;
 
-	if (j == i + 1)
-		j++;
 	ex_str = expansion(ft_substr(*str, i + 1, j - i - 1));
 	ft_strrep(str, i, j, ex_str);
 	free(ex_str);
@@ -71,7 +70,7 @@ char	*expander(char *str)
 	{
 		if (str[i] == '$')
 		{
-			if ((i > 0 && has_quote(str[i], str[i - 1])))
+			if ((has_quote(str, i)))
 				break ;
 			j = i;
 			while (str[++j])
@@ -82,5 +81,19 @@ char	*expander(char *str)
 		}
 	}
 	search_and_replace(str, '\2', '$');
+	search_and_remove(str, "'\"");
 	return (str);
+}
+
+char	**expander_cmd(char **cmd)
+{
+	int i;
+
+	i = 0;
+	while(cmd[i])
+	{
+		cmd[i] = expander(cmd[i]);
+		i++;
+	}
+	return cmd;
 }

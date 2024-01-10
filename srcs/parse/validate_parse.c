@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 20:11:28 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:12:33 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,28 @@ bool	validate_pipe(void)
 		dprt(2, "%s\n", "minishell: syntax error near unexpected token `|'");
 		return (false);
 	}
-	if (last && !last->next && last->type == PIPE)
+	if (last && last->type == PIPE)
 	{
 		if (last->prev->prev && last->prev->prev->prev
 			&& last->prev->type == PIPE && last->prev->prev->type == PIPE
 			&& last->prev->prev->prev->type == PIPE)
+			{
 			dprt(2, "%s\n",
 				"minishell: syntax error near unexpected token `||'");
-		else if (last->prev->type == PIPE || last->type == PIPE)
+				return(false);
+			}
+		else if (!last->next && (last->prev->type == PIPE || last->type == PIPE))
+		{
 			dprt(2, "%s\n",
 				"minishell: syntax error near unexpected token `|'");
-		return (false);
+			return (false);			
+		}
+		else if (last->prev->token && last->prev->type != PIPE )
+		{
+			dprt(2, "%s\n",
+				"minishell: syntax error near unexpected token `|'");
+			return (false);			
+		}
 	}
 	if (!validate_curr_pipe())
 		return (false);
@@ -117,11 +128,18 @@ bool	validate_parse(void)
 	{
 		dprt(2, "%s %s\n", "minishell: syntax error near unexpected token",
 			last->str);
+		ms()->status = 2;
 		return (false);
 	}
 	if (!validate_newline())
+	{
+		ms()->status = 2;
 		return (false);
+	}
 	if (!validate_pipe())
+	{
+		ms()->status = 2;
 		return (false);
+	}
 	return (true);
 }

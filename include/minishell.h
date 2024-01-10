@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 19:56:08 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:05:41 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,13 @@ t_var				*ms(void);
 
 // lexer, parser
 int					lexer(char *str);
-void				parse(void);
+bool				parse(void);
 void				search_and_replace(char *str, char src, char dest);
 void				search_and_remove(char *str, char *target);
 int					count_to_pipe(t_list *words);
 int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
+char				**expander_cmd(char **cmd);
 char				*space_token(char *str);
 bool				validate_parse(void);
 

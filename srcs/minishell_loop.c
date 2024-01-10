@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 17:19:13 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 17:40:31 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:18:38 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ void	cmd_loop(void)
 			free(buf);
 			continue;
 		}
-		parse();
+		if(parse())
+			execution();		
 		free(buf);
-		execution();
 	}
 }
 

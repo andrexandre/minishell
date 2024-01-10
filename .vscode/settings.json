@@ -30,7 +30,10 @@
 		"type_traits": "c",
 		"deque": "c",
 		"unordered_map": "c",
-		"vector": "c"
+		"vector": "c",
+		"strings.h": "c",
+		"fcntl.h": "c",
+		"string.h": "c"
 	},
 
 	"[c]": {

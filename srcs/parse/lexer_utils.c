@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 21:00:43 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/09 15:26:55 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,17 @@ int	ft_put_space(int i, char **result)
 {
 	char	*space;
 	int		j;
+	int		len;
+	char	*res;
 
-	j = i;
-	while (*result[++j])
+	res = *result;
+	len = ft_strlen(*result);
+	j = i + 1;
+	while (len > j && res[j])
 	{
-		if (!is_scnd_token(*result[i], *result[j]))
+		if (!is_scnd_token(res[i], res[j]))
 			break ;
+		j++;
 	}
 	space = ft_strdup(" ");
 	ft_strrep(result, j, j, space);
