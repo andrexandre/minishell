@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 13:48:27 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 13:53:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ void	prompt_loop(void)
 		if (*buf)
 			add_history(buf);
 		else
+		{
+			free(buf);
 			continue ;
+		}
 		if (lexer(buf))
 		{
 			free(buf);
@@ -115,11 +118,12 @@ void	debug(int n)
 int	main(int ac, char **av, char **ep)
 {
 	ms()->debug = 0;
-	ms()->ac = ac;
+	(void)ac;
 	(void)av;
 	minishell_init(ep);
 	debug(0);
 	prompt_loop();
 	debug(1);
+	rl_clear_history();
 	free_all(ms()->status, 0);
 }
