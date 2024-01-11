@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/09 15:26:55 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:43:29 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,19 @@ char	*space_token(char *str)
 	int		i;
 	char	*result;
 	bool	quote;
+	bool	dquote;
 
 	i = -1;
 	quote = false;
+	dquote = false;
 	result = ft_strdup(str);
 	while (result[++i])
 	{
-		if (result[i] == '\'' || result[i] == '"')
+		if (result[i] == '\'')
 			quote = !quote;
-		if (is_token(result[i]) && !quote)
+		if (result[i] == '"')
+			dquote = !dquote;
+		if (is_token(result[i]) && !quote && !dquote)
 		{
 			i = ft_put_space(i, &result);
 		}

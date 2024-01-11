@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirects.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 14:22:54 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:26:06 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	redirects(t_list *curr, int *error)
 	int	i;
 
 	i = -1;
-	while (curr->cmds[++i])
+	while (curr->token && curr->cmds[++i])
 	{
 		if (ms()->fd[0] && curr->cmds[i][0] == '<')
 			close(ms()->fd[0]);

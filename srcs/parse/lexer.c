@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/09 16:59:32 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:51:49 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,15 @@ int	lexer(char *str)
 	char	**splitted;
 
 	i = 0;
+	ms()->origin_str = str;
 	splitted = split_lexer(str);
 	if (!splitted)
 		return (1);
 	while (splitted[i])
 	{
 		if (!builtin(splitted[i]) && !token(splitted[i]))
-			ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]), NULL,
-					WORD, false));
+			ft_lstadd_back(&ms()->lst_lexer, ft_lstnew(ft_strdup(splitted[i]),
+					NULL, WORD, false));
 		i++;
 	}
 	free_strs(splitted);
