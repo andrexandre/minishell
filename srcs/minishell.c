@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 14:33:07 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 16:03:47 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	debug(int n)
 norm do prompt loop
 a funcão debug
 
-304 certas no mpanic
+302 certas no mpanic
 */
 int	main(int ac, char **av, char **ep)
 {
