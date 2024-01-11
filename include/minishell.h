@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 14:24:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:51:19 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,22 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int			debug;
-	int			status;
-	int			running;
-	char		**paths;
-	int			ac;
-	int			*pid;
-	int			fd[2];
-	int			**pipe;
-	int			saved_fd[2];
-	char		*hd_buf;
-	int			hd_fd;
-	t_eplist	*epl;
-	t_list		*words;
-	t_list		*lst_lexer;
-}				t_var;
+	int				debug;
+	int				status;
+	int				running;
+	char			**paths;
+	int				ac;
+	int				*pid;
+	int				fd[2];
+	int				**pipe;
+	int				saved_fd[2];
+	char			*hd_buf;
+	int				hd_fd;
+	char			*origin_str;
+	t_eplist		*epl;
+	t_list			*words;
+	t_list			*lst_lexer;
+}					t_var;
 
 // minishell_utils
 void				close_pipes(int len);
@@ -74,7 +75,9 @@ int					ft_strlen_matrix(char **str);
 char				*expander(char *str);
 char				**expander_cmd(char **cmd);
 char				*space_token(char *str);
+t_list				*ft_get_last_type(int type);
 bool				validate_parse(void);
+bool				validate_redirect(void);
 
 // minishell_loop
 int					_is_builtin(char *str);

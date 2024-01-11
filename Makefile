@@ -28,7 +28,8 @@ SRC		= minishell.c \
 		  parse/expander.c \
 		  parse/parse_utils.c \
 		  parse/lexer_utils.c\
-		  parse/validate_parse.c\
+		  parse/check_pipe_parse.c\
+		  parse/check_redirect_parse.c\
 		  builtin/builtin.c \
 		  builtin/builtin2.c \
 		  builtin/ep_lst.c \

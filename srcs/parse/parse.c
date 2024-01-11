@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/09 16:54:35 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:29:37 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,21 @@ t_list	*create_word(bool *is_new_cmd, t_list *words)
 
 void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 {
+	char	*space;
+
 	if (word_p->str == NULL)
 		word_p->str = ft_strdup(word_l->str);
 	else
 	{
-		word_p->str = (char *)ft_memcat(word_p->str, " ");
+		space = ft_strdup(" ");
+		word_p->str = (char *)ft_memcat(word_p->str, space);
+		free(space);
 		word_p->str = (char *)ft_memcat(word_p->str, word_l->str);
 	}
 	if (word_p->type == WORD)
 		word_p->type = word_l->type;
+	if (!word_p->token)
+		word_p->token = word_l->token;
 	word_p->cmds[cmd_index] = ft_strdup(word_l->str);
 	word_p->cmds[cmd_index + 1] = NULL;
 }
@@ -43,11 +49,12 @@ void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 
 	last = ft_lstlast(ms()->words);
 	if (last && last->type == REDIRECT_IN_D)
-		ft_lstadd_back(&ms()->words, ft_lstnew(ft_strdup(word_p->str), word_p->cmds, word_p->type, word_p->token));
+		ft_lstadd_back(&ms()->words, ft_lstnew(ft_strdup(word_p->str),
+				word_p->cmds, word_p->type, word_p->token));
 	else
 		ft_lstadd_back(&ms()->words, ft_lstnew(expander(ft_strdup(word_p->str)),
 				expander_cmd(word_p->cmds), word_p->type, word_p->token));
-	
+	free(word_p->str);
 	free(word_p);
 	*is_new_cmd = true;
 	*cmd_index = 0;

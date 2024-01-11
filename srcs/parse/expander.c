@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 19:11:49 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:51:30 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*expansion(char *str)
 	else if (get_env(str))
 		res = ft_strdup(get_env(str)->data);
 	else
-		res = ft_strdup("");
+		res = ft_strdup("\3");
 	if (ms()->debug)
 	{
 		prt("\033[1;34m");
@@ -36,25 +36,33 @@ char	*expansion(char *str)
 	return (res);
 }
 
-bool	has_quote(char *str, int i)
+void	has_quote(bool *quote, char *str, int i)
 {
-	static bool	quote;
-
-	if (i > 0 && (str[i - 1] == '\'' || str[i - 1] == '"'))
+	if (str[i] == '\'')
 	{
-		if (str[i - 1] == '\'')
-			quote = true;
-		if (i > 1 && (quote && str[i - 2] && str[i - 2] != '\0' && str[i
-				- 2] == '"'))
-			quote = false;
+		if (i > 0 && str[i - 1] == '"')
+			*quote = false;
+		else
+			*quote = !*quote;
 	}
-	return (quote);
 }
 
-void	expand_str(char **str, int i, int j)
+void	expand_str(char **str, int i)
 {
 	char	*ex_str;
+	char	*src;
+	int		j;
 
+	src = *str;
+	j = i;
+	if (src[i + 1] != '?')
+	{
+		while (src[++j])
+			if (!ft_isalnum(src[j]) && src[j] != '_')
+				break ;
+	}
+	else
+		j += 2;
 	ex_str = expansion(ft_substr(*str, i + 1, j - i - 1));
 	ft_strrep(str, i, j, ex_str);
 	free(ex_str);
@@ -62,45 +70,35 @@ void	expand_str(char **str, int i, int j)
 
 char	*expander(char *str)
 {
-	int	i;
-	int	j;
+	int		i;
+	bool	quote;
 
+	quote = false;
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '$')
+		has_quote(&quote, str, i);
+		if (!quote && str[i] == '$')
 		{
-			// if (ms()->debug)
-				prt("Expander: str = %s\n", str);
-			if ((has_quote(str, i)))
-				break ;
-			j = i;
-			if (str[i + 1] != '?')
-			{
-				while (str[++j])
-					if (!ft_isalnum(str[j]) && str[j] != '_')
-						break ;
-			}
-			else
-				j += 2;
-			expand_str(&str, i, j);
+			expand_str(&str, i);
 			i = 0;
 		}
 	}
 	search_and_replace(str, '\2', '$');
+	search_and_replace(str, '\3', '\0');
 	search_and_remove(str, "'\"");
 	return (str);
 }
 
 char	**expander_cmd(char **cmd)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(cmd[i])
+	while (cmd[i])
 	{
 		cmd[i] = expander(cmd[i]);
 		i++;
 	}
-	return cmd;
+	return (cmd);
 }
