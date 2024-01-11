@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:11:37 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 13:48:27 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ void	prompt_loop(void)
 			free(buf);
 			continue ;
 		}
-		parse();
+		if(parse())
+			execution();
 		free(buf);
-		execution();
 		free_pipes_words();
 	}
 }
