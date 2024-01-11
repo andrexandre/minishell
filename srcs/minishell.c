@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 13:53:27 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:33:07 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	prompt_loop(void)
 			free(buf);
 			continue ;
 		}
-		if(parse())
+		if (parse())
 			execution();
 		free(buf);
 		free_pipes_words();
@@ -95,26 +95,20 @@ void	minishell_init(char **ep)
 void	debug(int n)
 {
 	char	*hist;
-	char	*asd;
-	char	history_file[100];
 
-	hist = "/home/analexan/minishell/.minishell_history";
-	asd = NULL;
-	if (!get_env("HOME"))
-		strcpy(history_file, hist);
-	else
-	{
-		asd = ft_strjoin(get_env("HOME")->data,
-				"/minishell/.minishell_history");
-		strcpy(history_file, asd);
-		free(asd);
-	}
+	hist = ".minishell_history";
 	if (!n)
-		read_history(history_file);
+		read_history(hist);
 	else
-		write_history(history_file);
+		write_history(hist);
 }
 
+/* antes de entregar, retirar:
+norm do prompt loop
+a funcão debug
+
+304 certas no mpanic
+*/
 int	main(int ac, char **av, char **ep)
 {
 	ms()->debug = 0;

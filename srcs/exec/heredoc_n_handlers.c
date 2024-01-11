@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:18:09 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:33:00 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:22:31 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,6 @@ void	get_stdin(const char *arg)
 	free_all(EXIT_SUCCESS, 0);
 }
 
-void	tmp_hd_handler(int sig)
-{
-	prt("^C\n");
-	ms()->status = 128 + sig;
-}
 // receive input from the stdin and save in in the file
 int	heredoc(char *arg)
 {
@@ -83,11 +78,11 @@ int	heredoc(char *arg)
 	int		stat;
 
 	pid = fork();
-	if (pid > 0)
-		signal(SIGINT, tmp_hd_handler);
 	if (pid < 0)
 		free_all(EXIT_FAILURE, "fork");
-	else if (!pid)
+	if (pid > 0)
+		signal(SIGINT, tmp_hd_handler);
+	if (!pid)
 		get_stdin(arg);
 	if (pid > 0 && waitpid(pid, &stat, 0) > 0)
 		if (WIFEXITED(stat))

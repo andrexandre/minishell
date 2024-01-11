@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/10 10:58:23 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:24:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,25 +57,6 @@ typedef struct s_var
 	t_list		*lst_lexer;
 }				t_var;
 
-// heredoc_n_handlers
-void				tmp_handler(int sig);
-void				handler(int sig);
-int					heredoc(char *arg);
-
-// redirects
-void				redirects(t_list *curr, int *error);
-int					_is_builtin(char *str);
-
-// minishell_exec
-char				**ep_from_epl(void);
-void				run_child(char **ep, t_list *curr);
-
-// minishell_loop
-int					_is_builtin(char *str);
-void				run_cmd(t_list *curr, int j);
-int					run_builtin(t_list *curr);
-void				execution(void);
-
 // minishell_utils
 void				close_pipes(int len);
 void				free_pipes_words(void);
@@ -94,6 +75,23 @@ char				*expander(char *str);
 char				**expander_cmd(char **cmd);
 char				*space_token(char *str);
 bool				validate_parse(void);
+
+// minishell_loop
+int					_is_builtin(char *str);
+void				run_cmd(t_list *curr, int j);
+int					run_builtin(t_list *curr);
+void				execution(void);
+// minishell_exec
+char				**ep_from_epl(void);
+void				run_child(char **ep, t_list *curr);
+// redirects
+void				redirects(t_list *curr, int *error);
+int					_is_builtin(char *str);
+void				tmp_hd_handler(int sig);
+// heredoc_n_handlers
+void				tmp_handler(int sig);
+void				handler(int sig);
+int					heredoc(char *arg);
 
 // builtin
 int					run_echo(void);

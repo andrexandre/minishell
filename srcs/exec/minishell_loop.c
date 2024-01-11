@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 17:19:13 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:12:02 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:21:39 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ void	run_cmd(t_list *curr, int j)
 1 -> não executar esse pipe
 2 -> não executar mais nada
 */
-// NOT TOO MANY LINES
 void	execution_loop(int len, int error, int i)
 {
 	t_list	*curr;
@@ -84,12 +83,6 @@ void	execution_loop(int len, int error, int i)
 	curr = ms()->words;
 	while (curr)
 	{
-		if (curr->next && !curr->next->str)
-		{
-			close_pipes(-1);
-			dprt(2, "chegou ao executor :)\n");
-			break ;
-		}
 		error = 0;
 		ms()->fd[0] = 0;
 		ms()->fd[1] = 0;
@@ -161,4 +154,3 @@ void	execution(void)
 		}
 	}
 }
-// 298 certas no mpanic

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 12:03:59 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/09 15:43:30 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:26:16 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,8 @@ void				ft_lstiter(t_list *lst, void (*f)(t_list *));
 t_list				*ft_lstlast(t_list *lst);
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *));
 
-t_list				*ft_lstnew(char *str, char **cmds, enum e_type type, bool token);
+t_list				*ft_lstnew(char *str,
+						char **cmds, enum e_type type, bool token);
 int					ft_lstsize(t_list *lst);
 
 char				**ft_cleanup_split(char **split, size_t j);

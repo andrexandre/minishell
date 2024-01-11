@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:08:38 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:22:54 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ int	fd_error(t_list *curr, int *i, int *error)
 	return (0);
 }
 
-// NOT TOO MANY LINES
 void	redirects(t_list *curr, int *error)
 {
 	int	i;
@@ -73,17 +72,6 @@ void	redirects(t_list *curr, int *error)
 	i = -1;
 	while (curr->cmds[++i])
 	{
-		if ((!ft_strcmp(curr->cmds[i], "<") || !ft_strcmp(curr->cmds[i], "<<")
-				|| !ft_strcmp(curr->cmds[i], ">")
-				|| !ft_strcmp(curr->cmds[i], ">>")) && !curr->cmds[i + 1])
-		{
-			dprt(2, "minishell: syntax error near unexpected token `newline'\n");
-			dprt(2, "chegou ao executor :(\n");
-			*error = 2;
-			ms()->status = 2;
-			close_pipes(-1);
-			break ;
-		}
 		if (ms()->fd[0] && curr->cmds[i][0] == '<')
 			close(ms()->fd[0]);
 		if (ms()->fd[1] && curr->cmds[i][0] == '>')
@@ -113,4 +101,10 @@ int	_is_builtin(char *str)
 		|| !ft_strcmp(str, "exit"))
 		return (1);
 	return (0);
+}
+
+void	tmp_hd_handler(int sig)
+{
+	prt("^C\n");
+	ms()->status = 128 + sig;
 }
