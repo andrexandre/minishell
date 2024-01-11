@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 19:08:06 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/11 19:11:49 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ char	*expander(char *str)
 	{
 		if (str[i] == '$')
 		{
-			prt("Expander: str = %s\n", str);
+			// if (ms()->debug)
+				prt("Expander: str = %s\n", str);
 			if ((has_quote(str, i)))
 				break ;
 			j = i;
