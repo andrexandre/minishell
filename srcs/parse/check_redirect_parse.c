@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_redirect_parse.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 20:26:46 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 20:52:40 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:01:43 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ bool	unexpected_redirect(t_list *last)
 			if (ms()->origin_str[i] == '>' && i > 2 && ms()->origin_str[i
 					- 2] == '<')
 			{
-				dprt(2, "%s\n",
-					"minishell: syntax error near unexpected token >");
+				dprt(2, "minishell: syntax error near unexpected token `>'\n");
 				return (false);
 			}
 		}
@@ -56,7 +55,7 @@ bool	unexpected_redirect(t_list *last)
 	if (last && last->prev && (last->type == REDIRECT_IN
 			|| last->type == REDIRECT_IN_D) && (last->prev->token))
 	{
-		dprt(2, "%s %s\n", "minishell: syntax error near unexpected token",
+		dprt(2, "minishell: syntax error near unexpected token `%s'\n",
 			last->str);
 		return (false);
 	}
@@ -69,16 +68,14 @@ bool	newline_redirect(t_list *last)
 			|| last->type == REDIRECT_IN_D || last->type == REDIRECT_OUT
 			|| last->type == REDIRECT_OUT_D))
 	{
-		dprt(2, "%s\n",
-			"minishell: syntax error near unexpected token `newline'");
+		dprt(2, "minishell: syntax error near unexpected token `newline'\n");
 		return (false);
 	}
 	if (last && !last->next && last->prev && last->prev->type == PIPE
 		&& (last->type == REDIRECT_OUT || last->type == REDIRECT_OUT_D
 			|| last->type == REDIRECT_IN || last->type == REDIRECT_IN_D))
 	{
-		dprt(2, "%s\n",
-			"minishell: syntax error near unexpected token `newline'");
+		dprt(2, "minishell: syntax error near unexpected token `newline'\n");
 		return (false);
 	}
 	return (true);
