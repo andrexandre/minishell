@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 15:43:26 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:47:31 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	debug(int n)
 /* antes de entregar, retirar:
 norm do prompt loop
 a funcão debug
+e as 2 calls de debug
 
 325 certas no mpanic
 */
