@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_pipe_parse.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 20:09:45 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 11:02:10 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:08:27 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	validate_curr_pipe(void)
 
 bool	unexpected_pipe(t_list *last)
 {
-	if (last && last->type == PIPE)
+	if (last)
 	{
 		if (last->prev->prev && last->prev->prev->prev
 			&& last->prev->type == PIPE && last->prev->prev->type == PIPE

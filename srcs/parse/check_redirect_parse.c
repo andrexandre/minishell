@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 20:26:46 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 19:19:25 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:06:22 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,7 @@ bool	unexpected_redirect(t_list *last)
 			}
 		}
 	}
-	if (last && last->prev && (last->type == REDIRECT_IN
-			|| last->type == REDIRECT_IN_D
-			|| last->type == REDIRECT_OUT
-			|| last->type == REDIRECT_OUT_D) && (last->prev->token))
+	if (last && last->prev && last->prev->type != PIPE && (last->prev->token))
 	{
 		dprt(2, "minishell: syntax error near unexpected token `%s'\n",
 			last->str);
@@ -66,16 +63,12 @@ bool	unexpected_redirect(t_list *last)
 
 bool	newline_redirect(t_list *last)
 {
-	if (last && !last->next && (last->type == REDIRECT_IN
-			|| last->type == REDIRECT_IN_D || last->type == REDIRECT_OUT
-			|| last->type == REDIRECT_OUT_D))
+	if (last && !last->next)
 	{
 		dprt(2, "minishell: syntax error near unexpected token `newline'\n");
 		return (false);
 	}
-	if (last && !last->next && last->prev && last->prev->type == PIPE
-		&& (last->type == REDIRECT_OUT || last->type == REDIRECT_OUT_D
-			|| last->type == REDIRECT_IN || last->type == REDIRECT_IN_D))
+	if (last && !last->next && last->prev && last->prev->type == PIPE)
 	{
 		dprt(2, "minishell: syntax error near unexpected token `newline'\n");
 		return (false);
