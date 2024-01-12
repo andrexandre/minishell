@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 20:26:46 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 11:01:43 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:46:50 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ bool	unexpected_redirect(t_list *last)
 	if (last && last->type == REDIRECT_OUT)
 	{
 		i = ft_strlen(ms()->origin_str);
-		while (i-- >= 0)
+		while (--i >= 0)
 		{
-			if (ms()->origin_str[i] == '>' && i > 2 && ms()->origin_str[i
-					- 2] == '<')
+			if (ms()->origin_str[i] == '>' && i > 2
+				&& ms()->origin_str[i - 2] == '<')
 			{
 				dprt(2, "minishell: syntax error near unexpected token `>'\n");
 				return (false);

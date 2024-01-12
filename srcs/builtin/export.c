@@ -6,20 +6,19 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:44:42 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 13:02:15 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:24:09 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	export_error(char *name, char *str)
+int	export_error(char *name)
 {
 	int	i;
 
 	i = -1;
 	if (ft_isdigit(name[0]))
 	{
-		dprt(2, "minishell: export: `%s': not a valid identifier\n", str);
 		free(name);
 		return (1);
 	}
@@ -28,7 +27,6 @@ int	export_error(char *name, char *str)
 			break ;
 	if (!name[i])
 		return (0);
-	dprt(2, "minishell: export: `%s': not a valid identifier\n", str);
 	free(name);
 	return (1);
 }
@@ -42,8 +40,8 @@ int	ep_export_value(char *str)
 	name = ft_substr(str, 0, ft_strlen(str) - ft_strlen(ft_strchr(str, '=')));
 	if (!name)
 		return (1);
-	if (export_error(name, str))
-		return (1);
+	if (export_error(name) || str[0] == '=')
+		return (dprt(2, "minishell: export: `%s': not a valid identifier\n", str), 1);
 	if (!ft_strcmp(name, "_"))
 	{
 		free(name);

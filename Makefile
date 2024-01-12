@@ -26,6 +26,7 @@ SRC		= minishell.c \
 		  parse/lexer.c \
 		  parse/parse.c \
 		  parse/expander.c \
+		  parse/expander_utils.c \
 		  parse/parse_utils.c \
 		  parse/lexer_utils.c\
 		  parse/check_pipe_parse.c\

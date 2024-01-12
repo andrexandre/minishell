@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 12:58:46 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:45:36 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_var
 	char			*hd_buf;
 	int				hd_fd;
 	char			*origin_str;
-	t_eplist		*epl;
+		t_eplist		*epl;
 	t_list			*words;
 	t_list			*lst_lexer;
 }					t_var;
@@ -78,6 +78,7 @@ char				*space_token(char *str);
 t_list				*ft_get_last_type(int type);
 bool				validate_parse(void);
 bool				validate_redirect(void);
+char				*remove_char(char *str, int c);
 
 // minishell_loop
 int					_is_builtin(char *str);
