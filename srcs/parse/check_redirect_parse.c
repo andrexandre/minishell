@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_redirect_parse.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 20:26:46 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 17:46:50 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 19:19:25 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ bool	unexpected_redirect(t_list *last)
 		}
 	}
 	if (last && last->prev && (last->type == REDIRECT_IN
-			|| last->type == REDIRECT_IN_D) && (last->prev->token))
+			|| last->type == REDIRECT_IN_D
+			|| last->type == REDIRECT_OUT
+			|| last->type == REDIRECT_OUT_D) && (last->prev->token))
 	{
 		dprt(2, "minishell: syntax error near unexpected token `%s'\n",
 			last->str);

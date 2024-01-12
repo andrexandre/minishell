@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 16:44:34 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:16:09 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char	*expander(char *str)
 	int		i;
 	bool	quote;
 	char	*tmp;
+	char	*dest;
 
 	quote = false;
 	i = -1;
@@ -92,8 +93,8 @@ char	*expander(char *str)
 	str = remove_char(tmp, '\3');
 	free(tmp);
 	tmp = NULL;
-	search_and_remove(str, "'\"");
-	return (str);
+	dest = search_and_remove(str, "'\"");
+	return (dest);
 }
 
 char	**expander_cmd(char **cmd)

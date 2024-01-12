@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 16:41:22 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 21:29:37 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:16:59 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,24 @@ void	join_str_word(t_list *word_p, t_list *word_l, int cmd_index)
 void	add_word_lst(t_list *word_p, bool *is_new_cmd, int *cmd_index)
 {
 	t_list	*last;
+	char	*exp;
 
 	last = ft_lstlast(ms()->words);
 	if (last && last->type == REDIRECT_IN_D)
 		ft_lstadd_back(&ms()->words, ft_lstnew(ft_strdup(word_p->str),
 				word_p->cmds, word_p->type, word_p->token));
 	else
-		ft_lstadd_back(&ms()->words, ft_lstnew(expander(ft_strdup(word_p->str)),
-				expander_cmd(word_p->cmds), word_p->type, word_p->token));
+	{
+		exp = expander(ft_strdup(word_p->str));
+		if (!ft_strcmpold(exp, ""))
+			ft_lstadd_back(&ms()->words, ft_lstnew(exp,
+					expander_cmd(word_p->cmds), word_p->type, word_p->token));
+		else
+		{
+			free(exp);
+			free_strs(word_p->cmds);
+		}
+	}
 	free(word_p->str);
 	free(word_p);
 	*is_new_cmd = true;

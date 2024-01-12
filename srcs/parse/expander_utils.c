@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:22:53 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 15:22:58 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:17:15 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,3 @@ char	*remove_char(char *str, int c)
 	new[i + 1] = '\0';
 	return (new);
 }
-
