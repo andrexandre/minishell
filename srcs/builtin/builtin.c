@@ -6,14 +6,14 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:16:39 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:58:39 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // if bool 0 print newline if 1 don't print
-int	run_echo(void)
+int	run_echo(t_list *curr)
 {
 	int		i;
 	int		j;
@@ -22,9 +22,9 @@ int	run_echo(void)
 
 	i = 0;
 	nl = 1;
-	while (ms()->words->cmds[++i])
+	while (curr->cmds[++i])
 	{
-		str = ms()->words->cmds[i];
+		str = curr->cmds[i];
 		if (str[0] != '-' || !str[0])
 			break ;
 		j = 1;
@@ -38,7 +38,7 @@ int	run_echo(void)
 			break ;
 		nl = 0;
 	}
-	prt_strs(ms()->words->cmds + i, nl);
+	prt_strs(curr->cmds + i, nl);
 	return (0);
 }
 
@@ -56,29 +56,29 @@ int	prt_eplst(void)
 	return (0);
 }
 
-int	run_unset(void)
+int	run_unset(t_list *curr)
 {
-	t_eplist	*curr;
+	t_eplist	*to_change;
 	int			i;
 	int			exit_code;
 
 	exit_code = 0;
 	i = 1;
-	while (ms()->words->cmds[i])
+	while (curr->cmds[i])
 	{
-		curr = get_env(ms()->words->cmds[i]);
-		if (curr)
+		to_change = get_env(curr->cmds[i]);
+		if (to_change)
 		{
-			if (!curr->prev)
-				ms()->epl = curr->next;
-			else if (!curr->next)
-				curr->prev->next = NULL;
+			if (!to_change->prev)
+				ms()->epl = to_change->next;
+			else if (!to_change->next)
+				to_change->prev->next = NULL;
 			else
 			{
-				curr->prev->next = curr->next;
-				curr->next->prev = curr->prev;
+				to_change->prev->next = to_change->next;
+				to_change->next->prev = to_change->prev;
 			}
-			ep_ldelone(curr);
+			ep_ldelone(to_change);
 		}
 		i++;
 	}

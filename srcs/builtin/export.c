@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:44:42 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 17:16:23 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:02:15 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,29 +77,29 @@ int	ep_change_value(char *name, char *data)
 	return (0);
 }
 
-int	run_export(void)
+int	run_export(t_list *curr)
 {
-	t_eplist	*curr;
+	t_eplist	*to_change;
 	int			i;
 	int			status;
 
 	status = 0;
-	curr = ms()->epl;
-	if (!ms()->words->cmds[1])
+	to_change = ms()->epl;
+	if (!curr->cmds[1])
 	{
-		while (curr)
+		while (to_change)
 		{
-			if (ft_strchr(curr->str, '='))
-				prt("declare -x %s=\"%s\"\n", curr->name, curr->data);
+			if (ft_strchr(to_change->str, '='))
+				prt("declare -x %s=\"%s\"\n", to_change->name, to_change->data);
 			else
-				prt("declare -x %s\n", curr->name);
-			curr = curr->next;
+				prt("declare -x %s\n", to_change->name);
+			to_change = to_change->next;
 		}
 	}
 	i = 1;
-	while (ms()->words->cmds[i])
+	while (curr->cmds[i])
 	{
-		if (ep_export_value(ms()->words->cmds[i]))
+		if (ep_export_value(curr->cmds[i]))
 			status = 1;
 		i++;
 	}

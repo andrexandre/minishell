@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 11:24:15 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:52:25 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,29 @@ int	exit_error(void)
 	return (1);
 }
 
-int	run_exit(void)
+int	run_exit(t_list *curr)
 {
 	int	i;
 
 	if (isatty(STDIN_FILENO))
 		dprt(2, "exit\n");
 	ms()->running = 0;
-	if (ms()->words->cmds[1])
+	if (curr->cmds[1])
 	{
 		i = -1;
-		while (ms()->words->cmds[1][++i])
+		while (curr->cmds[1][++i])
 		{
-			if (!ft_isdigit(ms()->words->cmds[1][i])
-				&& ms()->words->cmds[1][0] != '-')
+			if (!ft_isdigit(curr->cmds[1][i])
+				&& curr->cmds[1][0] != '-')
 			{
 				dprt(2, "minishell: exit: %s: numeric argument required\n",
-					ms()->words->cmds[1]);
+					curr->cmds[1]);
 				return (2);
 			}
 		}
-		if (ms()->words->cmds[2])
+		if (curr->cmds[2])
 			return (exit_error());
-		return (ft_atoll(ms()->words->cmds[1]));
+		return (ft_atoll(curr->cmds[1]));
 	}
 	return (ms()->status);
 }
@@ -75,11 +75,11 @@ int	exec_cd(char *str)
 	return (0);
 }
 
-int	run_cd(void)
+int	run_cd(t_list *curr)
 {
 	char		*str;
 
-	if (!ms()->words->cmds[1])
+	if (!curr->cmds[1])
 	{
 		if (!get_env("HOME"))
 		{
@@ -89,12 +89,14 @@ int	run_cd(void)
 		else
 			str = get_env("HOME")->data;
 	}
-	else if (ms()->words->cmds[2])
+	else if (curr->cmds[2])
 	{
 		dprt(2, "minishell: cd: too many arguments\n");
 		return (1);
 	}
 	else
-		str = ms()->words->cmds[1];
+		str = curr->cmds[1];
+	if (curr->cmds[1] && !curr->cmds[1][0])
+		return (0);
 	return (exec_cd(str));
 }

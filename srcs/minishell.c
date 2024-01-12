@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 11:03:18 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:47:59 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	debug(int n)
 norm do prompt loop
 a funcão debug
 
-321 certas no mpanic
+322 certas no mpanic
 */
 int	main(int ac, char **av, char **ep)
 {
@@ -115,9 +115,11 @@ int	main(int ac, char **av, char **ep)
 	(void)ac;
 	(void)av;
 	minishell_init(ep);
-	debug(0);
+	if (isatty(STDIN_FILENO))
+		debug(0);
 	prompt_loop();
-	debug(1);
+	if (isatty(STDIN_FILENO))
+		debug(1);
 	rl_clear_history();
 	free_all(ms()->status, 0);
 }

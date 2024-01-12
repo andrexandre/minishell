@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 20:51:19 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:58:46 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,16 +97,16 @@ void				handler(int sig);
 int					heredoc(char *arg);
 
 // builtin
-int					run_echo(void);
+int					run_echo(t_list *curr);
 int					prt_eplst(void);
-int					run_unset(void);
+int					run_unset(t_list *curr);
 int					run_pwd(void);
 // builtin2
-int					run_exit(void);
-int					run_cd(void);
+int					run_exit(t_list *curr);
+int					run_cd(t_list *curr);
 // export
 int					ep_change_value(char *name, char *data);
-int					run_export(void);
+int					run_export(t_list *curr);
 // ep_lst
 t_eplist			*get_env(char *name);
 void				ep_lnew(t_eplist **lst, char *str);

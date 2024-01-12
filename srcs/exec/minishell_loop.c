@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 17:19:13 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 14:21:39 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:59:01 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,25 @@
 
 int	run_builtin(t_list *curr)
 {
-	t_list	*tmp;
 	int		status;
 
 	status = 1;
-	tmp = ms()->words;
-	ms()->words = curr;
-	if (!ft_strcmp(ms()->words->cmds[0], "cd"))
-		ms()->status = (*run_cd)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "echo"))
-		ms()->status = (*run_echo)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "env"))
+	if (!ft_strcmp(curr->cmds[0], "cd"))
+		ms()->status = (*run_cd)(curr);
+	else if (!ft_strcmp(curr->cmds[0], "echo"))
+		ms()->status = (*run_echo)(curr);
+	else if (!ft_strcmp(curr->cmds[0], "env"))
 		ms()->status = (*prt_eplst)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "export"))
-		ms()->status = (*run_export)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "pwd"))
+	else if (!ft_strcmp(curr->cmds[0], "export"))
+		ms()->status = (*run_export)(curr);
+	else if (!ft_strcmp(curr->cmds[0], "pwd"))
 		ms()->status = (*run_pwd)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "unset"))
-		ms()->status = (*run_unset)();
-	else if (!ft_strcmp(ms()->words->cmds[0], "exit"))
-		ms()->status = (*run_exit)();
+	else if (!ft_strcmp(curr->cmds[0], "unset"))
+		ms()->status = (*run_unset)(curr);
+	else if (!ft_strcmp(curr->cmds[0], "exit"))
+		ms()->status = (*run_exit)(curr);
 	else
 		status = 0;
-	ms()->words = tmp;
 	return (status);
 }
 
