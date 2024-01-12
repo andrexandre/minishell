@@ -12,11 +12,19 @@
 
 #include "minishell.h"
 
-bool	is_scnd_token(char old, char c)
+/*bool	is_scnd_token(char old, char c)
 {
 	if (old == '|')
 		return (false);
 	if (old == c && (c == '<' || c == '>'))
+		return (true);
+	return (false);
+}*/
+bool	is_scnd_token(char *str, int i, int j)
+{
+	if (str[i] == '|')
+		return (false);
+	if (str[i] == str[j] && (j - i) < 2 && (str[j] == '<' || str[j] == '>'))
 		return (true);
 	return (false);
 }
@@ -40,7 +48,8 @@ int	ft_put_space(int i, char **result)
 	j = i + 1;
 	while (len > j && res[j])
 	{
-		if (!is_scnd_token(res[i], res[j]))
+		//if (!is_scnd_token(res[i], res[j]))
+		if(!is_scnd_token(res, i, j))
 			break ;
 		j++;
 	}
