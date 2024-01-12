@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/08 20:11:17 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:16:42 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,52 +25,75 @@ void	search_and_replace(char *str, char src, char dest)
 	}
 }
 
-char	ft_get_first_target(char *str, char *target)
+bool	inside_quote(char str, char *target, char *quote)
 {
-	char	fc;
+	int	i;
+
+	i = 0;
+	if (*quote == '\0')
+	{
+		while (target[i])
+		{
+			if (str == target[i])
+				*quote = target[i];
+			i++;
+		}
+	}
+	else
+	{
+		while (target[i])
+		{
+			if (str == *quote)
+			{
+				*quote = '\0';
+				return (false);
+			}
+			i++;
+		}
+	}
+	return (str != *quote);
+}
+
+char	*create_search_and_remove(char *str, char *target, char *quote, int j)
+{
+	char	*dest;
+	int		i;
+
+	dest = ft_calloc(sizeof(char), j + 1);
+	j = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (inside_quote(str[i], target, quote))
+		{
+			dest[j] = str[i];
+			j++;
+		}
+		i++;
+	}
+	dest[j] = '\0';
+	free(str);
+	return (dest);
+}
+
+char	*search_and_remove(char *str, char *target)
+{
+	char	quote;
 	int		i;
 	int		j;
 
 	i = 0;
-	fc = '\2';
+	j = 0;
+	quote = '\0';
+	if (!str)
+		return (NULL);
 	while (str[i])
 	{
-		j = 0;
-		while (target[j])
-		{
-			if (str[i] == target[j])
-			{
-				fc = target[j];
-				break ;
-			}
+		if (inside_quote(str[i], target, &quote))
 			j++;
-		}
-		if (fc != '\2')
-			break ;
 		i++;
 	}
-	return (fc);
-}
-
-void	search_and_remove(char *str, char *target)
-{
-	char	*dest;
-	char	first_target;
-
-	dest = str;
-	first_target = ft_get_first_target(str, target);
-	if (!str)
-		return ;
-	while (*str != '\0')
-	{
-		if (*str != first_target)
-		{
-			*dest = *str;
-			dest++;
-		}
-		str++;
-	}
-	*dest = '\0';
+	return (create_search_and_remove(str, target, &quote, j));
 }
 
 int	ft_strlen_matrix(char **str)
@@ -80,20 +103,5 @@ int	ft_strlen_matrix(char **str)
 	i = 0;
 	while (str != NULL && str[i] != NULL)
 		i++;
-	return (i);
-}
-
-int	count_to_pipe(t_list *words)
-{
-	int		i;
-	t_list	*cur;
-
-	i = 1;
-	cur = words;
-	while (cur && cur->type != PIPE)
-	{
-		i++;
-		cur = cur->next;
-	}
 	return (i);
 }

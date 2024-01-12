@@ -6,20 +6,12 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:21:48 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 21:43:29 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:17:10 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*bool	is_scnd_token(char old, char c)
-{
-	if (old == '|')
-		return (false);
-	if (old == c && (c == '<' || c == '>'))
-		return (true);
-	return (false);
-}*/
 bool	is_scnd_token(char *str, int i, int j)
 {
 	if (str[i] == '|')
@@ -48,8 +40,7 @@ int	ft_put_space(int i, char **result)
 	j = i + 1;
 	while (len > j && res[j])
 	{
-		//if (!is_scnd_token(res[i], res[j]))
-		if(!is_scnd_token(res, i, j))
+		if (!is_scnd_token(res, i, j))
 			break ;
 		j++;
 	}
@@ -83,4 +74,19 @@ char	*space_token(char *str)
 		}
 	}
 	return (result);
+}
+
+int	count_to_pipe(t_list *words)
+{
+	int		i;
+	t_list	*cur;
+
+	i = 1;
+	cur = words;
+	while (cur && cur->type != PIPE)
+	{
+		i++;
+		cur = cur->next;
+	}
+	return (i);
 }
