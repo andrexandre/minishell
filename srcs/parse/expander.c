@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/11 22:51:30 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:33:24 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,10 @@ void	expand_str(char **str, int i)
 
 	src = *str;
 	j = i;
-	if (src[i + 1] != '?')
-	{
-		while (src[++j])
-			if (!ft_isalnum(src[j]) && src[j] != '_')
-				break ;
-	}
-	else
-		j += 2;
+	while (src[++j])
+		if (!ft_isalnum(src[j]) && src[j] != '_' && src[j] != '?')
+			break ;
+
 	ex_str = expansion(ft_substr(*str, i + 1, j - i - 1));
 	ft_strrep(str, i, j, ex_str);
 	free(ex_str);
