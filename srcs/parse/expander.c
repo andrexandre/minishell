@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 13:06:33 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:44:34 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ char	*expansion(char *str)
 		prt("\033[0m");
 	}
 	free(str);
+	str = NULL;
 	return (res);
 }
 
@@ -66,13 +67,14 @@ void	expand_str(char **str, int i)
 	ex_str = expansion(ft_substr(*str, i + 1, j - i - 1));
 	ft_strrep(str, i, j, ex_str);
 	free(ex_str);
+	ex_str = NULL;
 }
 
-// \3 has to remove the token instead of replacing it with \0
 char	*expander(char *str)
 {
 	int		i;
 	bool	quote;
+	char	*tmp;
 
 	quote = false;
 	i = -1;
@@ -86,7 +88,10 @@ char	*expander(char *str)
 		}
 	}
 	search_and_replace(str, '\2', '$');
-	search_and_replace(str, '\3', '\0');
+	tmp = str;
+	str = remove_char(tmp, '\3');
+	free(tmp);
+	tmp = NULL;
 	search_and_remove(str, "'\"");
 	return (str);
 }
