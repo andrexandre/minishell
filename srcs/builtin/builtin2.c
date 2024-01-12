@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 12:52:25 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:55:13 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 int	exit_error(void)
 {
 	ms()->running = 1;
-	dprt(2, "minishell: exit: too many arguments\n");
-	return (1);
+	return (dprt(2, "minishell: exit: too many arguments\n"), 1);
 }
 
 int	run_exit(t_list *curr)
@@ -33,12 +32,13 @@ int	run_exit(t_list *curr)
 		{
 			if (!ft_isdigit(curr->cmds[1][i])
 				&& curr->cmds[1][0] != '-')
-			{
-				dprt(2, "minishell: exit: %s: numeric argument required\n",
-					curr->cmds[1]);
-				return (2);
-			}
+				return (dprt(2,
+						"minishell: exit: %s: numeric argument required\n",
+						curr->cmds[1]), 2);
 		}
+		if (!curr->cmds[1][0])
+			return (dprt(2, "minishell: exit: : numeric argument required\n"),
+				2);
 		if (curr->cmds[2])
 			return (exit_error());
 		return (ft_atoll(curr->cmds[1]));

@@ -6,18 +6,28 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 12:47:59 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 14:26:10 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// NEEDS TO DECREASE LINES
+int	hist(char *buf)
+{
+	if (*buf)
+		add_history(buf);
+	else
+	{
+		free(buf);
+		return (1);
+	}
+	return (0);
+}
+
 void	prompt_loop(void)
 {
 	char	*buf;
 
-	ms()->running = 1;
 	while (ms()->running)
 	{
 		signal(SIGINT, handler);
@@ -29,13 +39,8 @@ void	prompt_loop(void)
 				write(2, "exit\n", 6);
 			break ;
 		}
-		if (*buf)
-			add_history(buf);
-		else
-		{
-			free(buf);
+		if (hist(buf))
 			continue ;
-		}
 		if (lexer(buf))
 		{
 			free(buf);
@@ -117,6 +122,7 @@ int	main(int ac, char **av, char **ep)
 	minishell_init(ep);
 	if (isatty(STDIN_FILENO))
 		debug(0);
+	ms()->running = 1;
 	prompt_loop();
 	if (isatty(STDIN_FILENO))
 		debug(1);
