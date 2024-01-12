@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/11 16:00:12 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:24:15 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	exec_cd(char *str)
 		cwd = getcwd(NULL, 0);
 		if (!cwd)
 		{
-			perror("getcwd");
+			perror("cd: getcwd");
 			return (1);
 		}
 		ep_change_value("PWD", cwd);
