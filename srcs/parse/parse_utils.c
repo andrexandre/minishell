@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:14:28 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 21:16:42 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/13 00:54:02 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ char	*create_search_and_remove(char *str, char *target, char *quote, int j)
 		i++;
 	}
 	dest[j] = '\0';
+	search_and_replace(dest, '\4', '\'');
+	search_and_replace(dest, '\5', '"');
 	free(str);
 	return (dest);
 }

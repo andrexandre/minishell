@@ -6,7 +6,7 @@
 /*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/12 22:24:07 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/13 00:51:41 by jealves-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@ char	*expansion(char *str)
 	else if (str[0] == '"' || str[0] == '\'')
 		res = ft_strdup(str);
 	else if (get_env(str))
+	{
 		res = ft_strdup(get_env(str)->data);
+		search_and_replace(res, '\'', '\4');
+		search_and_replace(res, '"', '\5');
+	}
 	else
 		res = ft_strdup("\3");
 	if (ms()->debug)
