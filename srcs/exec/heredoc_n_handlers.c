@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:18:09 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/13 11:49:59 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 14:56:31 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void	hd_handler(int sig)
 		free(ms()->hd_buf);
 		close(ms()->hd_fd[0]);
 		close(ms()->hd_fd[1]);
+		ms()->hd_fd[0] = 0;
+		ms()->hd_fd[1] = 0;
 		free_all(128 + sig, 0);
 	}
 }
@@ -50,6 +52,7 @@ void	get_stdin(const char *arg)
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, hd_handler);
 	close(ms()->hd_fd[0]);
+	ms()->hd_fd[0] = 0;
 	ms()->hd_buf = readline("> ");
 	while (ms()->hd_buf && ft_strcmp(ms()->hd_buf, arg))
 	{
@@ -59,9 +62,10 @@ void	get_stdin(const char *arg)
 		ms()->hd_buf = NULL;
 		ms()->hd_buf = readline("> ");
 	}
+	close(ms()->hd_fd[1]);
+	ms()->hd_fd[1] = 0;
 	if (!ms()->hd_buf)
 		dprt(2, "minishell: warning: end-of-file (wanted `%s')\n", arg);
-	close(ms()->hd_fd[1]);
 	free(ms()->hd_buf);
 	ms()->hd_buf = NULL;
 	free_all(EXIT_SUCCESS, 0);
@@ -81,11 +85,12 @@ int	heredoc(char *arg)
 		signal(SIGINT, parent_hd_handler);
 	if (!pid)
 		get_stdin(arg);
+	close(ms()->hd_fd[1]);
+	ms()->hd_fd[1] = 0;
 	if (waitpid(pid, &stat, 0) > 0)
 		if (WIFEXITED(stat))
 			ms()->status = WEXITSTATUS(stat);
 	if (ms()->status == 130)
 		return (-1);
-	close(ms()->hd_fd[1]);
 	return (ms()->hd_fd[0]);
 }

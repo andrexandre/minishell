@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 10:55:20 by jealves-          #+#    #+#             */
-/*   Updated: 2024/01/13 00:51:41 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/13 14:36:10 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,6 @@ char	*expansion(char *str)
 	}
 	else
 		res = ft_strdup("\3");
-	if (ms()->debug)
-	{
-		prt("\033[1;34m");
-		prt("Expander: busca = $%s, resultado = %s\n", str, res);
-		prt("\033[0m");
-	}
 	free(str);
 	str = NULL;
 	return (res);

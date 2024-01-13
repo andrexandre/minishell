@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/13 11:40:35 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 14:36:06 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ typedef struct s_eplist
 
 typedef struct s_var
 {
-	int				debug;
 	int				status;
 	int				running;
 	char			**paths;

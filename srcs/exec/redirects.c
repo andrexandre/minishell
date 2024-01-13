@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/13 11:22:33 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:00:10 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,7 @@ int	_is_builtin(char *str)
 void	parent_hd_handler(int sig)
 {
 	prt("^C\n");
+	close(ms()->hd_fd[0]);
+	ms()->hd_fd[0] = 0;
 	ms()->status = 128 + sig;
 }

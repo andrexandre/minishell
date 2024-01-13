@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:10:35 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 13:55:13 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:03:30 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ int	run_exit(t_list *curr)
 {
 	int	i;
 
-	if (isatty(STDIN_FILENO))
-		dprt(2, "exit\n");
+	dprt(2, "exit\n");
 	ms()->running = 0;
 	if (curr->cmds[1])
 	{

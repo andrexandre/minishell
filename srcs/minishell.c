@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/13 11:25:11 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:03:35 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ void	prompt_loop(void)
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
 		{
-			if (isatty(STDIN_FILENO))
-				write(2, "exit\n", 6);
+			write(2, "exit\n", 6);
 			break ;
 		}
 		if (hist(buf))
@@ -96,35 +95,13 @@ void	minishell_init(char **ep)
 	var_init(cwd);
 }
 
-// this is a temporary function for debugging that uses unauthorized functions
-void	debug(int n)
-{
-	char	*hist;
-
-	hist = ".minishell_history";
-	if (!n)
-		read_history(hist);
-	else
-		write_history(hist);
-}
-
-/* antes de entregar, retirar:
-tudo o que diz debug
-
-333 certas no mpanic
-*/
 int	main(int ac, char **av, char **ep)
 {
-	ms()->debug = 0;
 	(void)ac;
 	(void)av;
 	minishell_init(ep);
-	if (isatty(STDIN_FILENO))
-		debug(0);
 	ms()->running = 1;
 	prompt_loop();
-	if (isatty(STDIN_FILENO))
-		debug(1);
 	rl_clear_history();
 	free_all(ms()->status, 0);
 }

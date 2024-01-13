@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:44:42 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/13 12:59:10 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:04:56 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ep_export_value(char *str)
 	curr = get_env(name);
 	if (!curr)
 		ep_lnew(&ms()->epl, str);
-		else if (ft_strchr(str, '='))
+	else if (ft_strchr(str, '='))
 	{
 		free(curr->str);
 		curr->str = ft_strdup(str);
