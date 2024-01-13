@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 11:18:18 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 17:47:31 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 11:25:11 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	prompt_loop(void)
 
 	while (ms()->running)
 	{
-		signal(SIGINT, handler);
+		signal(SIGINT, parent_handler);
 		signal(SIGQUIT, SIG_IGN);
 		buf = readline("\033[0;34mminishell\033[0m😎> ");
 		if (!buf)
@@ -109,11 +109,9 @@ void	debug(int n)
 }
 
 /* antes de entregar, retirar:
-norm do prompt loop
-a funcão debug
-e as 2 calls de debug
+tudo o que diz debug
 
-325 certas no mpanic
+333 certas no mpanic
 */
 int	main(int ac, char **av, char **ep)
 {

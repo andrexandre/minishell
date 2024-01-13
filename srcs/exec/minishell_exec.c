@@ -6,12 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:15:44 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/09 15:54:16 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 11:55:04 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// transforms the env from a linked list to a char ** (for execve)
 char	**ep_from_epl(void)
 {
 	t_eplist	*curr;
@@ -60,6 +61,7 @@ int	has_slash(char *command)
 	return (0);
 }
 
+// searches for the command in PATH and gives the respective error if found
 char	*search_cmd(char *command, char **ep)
 {
 	int			i;
@@ -89,6 +91,7 @@ char	*search_cmd(char *command, char **ep)
 	return (NULL);
 }
 
+// parses the PATH from the env and saves it in a char **
 void	parsing_paths(void)
 {
 	char	*temp;

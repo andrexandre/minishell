@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jealves- <jealves-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:31:55 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 21:16:26 by jealves-         ###   ########.fr       */
+/*   Updated: 2024/01/13 11:40:35 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_var
 	int				**pipe;
 	int				saved_fd[2];
 	char			*hd_buf;
-	int				hd_fd;
+	int				hd_fd[2];
 	char			*origin_str;
 	t_eplist		*epl;
 	t_list			*words;
@@ -91,10 +91,10 @@ void				run_child(char **ep, t_list *curr);
 // redirects
 void				redirects(t_list *curr, int *error);
 int					_is_builtin(char *str);
-void				tmp_hd_handler(int sig);
+void				parent_hd_handler(int sig);
 // heredoc_n_handlers
-void				tmp_handler(int sig);
-void				handler(int sig);
+void				child_handler(int sig);
+void				parent_handler(int sig);
 int					heredoc(char *arg);
 
 // builtin

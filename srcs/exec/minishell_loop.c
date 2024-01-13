@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 17:19:13 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 12:59:01 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 11:51:23 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int	run_builtin(t_list *curr)
 {
-	int		status;
-
-	status = 1;
 	if (!ft_strcmp(curr->cmds[0], "cd"))
 		ms()->status = (*run_cd)(curr);
 	else if (!ft_strcmp(curr->cmds[0], "echo"))
@@ -32,8 +29,8 @@ int	run_builtin(t_list *curr)
 	else if (!ft_strcmp(curr->cmds[0], "exit"))
 		ms()->status = (*run_exit)(curr);
 	else
-		status = 0;
-	return (status);
+		return (0);
+	return (1);
 }
 
 void	run_cmd(t_list *curr, int j)
@@ -52,8 +49,8 @@ void	run_cmd(t_list *curr, int j)
 	}
 	else
 	{
-		signal(SIGINT, tmp_handler);
-		signal(SIGQUIT, tmp_handler);
+		signal(SIGINT, child_handler);
+		signal(SIGQUIT, child_handler);
 		ms()->pid[j] = fork();
 		if (ms()->pid[j] < 0)
 		{

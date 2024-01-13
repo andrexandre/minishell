@@ -6,7 +6,7 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:44:42 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/12 17:24:09 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 12:59:10 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,12 @@ int	export_error(char *name)
 
 	i = -1;
 	if (ft_isdigit(name[0]))
-	{
-		free(name);
 		return (1);
-	}
 	while (name[++i])
 		if (!ft_isalnum(name[i]) && name[i] != '_')
 			break ;
 	if (!name[i])
 		return (0);
-	free(name);
 	return (1);
 }
 
@@ -41,16 +37,14 @@ int	ep_export_value(char *str)
 	if (!name)
 		return (1);
 	if (export_error(name) || str[0] == '=')
-		return (dprt(2, "minishell: export: `%s': not a valid identifier\n", str), 1);
+		return (free(name), dprt(2, "minishell: export: \
+`%s': not a valid identifier\n", str), 1);
 	if (!ft_strcmp(name, "_"))
-	{
-		free(name);
-		return (0);
-	}
+		return (free(name), 0);
 	curr = get_env(name);
 	if (!curr)
 		ep_lnew(&ms()->epl, str);
-	else if (ft_strchr(str, '='))
+		else if (ft_strchr(str, '='))
 	{
 		free(curr->str);
 		curr->str = ft_strdup(str);

@@ -6,13 +6,13 @@
 /*   By: analexan <analexan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 10:49:51 by analexan          #+#    #+#             */
-/*   Updated: 2024/01/08 17:26:11 by analexan         ###   ########.fr       */
+/*   Updated: 2024/01/13 12:52:41 by analexan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// receives the name of the env to search ex: "HOME"
+// searches for the string name in the envp and returns eplist if it exists
 t_eplist	*get_env(char *name)
 {
 	t_eplist	*curr;
@@ -50,9 +50,9 @@ void	ep_lnew(t_eplist **lst, char *str)
 	node->str = ft_strdup(str);
 	if (!node->str)
 		return ;
-	node->name = ft_substr(node->str, 0,
-			ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
-	if (ft_strchr(node->str, '='))
+			node->name = ft_substr(node->str, 0,
+				ft_strlen(node->str) - ft_strlen(ft_strchr(node->str, '=')));
+		if (ft_strchr(node->str, '='))
 		node->data = ft_strchr(node->str, '=') + 1;
 	else
 		node->data = NULL;
