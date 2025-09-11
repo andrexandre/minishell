@@ -21,10 +21,11 @@ git clone https://github.com/andrexandre/minishell.git ; cd minishell
 ```
 
 2. Compile the program
+> The curses and readline libraries are required\
+> `sudo apt libncurses-dev libreadline-dev`
 ```sh
 make
 ```
-> The readline library is needed to compile the program
 
 3. Run the prorgam
 ```sh
